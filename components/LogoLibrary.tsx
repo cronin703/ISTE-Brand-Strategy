@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, LayoutGroup, MotionConfig, motion } from "framer-motion";
+import { AnimatePresence, LayoutGroup, LazyMotion, MotionConfig, m as motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LOGO_TYPES } from "@/lib/logoTypes";
 import type { LogoType, Mark } from "@/lib/types";
@@ -9,6 +9,7 @@ import { LogoCard } from "./LogoCard";
 type StatusFilter = "active" | "all" | "retired";
 type FileFilter = "any" | "has" | "missing";
 
+const loadFeatures = () => import("@/lib/motionFeatures").then((mod) => mod.default);
 const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 const EASE_IN = [0.7, 0, 0.84, 0] as const;
 
@@ -81,8 +82,9 @@ export function LogoLibrary({ marks }: { marks: Mark[] }) {
   let cardIndex = 0;
 
   return (
+    <LazyMotion features={loadFeatures} strict>
     <MotionConfig reducedMotion="user">
-      <div className="z-20 -mx-4 mb-6 border-b lg:sticky lg:top-16 border-border bg-bg/95 px-4 py-3 backdrop-blur sm:-mx-8 sm:px-8 lg:-mx-12 lg:px-12">
+      <div className="z-20 -mx-4 mb-6 border-b lg:sticky lg:top-16 border-border bg-bg px-4 py-3 sm:-mx-8 sm:px-8 lg:-mx-12 lg:px-12">
         <div className="flex flex-col gap-3">
           <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0" role="group" aria-label="Filter by logo type">
             <Chip pressed={type === "all"} onClick={() => setType("all")}>
@@ -199,6 +201,7 @@ export function LogoLibrary({ marks }: { marks: Mark[] }) {
         </LayoutGroup>
       )}
     </MotionConfig>
+    </LazyMotion>
   );
 }
 

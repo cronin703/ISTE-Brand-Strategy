@@ -11,6 +11,7 @@ export function useFocusTrap(ref: RefObject<HTMLElement | null>, active: boolean
     if (!active) return;
     const prev = document.activeElement as HTMLElement | null;
     const node = ref.current;
+    if (node && !node.contains(document.activeElement)) node.querySelector<HTMLElement>(FOCUSABLE)?.focus();
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") {
         e.preventDefault();

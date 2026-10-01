@@ -41,7 +41,7 @@ export function DownloadButton({
         <span data-on={!done} className="inline-flex items-center gap-2">
           <DownloadIcon width={16} height={16} />
           {compact ? file.ext : `Download ${file.ext}`}
-          <span className="font-normal opacity-80">{formatBytes(file.bytes)}</span>
+          <span className="font-normal">{formatBytes(file.bytes)}</span>
         </span>
         <span data-on={done} className="inline-flex items-center justify-center gap-2" aria-hidden={!done}>
           <CheckIcon width={16} height={16} />

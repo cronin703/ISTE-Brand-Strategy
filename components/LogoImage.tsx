@@ -43,7 +43,7 @@ export function LogoImage({
 
   if (!mark.hasLogo || !src) {
     return (
-      <div className={`flex flex-col items-center justify-center gap-2 text-center text-muted ${className}`}>
+      <div className="flex flex-col items-center justify-center gap-2 text-center">
         <ImageOffIcon width={28} height={28} />
         <span className="text-sm font-semibold">{mark.status === "Retired" ? "No file on record" : "Logo needed"}</span>
       </div>

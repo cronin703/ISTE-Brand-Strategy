@@ -101,9 +101,11 @@ export default function ColorPage() {
                 return (
                   <tr key={fn + bn}>
                     <td className="px-4 py-3">
-                      <span className="inline-flex h-9 items-center rounded border border-border px-3 font-semibold" style={{ color: fg, background: bg }} aria-hidden>
-                        Aa
-                      </span>
+                      {/* Drawn as SVG: the sample shows failing pairs on purpose. */}
+                      <svg width="48" height="36" viewBox="0 0 48 36" aria-hidden className="rounded border border-border">
+                        <rect width="48" height="36" fill={bg} />
+                        <text x="24" y="24" textAnchor="middle" fontSize="16" fontWeight="600" fill={fg} fontFamily="Inter Variable, sans-serif">Aa</text>
+                      </svg>
                     </td>
                     <td className="px-4 py-3 text-text">{fn} on {bn.toLowerCase()}</td>
                     <td className="px-4 py-3 font-mono text-heading tabular-nums">{r.toFixed(2)}:1</td>

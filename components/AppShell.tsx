@@ -5,10 +5,14 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BrandMark } from "./BrandMark";
 import { CloseIcon, MenuIcon, SearchIcon } from "./icons";
-import { SearchPalette, type SearchItem } from "./SearchPalette";
+import dynamic from "next/dynamic";
+import type { SearchItem } from "./SearchPalette";
 import { SidebarNav } from "./Sidebar";
 import { ThemeToggle } from "./ThemeToggle";
 import { useFocusTrap } from "./useFocusTrap";
+
+// The palette (and Fuse) load on first open.
+const SearchPalette = dynamic(() => import("./SearchPalette").then((m) => m.SearchPalette), { ssr: false });
 
 export function AppShell({ searchItems, children }: { searchItems: SearchItem[]; children: React.ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -37,6 +41,9 @@ export function AppShell({ searchItems, children }: { searchItems: SearchItem[];
       }
     }
     window.addEventListener("keydown", onKey);
+    // Warm the palette chunk once the page is idle so the first open is instant.
+    const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 2000));
+    idle(() => void import("./SearchPalette"));
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
@@ -54,7 +61,7 @@ export function AppShell({ searchItems, children }: { searchItems: SearchItem[];
       >
         Skip to content
       </a>
-      <header className="sticky top-0 z-40 h-16 border-b border-border bg-bg/95 backdrop-blur supports-[backdrop-filter]:bg-bg/85">
+      <header className="sticky top-0 z-40 h-16 border-b border-border bg-bg">
         <div className="flex h-full items-center gap-2 px-3 sm:px-4">
           <button
             type="button"
@@ -91,9 +98,9 @@ export function AppShell({ searchItems, children }: { searchItems: SearchItem[];
       </header>
 
       <div className="mx-auto flex w-full max-w-[1440px]">
-        <aside className="sticky top-16 hidden h-[calc(100dvh-4rem)] w-[264px] shrink-0 overflow-y-auto border-r border-border lg:block">
+        <div className="sticky top-16 hidden h-[calc(100dvh-4rem)] w-[264px] shrink-0 overflow-y-auto border-r border-border lg:block">
           <SidebarNav />
-        </aside>
+        </div>
         <main id="main" tabIndex={-1} className="min-w-0 flex-1 outline-none">
           {children}
         </main>
@@ -113,7 +120,6 @@ export function AppShell({ searchItems, children }: { searchItems: SearchItem[];
               <span className="font-semibold text-heading">Brand Hub</span>
               <button
                 type="button"
-                autoFocus
                 onClick={closeDrawer}
                 aria-label="Close navigation"
                 className="grid size-10 place-items-center rounded-md text-heading hover:bg-tile"
@@ -126,7 +132,7 @@ export function AppShell({ searchItems, children }: { searchItems: SearchItem[];
         </div>
       )}
 
-      <SearchPalette items={searchItems} open={searchOpen} onClose={closeSearch} />
+      {searchOpen && <SearchPalette items={searchItems} open={searchOpen} onClose={closeSearch} />}
     </>
   );
 }

@@ -34,3 +34,22 @@ The Drive folder must be shared "Anyone with the link can view" for the Drive im
 - Logos: edit `data/logos.json` (or re-export it from the Brand Lockup Checklist), then rebuild.
 - Rules per logo type: `lib/logoTypes.ts`.
 - Changelog: `app/resources/whats-new/page.tsx`.
+
+## Deploy to Vercel
+
+No `vercel.json` is needed: Vercel detects Next.js, and `next.config.ts` already allows images from `drive.google.com` and `lh3.googleusercontent.com`.
+
+1. Share the Drive logo folder as "Anyone with the link can view": https://drive.google.com/drive/folders/1RfJX_mxRdg1m-ADkWqZ6BDJp4zbIorVR
+2. Go to https://vercel.com/new and sign in with GitHub.
+3. Import `cronin703/ISTE-Brand-Strategy`. If the repo isn't listed, choose "Adjust GitHub App Permissions" and give Vercel access to it.
+4. Leave the defaults (Framework: Next.js, Build: `next build`, Output: automatic, no environment variables) and click Deploy.
+5. To deploy a branch other than `main`, either merge it to `main` or set Settings → Git → Production Branch. Every other branch gets a preview URL automatically.
+
+From a terminal instead: `npm i -g vercel`, then `vercel` (preview) and `vercel --prod` (production) in this folder.
+
+## Quality checks run on this build
+
+- axe-core (WCAG 2.0 to 2.2 A/AA plus best practice): 0 violations across 21 routes, light and dark.
+- Lighthouse on `/logos`: Performance 94 to 98, Accessibility 100, Best Practices 100, SEO 100.
+- Keyboard and interaction tests: search palette, filters and URL sync, downloads, copy, drawer focus trap, theme persistence, reduced motion.
+- No horizontal scroll from 375px to 1440px.

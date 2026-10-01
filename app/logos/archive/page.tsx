@@ -23,6 +23,7 @@ export default function ArchivePage() {
         download. Each page says what to use instead, or use the{" "}
         <Link className="link" href="/logos/iste-iste-ascd">ISTE+ASCD master brand</Link>.
       </Callout>
+      <h2 className="sr-only">Retired marks</h2>
       <ul className="mt-8 grid grid-cols-1 gap-4 min-[480px]:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {marks.map((m, i) => (
           <li key={m.id} className="card-enter" style={{ "--i": i } as React.CSSProperties}>

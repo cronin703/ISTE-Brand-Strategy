@@ -94,7 +94,7 @@ export function SearchPalette({ items, open, onClose }: { items: SearchItem[]; o
         aria-label="Search the brand hub"
         className="panel-in relative mx-auto mt-[10vh] w-[calc(100%-2rem)] max-w-[640px] overflow-hidden rounded-xl border border-border bg-bg shadow-2xl"
       >
-        <div className="flex items-center gap-3 border-b border-border px-4">
+        <div className="flex items-center gap-3 border-b-2 border-border px-4 focus-within:border-indicator">
           <SearchIcon className="shrink-0 text-muted" />
           <input
             ref={inputRef}

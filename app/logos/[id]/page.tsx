@@ -153,7 +153,7 @@ export default async function LogoDetail({ params }: { params: Promise<{ id: str
           </section>
         </div>
 
-        <aside className="xl:sticky xl:top-24 xl:h-fit">
+        <aside aria-label="Mark details" className="xl:sticky xl:top-24 xl:h-fit">
           <h2 className="sr-only">Details</h2>
           <dl className="divide-y divide-border rounded-lg border border-border text-[15px]">
             <Row label="Logo type">{mark.logoType}</Row>

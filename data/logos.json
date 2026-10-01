@@ -1,0 +1,1514 @@
+{
+  "source": "ISTE Brand Lockup Checklist (Google Sheet 1rBZASL1OvGzKLqxLjkMV774GxQJ-HPr0rrrW_8pY_7M), based on the Aug 2021 ISTE Brand Treatment audit",
+  "driveFolder": "https://drive.google.com/drive/folders/1RfJX_mxRdg1m-ADkWqZ6BDJp4zbIorVR",
+  "exported": "2026-10-01",
+  "marks": [
+    {
+      "id": "iste-iste-ascd",
+      "order": 1,
+      "sheetRow": 3,
+      "name": "ISTE / ISTE+ASCD",
+      "auditGroup": "Group 1 — Master Brand",
+      "logoType": "Master brand",
+      "productActive": "Yes",
+      "decision": "Keep",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "The master brand",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/about",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1XzcHM5M0gIFN4Pqqi1KxcQJRwdC1PEXF",
+        "viewUrl": "https://drive.google.com/file/d/1XzcHM5M0gIFN4Pqqi1KxcQJRwdC1PEXF/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1XzcHM5M0gIFN4Pqqi1KxcQJRwdC1PEXF&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/iste-iste-ascd.png",
+        "/logos/iste-iste-ascd.svg",
+        "/logos/iste-iste-ascd_b.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "course-of-mind",
+      "order": 2,
+      "sheetRow": 4,
+      "name": "Course of Mind",
+      "auditGroup": "Group 2 — Unique Logo/Site/Colors",
+      "logoType": "Initiative",
+      "productActive": "Yes",
+      "decision": "Keep",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "courseofmind.org",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/blog/course-of-mind-dive-into-the-learning-sciences",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [
+        "/logos/course-of-mind.png",
+        "/logos/course-of-mind.svg"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "digcit-commit",
+      "order": 3,
+      "sheetRow": 5,
+      "name": "DigCit Commit",
+      "auditGroup": "Group 2 — Unique Logo/Site/Colors",
+      "logoType": "Initiative",
+      "productActive": "Yes",
+      "decision": "Keep",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "digcitcommit.org",
+      "fileNotes": "",
+      "sourceUrl": "https://www.iste.org/explore/press-releases/new-coalition-aims-reach-1-million-students-new-definition-digital",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [
+        "/logos/digcit-commit.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "edsurge",
+      "order": 4,
+      "sheetRow": 6,
+      "name": "EdSurge",
+      "auditGroup": "Group 2 — Unique Logo/Site/Colors",
+      "logoType": "Initiative",
+      "productActive": "Yes",
+      "decision": "Keep",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "edsurge.com",
+      "fileNotes": "",
+      "sourceUrl": "https://www.edsurge.com/",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1pdeVOxpsqbylZWoYNmREF5m8qI_tDVFj",
+        "viewUrl": "https://drive.google.com/file/d/1pdeVOxpsqbylZWoYNmREF5m8qI_tDVFj/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1pdeVOxpsqbylZWoYNmREF5m8qI_tDVFj&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/edsurge.png",
+        "/logos/edsurge.svg"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-edsurge-co-brand",
+      "order": 5,
+      "sheetRow": 7,
+      "name": "ISTE + EdSurge (co-brand)",
+      "auditGroup": "Group 2 — Unique Logo/Site/Colors",
+      "logoType": "Partner lockup",
+      "productActive": "No",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "edsurge.com",
+      "fileNotes": "",
+      "sourceUrl": "https://www.edsurge.com/research/guides/how-learning-sciences-inform-edtech-procurement-a-tale-of-3-districts",
+      "matchConfidence": "Low",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "skillrise",
+      "order": 6,
+      "sheetRow": 8,
+      "name": "SkillRise",
+      "auditGroup": "Group 2 — Unique Logo/Site/Colors",
+      "logoType": "Initiative",
+      "productActive": "No",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "skillrise.org, an ISTE initiative",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/news/iste-announces-new-initiative-to-support-adult-learning-and-workforce-development-organizations",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1wCONEj0zJc0llHnbrFoQnIb37wxeVZp3",
+        "viewUrl": "https://drive.google.com/file/d/1wCONEj0zJc0llHnbrFoQnIb37wxeVZp3/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1wCONEj0zJc0llHnbrFoQnIb37wxeVZp3&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/skillrise.jpg"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "making-it-happen",
+      "order": 7,
+      "sheetRow": 9,
+      "name": "Making IT Happen",
+      "auditGroup": "Group 2 — Unique Logo/Site/Colors",
+      "logoType": "Initiative",
+      "productActive": "Yes",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "makingithappen.org, refresh logo",
+      "fileNotes": "",
+      "sourceUrl": "https://iste-ascd.org/making-it-happen-award",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "iste-u",
+      "order": 8,
+      "sheetRow": 10,
+      "name": "ISTE U",
+      "auditGroup": "Group 3 — Aligned Logo/Colors",
+      "logoType": "Program or product",
+      "productActive": "No",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "icon + wordmark variants",
+      "fileNotes": "",
+      "sourceUrl": "https://www.iste.org/iste-u",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [
+        "/logos/iste-u.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-loop",
+      "order": 9,
+      "sheetRow": 11,
+      "name": "ISTE Loop",
+      "auditGroup": "Group 3 — Aligned Logo/Colors",
+      "logoType": "Program or product",
+      "productActive": "Yes",
+      "decision": "Merge",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "multiple lockup variants",
+      "fileNotes": "",
+      "sourceUrl": "https://atlasabe.org/news/a-new-easy-and-free-opportunity-to-network-with-colleagues-from-around-the-nation/",
+      "matchConfidence": "Low",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "iste-creative-constructor-lab",
+      "order": 10,
+      "sheetRow": 12,
+      "name": "ISTE Creative Constructor Lab",
+      "auditGroup": "Group 3 — Aligned Logo/Colors",
+      "logoType": "Event",
+      "productActive": "No",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "dated event lockup",
+      "fileNotes": "",
+      "sourceUrl": "https://conference.iste.org/2022CreativeConstructorLab",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [
+        "/logos/iste-creative-constructor-lab.png",
+        "/logos/iste-creative-constructor-lab_b-virtual-2021.jpg"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-leadership-exchange",
+      "order": 11,
+      "sheetRow": 13,
+      "name": "ISTE Leadership Exchange",
+      "auditGroup": "Group 3 — Aligned Logo/Colors",
+      "logoType": "Event",
+      "productActive": "No",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "multiple lockup variants",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/events/leadership-exchange-at-istelive-24",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [
+        "/logos/iste-leadership-exchange.png",
+        "/logos/iste-leadership-exchange.svg"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-live",
+      "order": 12,
+      "sheetRow": 14,
+      "name": "ISTE Live",
+      "auditGroup": "Group 3 — Aligned Logo/Colors",
+      "logoType": "Event",
+      "productActive": "Yes",
+      "decision": "Keep",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "annual event, dated lockup",
+      "fileNotes": "Promo banner containing the ISTELive 26 logo, not a clean logo file",
+      "sourceUrl": "https://iste.org/events/istelive-26",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1YSnrNUOYd_Jkkb6c3IhRZi52nH1vI8En",
+        "viewUrl": "https://drive.google.com/file/d/1YSnrNUOYd_Jkkb6c3IhRZi52nH1vI8En/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1YSnrNUOYd_Jkkb6c3IhRZi52nH1vI8En&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/iste-live.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "summer-learning-academy",
+      "order": 13,
+      "sheetRow": 15,
+      "name": "Summer Learning Academy",
+      "auditGroup": "Group 3 — Aligned Logo/Colors",
+      "logoType": "Event",
+      "productActive": "No",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "annual, dated lockup",
+      "fileNotes": "",
+      "sourceUrl": "https://summerlearningacademy.iste.org/",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1m9hcuexP5oU9l63-52CRYc8Dqv2t0_0O",
+        "viewUrl": "https://drive.google.com/file/d/1m9hcuexP5oU9l63-52CRYc8Dqv2t0_0O/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1m9hcuexP5oU9l63-52CRYc8Dqv2t0_0O&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/summer-learning-academy.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-connect",
+      "order": 14,
+      "sheetRow": 16,
+      "name": "ISTE Connect",
+      "auditGroup": "Group 3 — Aligned Logo/Colors",
+      "logoType": "Program or product",
+      "productActive": "Yes",
+      "decision": "Rename",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "currently a graphic",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/connect",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [
+        "/logos/iste-connect.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "digital-learning-pathways",
+      "order": 15,
+      "sheetRow": 17,
+      "name": "Digital Learning Pathways",
+      "auditGroup": "Group 3 — Aligned Logo/Colors",
+      "logoType": "Partner lockup",
+      "productActive": "No",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "ISTE | Metiri co-brand",
+      "fileNotes": "",
+      "sourceUrl": "https://info.iste.org/iste-digital-learning-pathways",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1ibWLAItVz0473obkYRNvZqcG_gkh3jLY",
+        "viewUrl": "https://drive.google.com/file/d/1ibWLAItVz0473obkYRNvZqcG_gkh3jLY/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1ibWLAItVz0473obkYRNvZqcG_gkh3jLY&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/digital-learning-pathways.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-coaching-certificate-program",
+      "order": 16,
+      "sheetRow": 18,
+      "name": "ISTE Coaching Certificate Program",
+      "auditGroup": "Group 3 — Aligned Logo/Colors",
+      "logoType": "Partner lockup",
+      "productActive": "No",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "co-brand with MDEC",
+      "fileNotes": "",
+      "sourceUrl": "https://www.iste.org/credentials",
+      "matchConfidence": "Low",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "iste-books",
+      "order": 17,
+      "sheetRow": 19,
+      "name": "ISTE Books",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Program or product",
+      "productActive": "Unsure",
+      "decision": "Merge",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/learning-library/books",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "iste-learning-technology-directory",
+      "order": 18,
+      "sheetRow": 20,
+      "name": "ISTE Learning Technology Directory",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Program or product",
+      "productActive": "Unsure",
+      "decision": "Merge",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://ltd.iste.org/",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "iste-certification",
+      "order": 19,
+      "sheetRow": 21,
+      "name": "ISTE Certification",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Program or product",
+      "productActive": "Yes",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "plain lockup, new version available (is this all three certs?)",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/educator-certification",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1qEQd6EqavF-3srkbtjRRrlptLz7ui23Y",
+        "viewUrl": "https://drive.google.com/file/d/1qEQd6EqavF-3srkbtjRRrlptLz7ui23Y/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1qEQd6EqavF-3srkbtjRRrlptLz7ui23Y&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/iste-certification.png",
+        "/logos/iste-certification_hires.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-certification-higher-education-authorized-provider",
+      "order": 20,
+      "sheetRow": 22,
+      "name": "ISTE Certification, Higher Education Authorized Provider",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Badge or seal",
+      "productActive": "Yes",
+      "decision": "Keep",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/iste-certification-cohort-higher-education-cohort",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "iste-certification-trainer",
+      "order": 21,
+      "sheetRow": 23,
+      "name": "ISTE Certification Trainer",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Badge or seal",
+      "productActive": "Yes",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "new version available certified educator",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/certification-training-dates-and-locations",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "iste-certification-authorized-provider",
+      "order": 22,
+      "sheetRow": 24,
+      "name": "ISTE Certification, Authorized Provider",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Badge or seal",
+      "productActive": "Yes",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/iste-certification-authorized-providers",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1sIrBxiLtr3nzNM1_ZySjQKplaAmxnHe6",
+        "viewUrl": "https://drive.google.com/file/d/1sIrBxiLtr3nzNM1_ZySjQKplaAmxnHe6/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1sIrBxiLtr3nzNM1_ZySjQKplaAmxnHe6&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/iste-certification-authorized-provider.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-learning-certification",
+      "order": 23,
+      "sheetRow": 25,
+      "name": "ISTE Learning Certification",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Program or product",
+      "productActive": "No",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://info.iste.org/iste-certification-report",
+      "matchConfidence": "Low",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "iste-learning-academy",
+      "order": 24,
+      "sheetRow": 26,
+      "name": "ISTE Learning Academy",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Program or product",
+      "productActive": "Yes",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "new version available",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/iste-ascd-learning-academy",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "iste-exhibitor-annual-dated",
+      "order": 25,
+      "sheetRow": 27,
+      "name": "ISTE Exhibitor (annual, dated)",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Event",
+      "productActive": "Yes",
+      "decision": "Refresh",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "Cropped from the ISTELive 25 role logo PDF (2025 dated)",
+      "sourceUrl": "https://conference.iste.org/2025/exhibitors/pdfs/ISTELive25_RoleSpecificLogoStandards.pdf",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1tou4hiqoOAkThL_FBUtT4AIHkXcUXWzt",
+        "viewUrl": "https://drive.google.com/file/d/1tou4hiqoOAkThL_FBUtT4AIHkXcUXWzt/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1tou4hiqoOAkThL_FBUtT4AIHkXcUXWzt&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/iste-exhibitor-annual-dated.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-presenter-annual-dated",
+      "order": 26,
+      "sheetRow": 28,
+      "name": "ISTE Presenter (annual, dated)",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Event",
+      "productActive": "Yes",
+      "decision": "Refresh",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "Cropped from the ISTELive 25 role logo PDF (2025 dated)",
+      "sourceUrl": "https://conference.iste.org/2025/exhibitors/pdfs/ISTELive25_RoleSpecificLogoStandards.pdf",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1JTBz_BEVM1c3WzpMGJExDf1AhUShIisa",
+        "viewUrl": "https://drive.google.com/file/d/1JTBz_BEVM1c3WzpMGJExDf1AhUShIisa/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1JTBz_BEVM1c3WzpMGJExDf1AhUShIisa&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/iste-presenter-annual-dated.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-sponsor-annual-dated",
+      "order": 27,
+      "sheetRow": 29,
+      "name": "ISTE Sponsor (annual, dated)",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Event",
+      "productActive": "Yes",
+      "decision": "Refresh",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "Cropped from the ISTELive 25 role logo PDF (2025 dated)",
+      "sourceUrl": "https://conference.iste.org/2025/exhibitors/pdfs/ISTELive25_RoleSpecificLogoStandards.pdf",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1h8C-zy-47EbXUlBOBBeJrJ-D0B2xgX-o",
+        "viewUrl": "https://drive.google.com/file/d/1h8C-zy-47EbXUlBOBBeJrJ-D0B2xgX-o/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1h8C-zy-47EbXUlBOBBeJrJ-D0B2xgX-o&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/iste-sponsor-annual-dated.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-corporate-champion",
+      "order": 28,
+      "sheetRow": 30,
+      "name": "ISTE Corporate Champion",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Badge or seal",
+      "productActive": "No",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://cdn.iste.org/www-root/membership/ISTE_Corporate%20Membership_Brochure_11-2020.pdf",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "iste-corporate-leader",
+      "order": 29,
+      "sheetRow": 31,
+      "name": "ISTE Corporate Leader",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Badge or seal",
+      "productActive": "No",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://cdn.iste.org/www-root/membership/ISTE_Corporate%20Membership_Brochure_11-2020.pdf",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "iste-corporate-member",
+      "order": 30,
+      "sheetRow": 32,
+      "name": "ISTE Corporate Member",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Badge or seal",
+      "productActive": "No",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "Cropped from the 2020 corporate membership brochure",
+      "sourceUrl": "https://cdn.iste.org/www-root/membership/ISTE_Corporate%20Membership_Brochure_11-2020.pdf",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1JKZplzUfpMPbKU-eThMvfnDpueBWSITT",
+        "viewUrl": "https://drive.google.com/file/d/1JKZplzUfpMPbKU-eThMvfnDpueBWSITT/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1JKZplzUfpMPbKU-eThMvfnDpueBWSITT&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/iste-corporate-member.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-seal-of-alignment",
+      "order": 31,
+      "sheetRow": 33,
+      "name": "ISTE Seal of Alignment",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Badge or seal",
+      "productActive": "Yes",
+      "decision": "Keep",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "new version available",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/iste-seal",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1ITTD_IEalFE6QGBAhFJZp_GuXMvq08lB",
+        "viewUrl": "https://drive.google.com/file/d/1ITTD_IEalFE6QGBAhFJZp_GuXMvq08lB/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1ITTD_IEalFE6QGBAhFJZp_GuXMvq08lB&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/iste-seal-of-alignment.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-affiliate",
+      "order": 32,
+      "sheetRow": 34,
+      "name": "ISTE Affiliate",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Badge or seal",
+      "productActive": "No",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/affiliate-network",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "iste-affiliate-member",
+      "order": 33,
+      "sheetRow": 35,
+      "name": "ISTE Affiliate Member",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Badge or seal",
+      "productActive": "No",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "Small (370px) from an affiliate site",
+      "sourceUrl": "https://iste.org/affiliate-network",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [
+        "/logos/iste-affiliate-member.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-affiliate-network",
+      "order": 34,
+      "sheetRow": 36,
+      "name": "ISTE Affiliate Network",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Badge or seal",
+      "productActive": "No",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/affiliate-network",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "iste-standards",
+      "order": 35,
+      "sheetRow": 37,
+      "name": "ISTE Standards",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Standards",
+      "productActive": "Yes",
+      "decision": "Refresh",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "plain lockup",
+      "fileNotes": "Cropped from the ISTE Standards PDF cover",
+      "sourceUrl": "https://iste.org/adopting-the-standards",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "19CN41SEXEUDDCWB3rCaT52Mpaj9XU9-Y",
+        "viewUrl": "https://drive.google.com/file/d/19CN41SEXEUDDCWB3rCaT52Mpaj9XU9-Y/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=19CN41SEXEUDDCWB3rCaT52Mpaj9XU9-Y&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/iste-standards.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-standards-students",
+      "order": 36,
+      "sheetRow": 38,
+      "name": "ISTE Standards, Students",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Standards",
+      "productActive": "Yes",
+      "decision": "Refresh",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/standards/students",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "14vZXDeEgXPxnyms6fkn5y3oQSjD1F-fh",
+        "viewUrl": "https://drive.google.com/file/d/14vZXDeEgXPxnyms6fkn5y3oQSjD1F-fh/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=14vZXDeEgXPxnyms6fkn5y3oQSjD1F-fh&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/iste-standards-students.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-standards-educators",
+      "order": 37,
+      "sheetRow": 39,
+      "name": "ISTE Standards, Educators",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Standards",
+      "productActive": "Yes",
+      "decision": "Merge",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/standards/educators",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1G6ktQrn430Ok56SRT04VjyhG7NuteR7d",
+        "viewUrl": "https://drive.google.com/file/d/1G6ktQrn430Ok56SRT04VjyhG7NuteR7d/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1G6ktQrn430Ok56SRT04VjyhG7NuteR7d&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/iste-standards-educators.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-standards-leaders",
+      "order": 38,
+      "sheetRow": 40,
+      "name": "ISTE Standards, Leaders",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Standards",
+      "productActive": "Yes",
+      "decision": "Refresh",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "now education leaders",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/standards/education-leaders",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1q4HbfOw6Mn43fFA69YV9GZDu78Gmr1Yd",
+        "viewUrl": "https://drive.google.com/file/d/1q4HbfOw6Mn43fFA69YV9GZDu78Gmr1Yd/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1q4HbfOw6Mn43fFA69YV9GZDu78Gmr1Yd&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/iste-standards-leaders.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-standards-faculty",
+      "order": 39,
+      "sheetRow": 41,
+      "name": "ISTE Standards, Faculty",
+      "auditGroup": "TBD",
+      "logoType": "Partner lockup",
+      "productActive": "Yes",
+      "decision": "Refresh",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "ISTE+ASCD / ODU co-brand; no Faculty-only mark found",
+      "sourceUrl": "https://iste.org/standards/faculty",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [
+        "/logos/iste-standards-faculty.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-standards-coaches",
+      "order": 40,
+      "sheetRow": 42,
+      "name": "ISTE Standards, Coaches",
+      "auditGroup": "Group 4 — Level 1 Logo + Text",
+      "logoType": "Standards",
+      "productActive": "Yes",
+      "decision": "Refresh",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/standards/coaches",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1dYFBnosj60ND7KLfW_ioH1vtUNy1dHO9",
+        "viewUrl": "https://drive.google.com/file/d/1dYFBnosj60ND7KLfW_ioH1vtUNy1dHO9/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1dYFBnosj60ND7KLfW_ioH1vtUNy1dHO9&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/iste-standards-coaches.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "your-edtech-questions-podcast",
+      "order": 41,
+      "sheetRow": 43,
+      "name": "Your Edtech Questions (podcast)",
+      "auditGroup": "Group 5 — Other Marks/Misc.",
+      "logoType": "Media or publication",
+      "productActive": "No",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://info.iste.org/your-edtech-questions",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1U2LL4780_vBwF6FpiCxfCjwC6a84kxbZ",
+        "viewUrl": "https://drive.google.com/file/d/1U2LL4780_vBwF6FpiCxfCjwC6a84kxbZ/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1U2LL4780_vBwF6FpiCxfCjwC6a84kxbZ&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/your-edtech-questions-podcast.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "ed-influencers",
+      "order": 42,
+      "sheetRow": 44,
+      "name": "Ed Influencers",
+      "auditGroup": "Group 5 — Other Marks/Misc.",
+      "logoType": "Media or publication",
+      "productActive": "No",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://info.iste.org/ed-influencers",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1p-RyDTAHgrDpP9bMjdy2F_h3RKaQWP1I",
+        "viewUrl": "https://drive.google.com/file/d/1p-RyDTAHgrDpP9bMjdy2F_h3RKaQWP1I/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1p-RyDTAHgrDpP9bMjdy2F_h3RKaQWP1I&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/ed-influencers.jpg"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "ideaspark",
+      "order": 43,
+      "sheetRow": 45,
+      "name": "IdeaSpark",
+      "auditGroup": "TBD",
+      "logoType": "Media or publication",
+      "productActive": "Yes",
+      "decision": "Keep",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/ideaspark-podcast",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1ba5JL-j5QogMpyBWnUkBEztV9yadz5GP",
+        "viewUrl": "https://drive.google.com/file/d/1ba5JL-j5QogMpyBWnUkBEztV9yadz5GP/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1ba5JL-j5QogMpyBWnUkBEztV9yadz5GP&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/ideaspark.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-standards-seal-of-alignment",
+      "order": 44,
+      "sheetRow": 46,
+      "name": "ISTE Standards Seal of Alignment",
+      "auditGroup": "Group 5 — Other Marks/Misc.",
+      "logoType": "Badge or seal",
+      "productActive": "Yes",
+      "decision": "Refresh",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "dated, e.g. \"May 2019-21\"",
+      "fileNotes": "Dated seals 2021-23 and 2015-17",
+      "sourceUrl": "https://iste.org/seal-of-alignment/brainpop-jr",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [
+        "/logos/iste-standards-seal-of-alignment.jpg",
+        "/logos/iste-standards-seal-of-alignment_b-2015-17.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "standards-example-orbit-diagram",
+      "order": 45,
+      "sheetRow": 47,
+      "name": "Standards \"Example Orbit\" diagram",
+      "auditGroup": "Group 5 — Other Marks/Misc.",
+      "logoType": "Standards",
+      "productActive": "Yes",
+      "decision": "Refresh",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "also exists for Students, Educators, Coaches",
+      "fileNotes": "Students orbit used as the example",
+      "sourceUrl": "https://cms-live-media.iste.org/ISTE_STANDARDS_2024_v02.pdf",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1MQ_ouWLNG5fm-OcDXkGaon94RiJ_mQ5h",
+        "viewUrl": "https://drive.google.com/file/d/1MQ_ouWLNG5fm-OcDXkGaon94RiJ_mQ5h/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1MQ_ouWLNG5fm-OcDXkGaon94RiJ_mQ5h&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/standards-example-orbit-diagram.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-recognized-program-educator-standards",
+      "order": 46,
+      "sheetRow": 48,
+      "name": "ISTE Recognized Program (Educator Standards)",
+      "auditGroup": "Group 5 — Other Marks/Misc.",
+      "logoType": "Badge or seal",
+      "productActive": "Yes",
+      "decision": "Refresh",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "shield mark",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/teacher-preparation-partners",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1gaeRq9cy3-fQczo6yT6seZIsQb9OR76k",
+        "viewUrl": "https://drive.google.com/file/d/1gaeRq9cy3-fQczo6yT6seZIsQb9OR76k/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1gaeRq9cy3-fQczo6yT6seZIsQb9OR76k&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/iste-recognized-program-educator-standards.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-standards-venn-circle-graphic",
+      "order": 47,
+      "sheetRow": 49,
+      "name": "ISTE Standards Venn/circle graphic",
+      "auditGroup": "Group 5 — Other Marks/Misc.",
+      "logoType": "Standards",
+      "productActive": "Yes",
+      "decision": "Refresh",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "Students / Leaders / Educators",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/essential-conditions-for-effective-tech-use-in-schools",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "digital-learning-in-teacher-education",
+      "order": 48,
+      "sheetRow": 50,
+      "name": "Digital Learning in Teacher Education",
+      "auditGroup": "Group 5 — Other Marks/Misc.",
+      "logoType": "Program or product",
+      "productActive": "Yes",
+      "decision": "Keep",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "report cover mark",
+      "fileNotes": "Journal cover image",
+      "sourceUrl": "https://iste.org/products/journal-of-digital-learning-in-teacher-education",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1KVt_drJ_8_qxhOwJcAREn2AW4ZHRTWbi",
+        "viewUrl": "https://drive.google.com/file/d/1KVt_drJ_8_qxhOwJcAREn2AW4ZHRTWbi/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1KVt_drJ_8_qxhOwJcAREn2AW4ZHRTWbi&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/digital-learning-in-teacher-education.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "research-on-technology-in-education",
+      "order": 49,
+      "sheetRow": 51,
+      "name": "Research on Technology in Education",
+      "auditGroup": "Group 5 — Other Marks/Misc.",
+      "logoType": "Program or product",
+      "productActive": "Yes",
+      "decision": "Keep",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "report cover mark",
+      "fileNotes": "Journal cover image",
+      "sourceUrl": "https://iste.org/products/journal-of-research-on-technology-in-education",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "1hXH4O1dMeR5H-gIHHHj6rrbTV2Ate8OC",
+        "viewUrl": "https://drive.google.com/file/d/1hXH4O1dMeR5H-gIHHHj6rrbTV2Ate8OC/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=1hXH4O1dMeR5H-gIHHHj6rrbTV2Ate8OC&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/research-on-technology-in-education.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-certified-educator",
+      "order": 50,
+      "sheetRow": 52,
+      "name": "ISTE Certified Educator",
+      "auditGroup": "Group 5 — Other Marks/Misc.",
+      "logoType": "Badge or seal",
+      "productActive": "Yes",
+      "decision": "Keep",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "Is this Edtech Leader?",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/educator-certification",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": "12wiykwyltMFD8fI3laUjSWVghVyidI0b",
+        "viewUrl": "https://drive.google.com/file/d/12wiykwyltMFD8fI3laUjSWVghVyidI0b/view",
+        "imageUrl": "https://drive.google.com/thumbnail?id=12wiykwyltMFD8fI3laUjSWVghVyidI0b&sz=w1600"
+      },
+      "localFiles": [
+        "/logos/iste-certified-educator.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "iste-certified-coach",
+      "order": 51,
+      "sheetRow": 53,
+      "name": "ISTE Certified Coach",
+      "auditGroup": "Group 5 — Other Marks/Misc.",
+      "logoType": "Badge or seal",
+      "productActive": "Yes",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/instructional-leader-certification",
+      "matchConfidence": "Low",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "iste-certified-librarian",
+      "order": 52,
+      "sheetRow": 54,
+      "name": "ISTE Certified Librarian",
+      "auditGroup": "Group 5 — Other Marks/Misc.",
+      "logoType": "Badge or seal",
+      "productActive": "Yes",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "Small (277px) badge",
+      "sourceUrl": "https://iste.org/iste-certification-cohort-dual-librarian-certification",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [
+        "/logos/iste-certified-librarian.png"
+      ],
+      "hasLogo": true
+    },
+    {
+      "id": "computational-thinking-facilitator",
+      "order": 53,
+      "sheetRow": 55,
+      "name": "Computational Thinking, Facilitator",
+      "auditGroup": "Group 5 — Other Marks/Misc.",
+      "logoType": "Badge or seal",
+      "productActive": "Yes",
+      "decision": "Refresh",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/standards/computational-thinking-competencies",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "computational-thinking-designer",
+      "order": 54,
+      "sheetRow": 56,
+      "name": "Computational Thinking, Designer",
+      "auditGroup": "Group 5 — Other Marks/Misc.",
+      "logoType": "Badge or seal",
+      "productActive": "Yes",
+      "decision": "Refresh",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/standards/computational-thinking-competencies",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "computational-thinking-learner",
+      "order": 55,
+      "sheetRow": 57,
+      "name": "Computational Thinking, Learner",
+      "auditGroup": "Group 5 — Other Marks/Misc.",
+      "logoType": "Badge or seal",
+      "productActive": "Yes",
+      "decision": "Refresh",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://iste.org/standards/computational-thinking-competencies",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "skillrise-badge-spread-with-edtech",
+      "order": 56,
+      "sheetRow": 58,
+      "name": "SkillRise badge (\"spread with edtech\")",
+      "auditGroup": "Group 5 — Other Marks/Misc.",
+      "logoType": "Badge or seal",
+      "productActive": "No",
+      "decision": "Retire",
+      "status": "Retired",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "",
+      "sourceUrl": "https://jff.org/skillrise",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [],
+      "hasLogo": false
+    },
+    {
+      "id": "iste-community-leaders",
+      "order": 57,
+      "sheetRow": 59,
+      "name": "ISTE Community Leaders",
+      "auditGroup": "Group 5 — Other Marks/Misc.",
+      "logoType": "Program or product",
+      "productActive": "Unsure",
+      "decision": "Refresh",
+      "status": "Active",
+      "owner": "Nick Cronin",
+      "confirmed": false,
+      "tagline": "",
+      "notes": "",
+      "fileNotes": "Stand-in: The Edge Community Leader Podcast artwork",
+      "sourceUrl": "https://iste-ascd.org/connect-community-for-educators",
+      "matchConfidence": "Likely",
+      "drive": {
+        "fileId": null,
+        "viewUrl": null,
+        "imageUrl": null
+      },
+      "localFiles": [
+        "/logos/iste-community-leaders.jpg"
+      ],
+      "hasLogo": true
+    }
+  ]
+}

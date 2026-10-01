@@ -1,0 +1,27 @@
+{
+  "_note": "Working values taken from the live ISTE site, not from an official brand guide. Replace with official values when the brand team supplies them.",
+  "name": "ISTE+ASCD",
+  "fullName": "International Society for Technology in Education (ISTE), merged with ASCD",
+  "tagline": "Education, Transformed.",
+  "colors": {
+    "navy":   { "hex": "#1B365D", "role": "Primary. Headings, navigation, dominant chrome." },
+    "accent": { "hex": "#0EA5D9", "role": "Accent. Links, buttons, one focal element per view. Never a large fill." },
+    "white":  { "hex": "#FFFFFF", "role": "Primary background." },
+    "gray":   { "hex": "#58595B", "role": "Body copy, captions, secondary text. Never pure black." }
+  },
+  "logoColorsSampled": {
+    "_note": "Pixel-sampled from the logo files in public/logos. Close, not official.",
+    "isteWordmarkNavy": "#011538",
+    "isteWordmarkLime": "#BFCC40",
+    "isteAscdBlue": "#28A8D4",
+    "isteAscdIndigo": "#2A3580",
+    "isteAscdOrange": "#FAA73B"
+  },
+  "typography": {
+    "approach": "Clean sans-serif, bold headings, generous spacing. No serif, script, condensed or tight letter-spacing.",
+    "webFallback": "Inter, then system-ui sans",
+    "officialTypeface": "TBD from brand team (check web licence)"
+  },
+  "voice": "Inspirational yet professional. Speaks to educators as peers. Aspirational words (transform, spark, thrive) backed by pedagogical credibility. No empty hype or heavy jargon.",
+  "imagery": "Authentic, diverse students and educators engaged with technology in real classrooms. Flat or line icons. Abstract network motifs, not clip art."
+}

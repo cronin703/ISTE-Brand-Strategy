@@ -1,0 +1,219 @@
+@import "tailwindcss";
+
+/* Theme is driven by data-theme on <html>, set before paint by an inline script. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  /* Motion tokens (docs/design-direction.md) */
+  --motion-100: 100ms;
+  --motion-150: 150ms;
+  --motion-200: 200ms;
+  --motion-300: 300ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+
+  /* Brand (working values from data/brand.json) */
+  --brand-navy: #1b365d;
+  --brand-accent: #0ea5d9;
+  --brand-gray: #58595b;
+  --mark-indigo: #2a3580;
+  --mark-blue: #28a8d4;
+  --mark-orange: #faa73b;
+
+  /* Light theme roles */
+  --bg: #ffffff;
+  --bg-subtle: #f7f8f9;
+  --tile: #f4f5f7;
+  --border: #dfe1e6;
+  --border-strong: #b3b9c4;
+  --heading: #1b365d;
+  --text: #3b3c3e;
+  --muted: #58595b;
+  --link: #0a6e93;
+  --action: #0a6e93;
+  --action-hover: #085a78;
+  --on-action: #ffffff;
+  --indicator: #0ea5d9;
+  --focus: #1b365d;
+  --success: #216e4e;
+  --success-bg: #e3fcef;
+  --danger: #ae2a19;
+  --danger-bg: #ffeceb;
+  --warn: #7f5f01;
+  --warn-bg: #fff7d6;
+  --info-bg: #e9f2ff;
+  --shadow-hover: 0 8px 24px -12px rgb(9 30 66 / 0.28);
+  --overlay: rgb(9 30 66 / 0.45);
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --mark-indigo: #ffffff;
+  --bg: #161a1d;
+  --bg-subtle: #1b1f23;
+  --tile: #1d2125;
+  --border: #2c333a;
+  --border-strong: #454f59;
+  --heading: #f1f4f8;
+  --text: #c7d1db;
+  --muted: #a7b0ba;
+  --link: #7dd3f5;
+  --action: #38bdf0;
+  --action-hover: #7dd3f5;
+  --on-action: #0b1a2b;
+  --indicator: #38bdf0;
+  --focus: #7dd3f5;
+  --success: #7ee2b8;
+  --success-bg: #1c3329;
+  --danger: #fd9891;
+  --danger-bg: #42221f;
+  --warn: #f5cd47;
+  --warn-bg: #332e1b;
+  --info-bg: #1c2b41;
+  --shadow-hover: 0 8px 24px -12px rgb(0 0 0 / 0.7);
+  --overlay: rgb(0 0 0 / 0.6);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --color-bg: var(--bg);
+  --color-bg-subtle: var(--bg-subtle);
+  --color-tile: var(--tile);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-heading: var(--heading);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-link: var(--link);
+  --color-action: var(--action);
+  --color-action-hover: var(--action-hover);
+  --color-on-action: var(--on-action);
+  --color-indicator: var(--indicator);
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-info-bg: var(--info-bg);
+  --color-navy: var(--brand-navy);
+}
+
+html {
+  background: var(--bg);
+  color: var(--text);
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 5rem;
+}
+body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  background: var(--bg);
+  overflow-x: clip;
+}
+/* Theme switch: colours cross-fade 150ms (class added only while switching). */
+html.theme-fade,
+html.theme-fade * {
+  transition: background-color var(--motion-150) linear, border-color var(--motion-150) linear,
+    color var(--motion-150) linear, fill var(--motion-150) linear !important;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.prose-hub p,
+.prose-hub li {
+  max-width: 68ch;
+}
+.prose-hub a:not([class]),
+a.link {
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+.prose-hub a:not([class]):hover,
+a.link:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* ---------- Motion ---------- */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes panel-in {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes drawer-in {
+  from { transform: translateX(-100%); }
+  to { transform: none; }
+}
+@keyframes drawer-out {
+  from { transform: none; }
+  to { transform: translateX(-100%); }
+}
+
+/* First load of a card grid: 200ms, 30ms stagger, capped at 8 cards (index set inline). */
+.card-enter {
+  animation: rise-in var(--motion-200) var(--ease-out) both;
+  animation-delay: calc(min(var(--i, 0), 7) * 30ms);
+}
+/* Sections fade and rise once as they enter (toggled by <Reveal>). */
+.reveal {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--motion-200) var(--ease-out), transform var(--motion-200) var(--ease-out);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+.no-js .reveal {
+  opacity: 1;
+  transform: none;
+}
+
+.overlay-in { animation: fade-in var(--motion-150) var(--ease-out) both; }
+.panel-in { animation: panel-in var(--motion-200) var(--ease-out) both; }
+.drawer-in { animation: drawer-in var(--motion-200) var(--ease-out) both; }
+.drawer-out { animation: drawer-out var(--motion-150) var(--ease-in) both; }
+
+/* Label swaps ("Copied", "Downloaded"): two stacked labels cross-fade 150ms. */
+.swap { display: inline-grid; }
+.swap > * {
+  grid-area: 1 / 1;
+  transition: opacity var(--motion-150) var(--ease-out);
+}
+.swap > [data-on="false"] { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { transform: none; }
+  /* Keep short opacity fades for overlays and label swaps. */
+  .overlay-in,
+  .panel-in {
+    animation: fade-in 120ms linear both !important;
+  }
+  .swap > * { transition: opacity 120ms linear !important; }
+}
+
+/* Reversed master mark: indigo goes white on navy tiles. */
+.reversed-mark { --mark-indigo: #ffffff; }

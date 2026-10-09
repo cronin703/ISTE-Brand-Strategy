@@ -41,7 +41,7 @@ The hub lives under a sub-path, set once in `lib/basePath.ts` and applied as `ba
 
 - `next/link` and the router add the prefix on their own. Plain `<a>`, `<img>` and metadata URLs that point at files in `public/` need `withBase()` from `lib/basePath.ts`.
 - The domain root (`/`) redirects to `/brand-governance` until something else lives there.
-- `vercel.json` sends `/Brand-governance` (capital B) to the lowercase path. Next.js redirects can't do this because they match case-insensitively and would loop.
+- Paths are lowercase. A redirect from `/Brand-governance` isn't possible: Next.js and Vercel both match redirects case-insensitively, so it would loop.
 
 ## Deploy to Vercel
 

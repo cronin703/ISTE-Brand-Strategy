@@ -13,6 +13,8 @@
   --motion-600: 600ms;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  /* Sidebar hover fill: gentle start, long soft settle. */
+  --ease-liquid: cubic-bezier(0.45, 0, 0.15, 1);
 
   /* Brand (working values from data/brand.json) */
   --brand-navy: #1b365d;
@@ -390,21 +392,50 @@ a.link:hover {
   pointer-events: none;
   transform: translate(var(--x, 0), var(--y, 0));
 }
+/* The marker sits on the pill's straight left edge, clear of the rounded corners. */
 .nav-pill::before {
   content: "";
   position: absolute;
-  top: 6px;
-  bottom: 6px;
+  top: 50%;
   left: 0;
   width: 3px;
-  border-radius: 999px;
+  height: max(14px, calc(100% - 20px));
+  border-radius: 0 3px 3px 0;
   background: var(--indicator);
+  transform: translateY(-50%);
 }
 .nav-pill-ready {
   transition: transform var(--motion-300) var(--ease-out), height var(--motion-300) var(--ease-out),
     width var(--motion-300) var(--ease-out), opacity var(--motion-150) var(--ease-out);
 }
 [data-pill] [aria-current="page"] { background: transparent; }
+
+/* Sidebar hover: a fill flows in from the left with a soft leading edge, and drains back on leave. */
+.nav-liquid {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.nav-liquid::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  z-index: -1;
+  width: calc(100% + 40px);
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--tile) calc(100% - 40px), color-mix(in srgb, var(--tile) 0%, transparent));
+  transform: translateX(calc(-100% - 1px));
+  transition: transform var(--motion-300) var(--ease-in);
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .nav-liquid:hover::before {
+    transform: translateX(0);
+    transition: transform var(--motion-600) var(--ease-liquid);
+  }
+}
+.nav-liquid:focus-visible::before { transform: translateX(0); }
+[data-pill] .nav-liquid[aria-current="page"]::before { display: none; }
 [data-pill] .nav-bar { display: none; }
 .nav-group {
   display: grid;

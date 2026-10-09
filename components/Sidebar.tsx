@@ -81,7 +81,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                     aria-expanded={expanded}
                     aria-controls={id}
                     onClick={() => setOpen((o) => ({ ...o, [section.href]: !o[section.href] }))}
-                    className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-left font-semibold hover:bg-tile ${
+                    className={`nav-liquid flex w-full items-center justify-between rounded-md px-3 py-2 text-left font-semibold ${
                       inSection ? "text-heading" : "text-text"
                     }`}
                   >
@@ -151,12 +151,12 @@ function NavLink({
       href={href}
       onClick={onNavigate}
       aria-current={current ? "page" : undefined}
-      className={`relative flex items-center rounded-md py-1.5 pr-3 hover:bg-tile ${nested ? "pl-6" : "pl-3"} ${
+      className={`nav-liquid relative flex items-center rounded-md py-1.5 pr-3 ${nested ? "pl-6" : "pl-3"} ${
         strong ? "py-2 font-semibold" : ""
       } ${current ? "bg-tile font-semibold text-heading" : "text-text"}`}
     >
       {current && (
-        <span aria-hidden className="nav-bar indicator-in absolute inset-y-1.5 left-0 w-[3px] rounded-full bg-indicator" />
+        <span aria-hidden className="nav-bar indicator-in absolute inset-y-2.5 left-0 w-[3px] rounded-full bg-indicator" />
       )}
       {children}
     </Link>

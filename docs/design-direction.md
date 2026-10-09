@@ -88,6 +88,8 @@ Where the demo gets its movement:
 | Route change | Page fades and rises 6px, 300ms (`app/template.tsx`) |
 | Header on scroll | Turns to frosted glass with a hairline shadow, 200ms |
 | Sidebar active item | One highlight pill slides to the item you open, 300ms ease-out (grows in on first load) |
+| Sidebar hover | A fill flows in from the left with a soft 40px leading edge, 600ms `--ease-liquid`; drains back left on leave, 300ms ease-in |
+| Sidebar active marker | 3px bar on the pill's straight left edge, vertically centred, clear of the rounded corners |
 | Sidebar sections | Open and close by animating their height, 300ms; closed sections are `inert` |
 | "On this page" | Click smooth-scrolls to the section; a marker slides along the rule to the section being read, 300ms |
 | Light/dark preview toggle | The selected background slides across, 200ms |

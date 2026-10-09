@@ -189,7 +189,7 @@ export function LogoLibrary({ marks }: { marks: Mark[] }) {
                           exit={{ opacity: 0, transition: { duration: 0.15, ease: EASE_IN } }}
                           transition={{ layout: { duration: 0.2, ease: EASE_OUT } }}
                         >
-                          <LogoCard mark={m} priority={i < 4} />
+                          <LogoCard mark={m} priority={i < 4} reveal={firstPaint.current && i >= 8} />
                         </motion.li>
                       );
                     })}

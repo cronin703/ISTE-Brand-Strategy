@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BrandMark } from "@/components/BrandMark";
 import { CountUp } from "@/components/CountUp";
+import { HeroBackdrop } from "@/components/HeroBackdrop";
 import { HeroTile } from "@/components/HeroTile";
 import { DownloadButton } from "@/components/DownloadButton";
 import { ArrowIcon } from "@/components/icons";
@@ -27,7 +28,8 @@ export default function Home() {
   });
 
   return (
-    <div className="px-4 pt-10 sm:px-8 lg:px-12 lg:pt-14">
+    <div className="relative isolate px-4 pt-10 sm:px-8 lg:px-12 lg:pt-14">
+      <HeroBackdrop />
       <section className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
         <div className="card-enter">
           <p className="text-sm font-semibold uppercase tracking-[0.08em] text-muted">ISTE+ASCD Brand Hub</p>
@@ -54,7 +56,7 @@ export default function Home() {
           </div>
         </div>
         <HeroTile
-          className="card-enter flex aspect-[4/3] items-center justify-center rounded-xl border border-border bg-tile p-10 sm:p-16"
+          className="hero-glass card-enter flex aspect-[4/3] items-center justify-center rounded-xl border border-border p-10 sm:p-16"
           style={{ "--i": 2 } as React.CSSProperties}
         >
           <BrandMark className="h-auto w-full max-w-[360px]" title="ISTE+ASCD logo" animate />
@@ -143,7 +145,7 @@ export default function Home() {
         <h2 className="mb-5 text-[28px] font-bold text-heading">Explore the hub</h2>
         <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {NAV.filter((s) => s.href !== "/logos").map((s) => (
-            <li key={s.href}>
+            <li key={s.href} data-reveal>
               <Link href={s.href} className="spotlight block h-full rounded-lg bg-bg-subtle p-5 transition-colors duration-[var(--motion-150)] hover:bg-tile">
                 <span className="text-lg font-semibold text-heading">{s.title}</span>
                 <span className="mt-1 block text-[15px] text-muted">{s.description}</span>

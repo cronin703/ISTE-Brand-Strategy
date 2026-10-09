@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import type { SearchItem } from "./SearchPalette";
 import { SidebarNav } from "./Sidebar";
 import { ThemeToggle } from "./ThemeToggle";
+import { MotionFx } from "./MotionFx";
 import { PointerFx } from "./PointerFx";
 import { useFocusTrap } from "./useFocusTrap";
 
@@ -145,6 +146,7 @@ export function AppShell({ searchItems, children }: { searchItems: SearchItem[];
       )}
 
       <PointerFx />
+      <MotionFx />
       {searchOpen && <SearchPalette items={searchItems} open={searchOpen} onClose={closeSearch} />}
     </>
   );

@@ -39,6 +39,7 @@ export function LogoImage({
   useEffect(() => {
     const img = ref.current;
     if (img && img.complete && img.naturalWidth === 0) setIndex((i) => i + 1);
+    else if (img && img.complete) img.dataset.loaded = "";
   }, [src]);
 
   if (!mark.hasLogo || !src) {
@@ -62,7 +63,8 @@ export function LogoImage({
       decoding="async"
       referrerPolicy="no-referrer"
       onError={() => setIndex((i) => i + 1)}
-      className={`max-h-full max-w-full object-contain ${className}`}
+      onLoad={(e) => (e.currentTarget.dataset.loaded = "")}
+      className={`logo-img max-h-full max-w-full object-contain ${className}`}
     />
   );
 }

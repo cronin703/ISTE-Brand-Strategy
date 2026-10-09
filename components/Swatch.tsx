@@ -7,7 +7,7 @@ import { CheckIcon, CopyIcon } from "./icons";
 export function Swatch({ name, hex, role, rgb, border }: { name: string; hex: string; role?: string; rgb: string; border?: boolean }) {
   const { copied, copy } = useCopy();
   return (
-    <li>
+    <li data-reveal>
       <button
         type="button"
         onClick={() => copy(hex.toUpperCase())}

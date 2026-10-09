@@ -4,10 +4,11 @@ import { DownloadButton } from "./DownloadButton";
 import { LogoImage } from "./LogoImage";
 
 /** Card for the grid. The name link stretches over the card; the download button sits above it. */
-export function LogoCard({ mark, priority }: { mark: Mark; priority?: boolean }) {
+export function LogoCard({ mark, priority, reveal = true }: { mark: Mark; priority?: boolean; reveal?: boolean }) {
   const retired = mark.status === "Retired";
   const primary = mark.files[0];
   return (
+    <div data-reveal={reveal || undefined} className="h-full">
     <article className="spotlight group relative flex h-full flex-col rounded-lg border border-border bg-bg transition-[transform,box-shadow,border-color] duration-[var(--motion-150)] ease-[var(--ease-out)] focus-within:border-border-strong hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[var(--shadow-hover)]">
       {/* Light tile in both themes: most files are drawn for light backgrounds. */}
       <div className="m-2 mb-0 flex aspect-[16/10] items-center justify-center overflow-hidden rounded-md bg-[#f4f5f7] p-6 text-[#58595b]">
@@ -52,5 +53,6 @@ export function LogoCard({ mark, priority }: { mark: Mark; priority?: boolean })
         </div>
       </div>
     </article>
+    </div>
   );
 }

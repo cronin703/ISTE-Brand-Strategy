@@ -115,7 +115,7 @@ export function LinkCard({
     <li className="card-enter" style={{ "--i": index } as React.CSSProperties}>
       <Link
         href={href}
-        className="group flex h-full flex-col rounded-lg border border-border bg-bg p-5 transition-[transform,box-shadow,border-color] duration-[var(--motion-150)] ease-[var(--ease-out)] hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[var(--shadow-hover)]"
+        className="spotlight group flex h-full flex-col rounded-lg border border-border bg-bg p-5 transition-[transform,box-shadow,border-color] duration-[var(--motion-150)] ease-[var(--ease-out)] hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[var(--shadow-hover)]"
       >
         <span className="flex items-center justify-between gap-3">
           <span className="text-lg font-semibold text-heading">{title}</span>

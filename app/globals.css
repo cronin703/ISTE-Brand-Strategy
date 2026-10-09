@@ -50,8 +50,8 @@
   --spot-ring: rgb(14 165 217 / 0.55);
   --glow-a: rgb(40 168 212 / 0.22);
   --glow-b: rgb(250 167 59 / 0.16);
-  --header-glass: rgb(255 255 255 / 0.78);
   --grain-opacity: 0.06;
+  --glass-edge: rgb(255 255 255 / 0.6);
   color-scheme: light;
 }
 
@@ -84,8 +84,8 @@
   --spot-ring: rgb(125 211 245 / 0.6);
   --glow-a: rgb(56 189 240 / 0.2);
   --glow-b: rgb(250 167 59 / 0.12);
-  --header-glass: rgb(22 26 29 / 0.72);
   --grain-opacity: 0.09;
+  --glass-edge: rgb(255 255 255 / 0.06);
   color-scheme: dark;
 }
 
@@ -349,20 +349,12 @@ a.link:hover {
   }
 }
 
-/* Header turns to frosted glass once the page scrolls. */
+/* Header: frosted glass; a hairline shadow appears once the page scrolls. */
 .header-glass {
-  background: var(--bg);
-  transition: background-color var(--motion-200) var(--ease-out), border-color var(--motion-200) var(--ease-out),
-    box-shadow var(--motion-200) var(--ease-out);
+  transition: border-color var(--motion-200) var(--ease-out), box-shadow var(--motion-200) var(--ease-out);
 }
 .header-glass:not([data-scrolled]) { border-color: transparent; }
-.header-glass[data-scrolled] {
-  background: var(--header-glass);
-  box-shadow: 0 6px 20px -16px rgb(9 30 66 / 0.35);
-}
-@supports (backdrop-filter: blur(1px)) {
-  .header-glass[data-scrolled] { backdrop-filter: saturate(1.6) blur(14px); }
-}
+.header-glass[data-scrolled] { box-shadow: 0 6px 20px -16px rgb(9 30 66 / 0.35); }
 
 /* Sidebar: the active indicator grows in. */
 @keyframes indicator-in {
@@ -433,11 +425,12 @@ a.link:hover {
 /* Segmented toggles: the selected background slides. */
 .seg-thumb { transition: transform var(--motion-200) var(--ease-out); }
 
-/* Hero backdrop: a blurred classroom photo that drifts and deepens on scroll. */
+/* Page backdrop (home): a blurred classroom photo fixed behind the whole page, sidebar and header
+   included. It drifts and settles as the page scrolls, driven by CSS scroll-driven animation. */
+body:has(.hero-backdrop) { background: transparent; }
 .hero-backdrop {
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: min(860px, 110vh);
+  position: fixed;
+  inset: 0;
   z-index: -1;
   overflow: hidden;
   pointer-events: none;
@@ -456,28 +449,21 @@ a.link:hover {
 .hero-backdrop-wash {
   position: absolute;
   inset: 0;
-  /* Keeps hero text at AA: strongest behind the copy on the left, fading to the page at the bottom. */
-  background:
-    linear-gradient(90deg, color-mix(in srgb, var(--bg) 84%, transparent) 0%, color-mix(in srgb, var(--bg) 72%, transparent) 45%, color-mix(in srgb, var(--bg) 35%, transparent) 75%),
-    linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--bg) 40%, transparent) 55%, var(--bg) 100%);
-}
-.hero-glass {
-  background: color-mix(in srgb, var(--tile) 62%, transparent);
-  -webkit-backdrop-filter: blur(18px) saturate(1.4);
-  backdrop-filter: blur(18px) saturate(1.4);
+  /* Even wash so text anywhere on the page stays at AA over the photo. */
+  background: color-mix(in srgb, var(--bg) 66%, transparent);
 }
 @keyframes backdrop-drift {
-  to { transform: translateY(80px) scale(1.2); }
+  to { transform: translateY(60px) scale(1.2); }
 }
-@keyframes backdrop-deepen {
-  to { opacity: 0.85; }
+@keyframes backdrop-settle {
+  to { opacity: 0.45; }
 }
 @supports (animation-timeline: scroll()) {
   @media (prefers-reduced-motion: no-preference) {
     .hero-backdrop-img {
       animation: backdrop-drift linear both;
       animation-timeline: scroll(root);
-      animation-range: 0 700px;
+      animation-range: 0 900px;
     }
     .hero-backdrop-wash::after {
       content: "";
@@ -485,11 +471,29 @@ a.link:hover {
       inset: 0;
       background: var(--bg);
       opacity: 0;
-      animation: backdrop-deepen linear both;
+      animation: backdrop-settle linear both;
       animation-timeline: scroll(root);
-      animation-range: 0 700px;
+      animation-range: 0 900px;
     }
   }
+}
+
+/* Frosted glass, used sparingly: header, sidebar, hero tile, home cards, search, drawer, library filters.
+   Over plain pages it reads as the normal surface. */
+.glass {
+  background: color-mix(in srgb, var(--bg) var(--glass-mix, 62%), transparent);
+  box-shadow: inset 0 1px 0 var(--glass-edge);
+}
+.glass-tile { --glass-mix: 55%; background: color-mix(in srgb, var(--tile) 55%, transparent); }
+.glass-strong { --glass-mix: 93%; --glass-blur: 24px; }
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .glass {
+    -webkit-backdrop-filter: blur(var(--glass-blur, 16px)) saturate(1.4);
+    backdrop-filter: blur(var(--glass-blur, 16px)) saturate(1.4);
+  }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass { --glass-mix: 94%; }
 }
 
 /* Cards rise in as they scroll into view (toggled by <MotionFx>). */

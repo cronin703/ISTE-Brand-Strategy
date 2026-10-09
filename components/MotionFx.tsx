@@ -1,21 +1,15 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 /**
  * Cards marked data-reveal rise in as they scroll into view, once. Cards entering together
  * stagger in reading order. Content is visible without JS (styles key off html.js).
+ * A MutationObserver picks up cards added later (route changes, re-mounted lists), so none stay hidden.
  */
 export function MotionFx() {
-  const pathname = usePathname();
   useEffect(() => {
-    const items = [...document.querySelectorAll<HTMLElement>("[data-reveal]:not(.is-in)")];
-    if (!items.length) return;
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      items.forEach((el) => el.classList.add("is-in"));
-      return;
-    }
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const io = new IntersectionObserver(
       (entries) => {
         const entering = entries
@@ -34,8 +28,30 @@ export function MotionFx() {
       },
       { rootMargin: "0px 0px -8% 0px", threshold: 0.12 },
     );
-    items.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, [pathname]);
+    const seen = new WeakSet<Element>();
+    function scan(root: ParentNode) {
+      root.querySelectorAll<HTMLElement>("[data-reveal]:not(.is-in)").forEach((el) => {
+        if (seen.has(el)) return;
+        seen.add(el);
+        if (reduce) el.classList.add("is-in");
+        else io.observe(el);
+      });
+    }
+    scan(document);
+    let queued = false;
+    const mo = new MutationObserver(() => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        scan(document);
+      });
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+    return () => {
+      mo.disconnect();
+      io.disconnect();
+    };
+  }, []);
   return null;
 }

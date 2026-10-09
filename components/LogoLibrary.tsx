@@ -84,7 +84,7 @@ export function LogoLibrary({ marks }: { marks: Mark[] }) {
   return (
     <LazyMotion features={loadFeatures} strict>
     <MotionConfig reducedMotion="user">
-      <div className="z-20 -mx-4 mb-6 border-b lg:sticky lg:top-16 border-border bg-bg px-4 py-3 sm:-mx-8 sm:px-8 lg:-mx-12 lg:px-12">
+      <div className="glass glass-strong z-20 -mx-4 mb-6 border-b lg:sticky lg:top-16 border-border px-4 py-3 sm:-mx-8 sm:px-8 lg:-mx-12 lg:px-12">
         <div className="flex flex-col gap-3">
           <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0" role="group" aria-label="Filter by logo type">
             <Chip pressed={type === "all"} onClick={() => setType("all")}>

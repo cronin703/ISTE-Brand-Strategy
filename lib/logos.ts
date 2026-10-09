@@ -52,8 +52,7 @@ function toMark(m: RawMark): Mark {
     id: m.id,
     name: m.name,
     logoType: m.logoType,
-    // Audit group labels use an em dash in the sheet; show them with a colon.
-    auditGroup: m.auditGroup.replace(/\s+—\s+/, ": "),
+    auditGroup: m.auditGroup,
     decision: m.decision,
     status: m.status,
     owner: m.owner,

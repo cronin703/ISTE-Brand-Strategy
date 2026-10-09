@@ -107,6 +107,8 @@ Cursor spotlight (`.spotlight`, fed by `components/PointerFx.tsx`): on cards, sw
 
 With `prefers-reduced-motion: reduce`, all of the above render in their final state with no movement; the page fade drops to a 120ms opacity fade.
 
-Hero backdrop: `public/hero/classroom.webp`, blurred 22px at 42% opacity (30% in dark) under a wash that keeps hero text at 5.9:1 or better. It drifts down 80px and scales slightly over the first 700px of scroll using CSS scroll-driven animation (`animation-timeline: scroll()`), with no JS; it stays still where unsupported or with reduced motion.
+Page backdrop (home only): `public/hero/classroom.webp`, fixed behind the whole page (header and sidebar included), blurred 22px at 42% opacity (30% in dark) under an even wash; text over it measures 5.2:1 or better. It drifts down 60px, scales slightly and settles toward the page color over the first 900px of scroll using CSS scroll-driven animation (`animation-timeline: scroll()`), with no JS; it stays still where unsupported or with reduced motion.
 
 Cards (`data-reveal`) rise 24px and fade in as they scroll into view, once, 600ms, staggered 70ms in reading order (max 6). Logo library cards reveal only on first load, never on filter changes. Logo images fade in as they load.
+
+Frosted glass (`.glass`), used sparingly where something sits over the photo or over scrolling content: header, hero logo tile, home quick-link and Explore cards, search palette, mobile nav drawer, logo library filter bar. `.glass-strong` (93%, 24px blur) for surfaces with text-dense controls. Falls back to a near-solid surface without backdrop-filter.

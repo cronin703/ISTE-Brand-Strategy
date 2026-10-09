@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import type { SearchItem } from "./SearchPalette";
 import { SidebarNav } from "./Sidebar";
 import { ThemeToggle } from "./ThemeToggle";
+import { HeroBackdrop } from "./HeroBackdrop";
 import { MotionFx } from "./MotionFx";
 import { PointerFx } from "./PointerFx";
 import { useFocusTrap } from "./useFocusTrap";
@@ -74,7 +75,9 @@ export function AppShell({ searchItems, children }: { searchItems: SearchItem[];
       >
         Skip to content
       </a>
-      <header ref={headerRef} className="header-glass sticky top-0 z-40 h-16 border-b border-border">
+      {/* Home only: rendered here, outside the page-enter wrapper, so position: fixed stays tied to the viewport. */}
+      {pathname === "/" && <HeroBackdrop />}
+      <header ref={headerRef} className="header-glass glass glass-strong sticky top-0 z-40 h-16 border-b border-border">
         <div className="flex h-full items-center gap-2 px-3 sm:px-4">
           <button
             type="button"
@@ -127,7 +130,7 @@ export function AppShell({ searchItems, children }: { searchItems: SearchItem[];
             role="dialog"
             aria-modal="true"
             aria-label="Navigation"
-            className={`${drawer === "open" ? "drawer-in" : "drawer-out"} absolute inset-y-0 left-0 w-[300px] max-w-[85vw] overflow-y-auto bg-bg shadow-2xl`}
+            className={`${drawer === "open" ? "drawer-in" : "drawer-out"} glass glass-strong absolute inset-y-0 left-0 w-[300px] max-w-[85vw] overflow-y-auto shadow-2xl`}
           >
             <div className="flex h-16 items-center justify-between border-b border-border px-4">
               <span className="font-semibold text-heading">Brand Hub</span>

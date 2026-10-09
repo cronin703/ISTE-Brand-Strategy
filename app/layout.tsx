@@ -1,15 +1,14 @@
 import "@fontsource-variable/inter";
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
-import { AppShell } from "@/components/AppShell";
-import { Footer } from "@/components/Footer";
 import { themeScript } from "@/components/ThemeToggle";
 import { withBase } from "@/lib/basePath";
-import { searchIndex } from "@/lib/search";
 
 export const metadata: Metadata = {
   title: { default: "ISTE Brand Hub", template: "%s · ISTE Brand Hub" },
   description: "Logos, colors, type and voice for ISTE+ASCD, in one place.",
+  // Password-protected demo: keep it out of search engines.
+  robots: { index: false, follow: false },
   icons: {
     icon: [
       { url: withBase("/favicon.svg"), type: "image/svg+xml" },
@@ -32,12 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body>
-        <AppShell searchItems={searchIndex()}>
-          {children}
-          <Footer />
-        </AppShell>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

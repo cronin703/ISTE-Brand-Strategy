@@ -43,6 +43,15 @@ The hub lives under a sub-path, set once in `lib/basePath.ts` and applied as `ba
 - The domain root (`/`) redirects to `/brand-governance` until something else lives there.
 - Paths are lowercase. A redirect from `/Brand-governance` isn't possible: Next.js and Vercel both match redirects case-insensitively, so it would loop.
 
+## Password protection
+
+The whole hub sits behind a password (`proxy.ts`, `lib/gate.ts`, `app/unlock/`). Visitors land on a branded unlock page; a correct password sets a 30-day cookie. Search engines are told not to index the site.
+
+- The password is not in the code. `lib/gate.ts` holds `sha256(sha256("iste-hub:" + password))`, and the cookie holds the inner hash, so neither the repo nor the stored hash lets anyone in.
+- To change the password without a code change, set `SITE_PASSWORD_HASH` in Vercel (Settings, Environment Variables) and redeploy. Make the value with:
+  `node -e "const c=require('crypto');const h=s=>c.createHash('sha256').update(s).digest('hex');console.log(h(h('iste-hub:'+process.argv[1])))" 'new-password'`
+- To remove the lock, delete `proxy.ts`.
+
 ## Deploy to Vercel
 
 Vercel detects Next.js, and `next.config.ts` already allows images from `drive.google.com` and `lh3.googleusercontent.com`.

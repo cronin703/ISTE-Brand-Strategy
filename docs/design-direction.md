@@ -106,3 +106,7 @@ Signature moments (600ms, home page only unless noted, all one-shot):
 Cursor spotlight (`.spotlight`, fed by `components/PointerFx.tsx`): on cards, swatches and the logo preview, a soft accent fill and a lit border follow the pointer. Mouse only.
 
 With `prefers-reduced-motion: reduce`, all of the above render in their final state with no movement; the page fade drops to a 120ms opacity fade.
+
+Hero backdrop: `public/hero/classroom.webp`, blurred 22px at 42% opacity (30% in dark) under a wash that keeps hero text at 5.9:1 or better. It drifts down 80px and scales slightly over the first 700px of scroll using CSS scroll-driven animation (`animation-timeline: scroll()`), with no JS; it stays still where unsupported or with reduced motion.
+
+Cards (`data-reveal`) rise 24px and fade in as they scroll into view, once, 600ms, staggered 70ms in reading order (max 6). Logo library cards reveal only on first load, never on filter changes. Logo images fade in as they load.

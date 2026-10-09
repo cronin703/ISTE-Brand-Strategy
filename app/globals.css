@@ -448,11 +448,11 @@ a.link:hover {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: blur(12px) saturate(1.2);
-  transform: scale(1.18);
-  opacity: 0.75;
+  filter: blur(22px) saturate(1.1);
+  transform: scale(1.15);
+  opacity: 0.42;
 }
-[data-theme="dark"] .hero-backdrop-img { opacity: 0.5; }
+[data-theme="dark"] .hero-backdrop-img { opacity: 0.3; }
 .hero-backdrop-wash {
   position: absolute;
   inset: 0;
@@ -467,7 +467,7 @@ a.link:hover {
   backdrop-filter: blur(18px) saturate(1.4);
 }
 @keyframes backdrop-drift {
-  to { transform: translateY(140px) scale(1.3); }
+  to { transform: translateY(80px) scale(1.2); }
 }
 @keyframes backdrop-deepen {
   to { opacity: 0.85; }

@@ -1,7 +1,7 @@
 import { withBase } from "@/lib/basePath";
 
-// Placeholder photo (AI-generated in Canva). Swap public/hero/classroom.jpg for an official ISTE+ASCD photo.
-const PHOTO = "/hero/classroom.jpg";
+// Hero background photo. Replace public/hero/classroom.webp to change it (about 1200px wide is plenty: it is blurred).
+const PHOTO = "/hero/classroom.webp";
 
 /**
  * Blurred classroom photo behind the hero. It drifts and deepens as the page scrolls, driven by

@@ -4,12 +4,13 @@ import type { Metadata, Viewport } from "next";
 import { AppShell } from "@/components/AppShell";
 import { Footer } from "@/components/Footer";
 import { themeScript } from "@/components/ThemeToggle";
+import { withBase } from "@/lib/basePath";
 import { searchIndex } from "@/lib/search";
 
 export const metadata: Metadata = {
   title: { default: "ISTE Brand Hub", template: "%s · ISTE Brand Hub" },
   description: "Logos, colors, type and voice for ISTE+ASCD, in one place.",
-  icons: { icon: "/favicon.svg" },
+  icons: { icon: withBase("/favicon.svg") },
 };
 
 export const viewport: Viewport = {

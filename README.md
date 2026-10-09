@@ -6,7 +6,7 @@ A public brand site for ISTE+ASCD: a logo library plus core brand guidance, mode
 
 ```bash
 npm install
-npm run dev        # http://localhost:3000
+npm run dev        # http://localhost:3000/brand-governance
 npm run build      # static build of every page (76 routes)
 npm run thumbs     # regenerate public/thumbs/*.webp after changing public/logos
 ```
@@ -35,15 +35,25 @@ The Drive folder must be shared "Anyone with the link can view" for the Drive im
 - Rules per logo type: `lib/logoTypes.ts`.
 - Changelog: `app/resources/whats-new/page.tsx`.
 
+## Address: lemoncakestudio.com/brand-governance
+
+The hub lives under a sub-path, set once in `lib/basePath.ts` and applied as `basePath` in `next.config.ts`.
+
+- `next/link` and the router add the prefix on their own. Plain `<a>`, `<img>` and metadata URLs that point at files in `public/` need `withBase()` from `lib/basePath.ts`.
+- The domain root (`/`) redirects to `/brand-governance` until something else lives there.
+- `vercel.json` sends `/Brand-governance` (capital B) to the lowercase path. Next.js redirects can't do this because they match case-insensitively and would loop.
+
 ## Deploy to Vercel
 
-No `vercel.json` is needed: Vercel detects Next.js, and `next.config.ts` already allows images from `drive.google.com` and `lh3.googleusercontent.com`.
+Vercel detects Next.js, and `next.config.ts` already allows images from `drive.google.com` and `lh3.googleusercontent.com`.
 
 1. Share the Drive logo folder as "Anyone with the link can view": https://drive.google.com/drive/folders/1RfJX_mxRdg1m-ADkWqZ6BDJp4zbIorVR
 2. Go to https://vercel.com/new and sign in with GitHub.
 3. Import `cronin703/ISTE-Brand-Strategy`. If the repo isn't listed, choose "Adjust GitHub App Permissions" and give Vercel access to it.
 4. Leave the defaults (Framework: Next.js, Build: `next build`, Output: automatic, no environment variables) and click Deploy.
 5. To deploy a branch other than `main`, either merge it to `main` or set Settings → Git → Production Branch. Every other branch gets a preview URL automatically.
+
+6. Add the domain: Project → Settings → Domains → add `lemoncakestudio.com` (and `www.lemoncakestudio.com`, set to redirect to the apex). Vercel shows the DNS records to add at your registrar: usually an `A` record for `@` pointing to `76.76.21.21` and a `CNAME` for `www` pointing to `cname.vercel-dns.com`. If you bought the domain through Vercel, this is automatic.
 
 From a terminal instead: `npm i -g vercel`, then `vercel` (preview) and `vercel --prod` (production) in this folder.
 

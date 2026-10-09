@@ -3,6 +3,7 @@
 import Fuse from "fuse.js";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { withBase } from "@/lib/basePath";
 import { SearchIcon } from "./icons";
 import { useFocusTrap } from "./useFocusTrap";
 
@@ -147,7 +148,7 @@ export function SearchPalette({ items, open, onClose }: { items: SearchItem[]; o
             <p className="font-medium text-heading">No matches for “{query}”.</p>
             <p className="mt-1">
               Try a program name such as “Standards” or “ISTELive”, or{" "}
-              <a className="link" href="/get-started#request">
+              <a className="link" href={withBase("/get-started#request")}>
                 request a logo
               </a>
               .

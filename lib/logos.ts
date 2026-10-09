@@ -2,6 +2,7 @@ import "server-only";
 import { statSync } from "node:fs";
 import path from "node:path";
 import raw from "@/data/logos.json";
+import { withBase } from "./basePath";
 import type { LogoType, Mark, RawMark } from "./types";
 
 export const LOGO_TYPE_ORDER: LogoType[] = [
@@ -28,7 +29,7 @@ function fileInfo(p: string) {
   try {
     bytes = statSync(abs).size;
   } catch {}
-  return { path: p, name: path.basename(p), ext, bytes };
+  return { path: withBase(p), name: path.basename(p), ext, bytes };
 }
 
 function aliasesFor(name: string): string[] {
@@ -62,8 +63,8 @@ function toMark(m: RawMark): Mark {
     hasLogo: m.hasLogo,
     driveImage,
     driveThumb: driveImage ? driveImage.replace(/sz=w\d+/, "sz=w640") : null,
-    localThumb: thumbName ? `/thumbs/${thumbName}.webp` : null,
-    localImage: svg ?? first ?? null,
+    localThumb: thumbName ? withBase(`/thumbs/${thumbName}.webp`) : null,
+    localImage: withBase(svg ?? first ?? "") || null,
     files,
     aliases: aliasesFor(m.name),
     dated: /dated|annual/i.test(`${m.name} ${m.notes} ${m.fileNotes}`),

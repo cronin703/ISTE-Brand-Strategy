@@ -384,6 +384,60 @@ a.link:hover {
 .is-visible .meter-fill,
 .no-js .meter-fill { transform: none; }
 
+/* Sidebar: one highlight pill slides to the current item; groups open and close smoothly. */
+.nav-pill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 0;
+  border-radius: 6px;
+  background: var(--tile);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(var(--x, 0), var(--y, 0));
+}
+.nav-pill::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 0;
+  width: 3px;
+  border-radius: 999px;
+  background: var(--indicator);
+}
+.nav-pill-ready {
+  transition: transform var(--motion-300) var(--ease-out), height var(--motion-300) var(--ease-out),
+    width var(--motion-300) var(--ease-out), opacity var(--motion-150) var(--ease-out);
+}
+[data-pill] [aria-current="page"] { background: transparent; }
+[data-pill] .nav-bar { display: none; }
+.nav-group {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--motion-300) var(--ease-out);
+}
+.nav-group[data-open] { grid-template-rows: 1fr; }
+.nav-group > ul { min-height: 0; }
+
+/* "On this page": a marker slides along the rule to the section being read. */
+.toc-mark {
+  position: absolute;
+  left: -1px;
+  top: 0;
+  width: 2px;
+  border-radius: 999px;
+  background: var(--indicator);
+  opacity: 0;
+  transform: translateY(var(--y, 0));
+}
+.toc-mark-ready {
+  transition: transform var(--motion-300) var(--ease-out), height var(--motion-300) var(--ease-out);
+}
+
+/* Segmented toggles: the selected background slides. */
+.seg-thumb { transition: transform var(--motion-200) var(--ease-out); }
+
 @media (prefers-reduced-motion: reduce) {
   .hero-tile { transform: none !important; }
   .word-mask > span,

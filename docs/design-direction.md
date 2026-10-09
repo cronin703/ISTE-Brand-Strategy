@@ -87,7 +87,10 @@ Where the demo gets its movement:
 | Theme switch | Colours cross-fade 150ms |
 | Route change | Page fades and rises 6px, 300ms (`app/template.tsx`) |
 | Header on scroll | Turns to frosted glass with a hairline shadow, 200ms |
-| Sidebar active item | Indicator grows from the centre, 300ms |
+| Sidebar active item | One highlight pill slides to the item you open, 300ms ease-out (grows in on first load) |
+| Sidebar sections | Open and close by animating their height, 300ms; closed sections are `inert` |
+| "On this page" | Click smooth-scrolls to the section; a marker slides along the rule to the section being read, 300ms |
+| Light/dark preview toggle | The selected background slides across, 200ms |
 | Links | Underline deepens and drops 1px on hover, 150ms |
 
 Signature moments (600ms, home page only unless noted, all one-shot):

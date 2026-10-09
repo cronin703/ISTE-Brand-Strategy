@@ -32,7 +32,12 @@ export function PreviewTile({ mark, retired }: { mark: LogoImageSource; retired:
       {mark.hasLogo && (
         <div className="mt-3 flex items-center justify-between gap-4">
           <p className="text-sm text-muted">Preview background</p>
-          <div role="radiogroup" aria-label="Preview background" className="inline-flex rounded-md border border-border p-0.5">
+          <div role="radiogroup" aria-label="Preview background" className="relative grid grid-cols-2 rounded-md border border-border p-0.5">
+            <span
+              aria-hidden
+              className="seg-thumb absolute inset-y-0.5 left-0.5 w-[calc(50%-2px)] rounded bg-heading"
+              style={{ transform: bg === "dark" ? "translateX(100%)" : "none" }}
+            />
             {(["light", "dark"] as const).map((v) => (
               <button
                 key={v}
@@ -40,8 +45,8 @@ export function PreviewTile({ mark, retired }: { mark: LogoImageSource; retired:
                 role="radio"
                 aria-checked={bg === v}
                 onClick={() => setBg(v)}
-                className={`h-8 rounded px-3 text-sm font-medium capitalize ${
-                  bg === v ? "bg-heading text-bg" : "text-text hover:bg-tile"
+                className={`relative h-8 rounded px-3 text-sm font-medium capitalize transition-colors duration-[var(--motion-200)] ${
+                  bg === v ? "text-bg" : "text-text hover:bg-tile"
                 }`}
               >
                 {v}

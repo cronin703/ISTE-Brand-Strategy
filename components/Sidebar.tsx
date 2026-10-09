@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { NAV } from "@/lib/nav";
 import { ChevronIcon } from "./icons";
 
@@ -21,9 +21,44 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
     if (current) setOpen((o) => (o[current.href] ? o : { ...o, [current.href]: true }));
   }, [pathname]);
 
+  // One highlight pill that slides to the current item (replaces the per-link highlight once JS runs).
+  const navRef = useRef<HTMLElement>(null);
+  const pillRef = useRef<HTMLSpanElement>(null);
+  useLayoutEffect(() => {
+    const nav = navRef.current;
+    const pill = pillRef.current;
+    if (!nav || !pill) return;
+    nav.dataset.pill = "";
+    let ready = false;
+    function place() {
+      const link = nav!.querySelector<HTMLElement>('[aria-current="page"]');
+      const visible = link && link.offsetParent && !link.closest("[inert]");
+      if (!visible) {
+        pill!.style.opacity = "0";
+        return;
+      }
+      const n = nav!.getBoundingClientRect();
+      const r = link.getBoundingClientRect();
+      pill!.style.setProperty("--y", `${r.top - n.top}px`);
+      pill!.style.setProperty("--x", `${r.left - n.left}px`);
+      pill!.style.width = `${r.width}px`;
+      pill!.style.height = `${r.height}px`;
+      pill!.style.opacity = "1";
+      if (!ready) {
+        ready = true;
+        requestAnimationFrame(() => pill!.classList.add("nav-pill-ready"));
+      }
+    }
+    place();
+    const ro = new ResizeObserver(place);
+    ro.observe(nav.firstElementChild as Element);
+    return () => ro.disconnect();
+  }, [pathname, open]);
+
   return (
-    <nav aria-label="Main" className="px-3 py-6 text-[15px]">
-      <ul className="space-y-1">
+    <nav ref={navRef} aria-label="Main" className="relative px-3 py-6 text-[15px]">
+      <span ref={pillRef} aria-hidden className="nav-pill" />
+      <ul className="relative space-y-1">
         <li>
           <NavLink href="/" current={pathname === "/"} onNavigate={onNavigate}>
             Home
@@ -59,7 +94,8 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                       }`}
                     />
                   </button>
-                  <ul id={id} hidden={!expanded} className="mt-0.5 space-y-0.5">
+                  <div className="nav-group" data-open={expanded || undefined} inert={!expanded}>
+                  <ul id={id} className="space-y-0.5 overflow-hidden pt-0.5">
                     {section.href !== section.pages[0].href && (
                       <li>
                         <NavLink href={section.href} current={isCurrent(pathname, section.href)} onNavigate={onNavigate} nested>
@@ -84,6 +120,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                       </li>
                     ))}
                   </ul>
+                  </div>
                 </>
               )}
             </li>
@@ -119,7 +156,7 @@ function NavLink({
       } ${current ? "bg-tile font-semibold text-heading" : "text-text"}`}
     >
       {current && (
-        <span aria-hidden className="indicator-in absolute inset-y-1.5 left-0 w-[3px] rounded-full bg-indicator" />
+        <span aria-hidden className="nav-bar indicator-in absolute inset-y-1.5 left-0 w-[3px] rounded-full bg-indicator" />
       )}
       {children}
     </Link>

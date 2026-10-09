@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronIcon } from "./icons";
+import { TocNav } from "./TocNav";
 
 export function PageHeader({
   title,
@@ -48,18 +49,7 @@ export function ContentPage({
       <div className="flex gap-12">
         <div className="prose-hub min-w-0 max-w-[820px] flex-1">{children}</div>
         {toc && toc.length > 0 && (
-          <nav aria-label="On this page" className="sticky top-28 hidden h-fit w-52 shrink-0 xl:block">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted">On this page</p>
-            <ul className="space-y-2 border-l border-border text-sm">
-              {toc.map((t) => (
-                <li key={t.id}>
-                  <a href={`#${t.id}`} className="-ml-px block border-l border-transparent pl-4 text-muted hover:border-border-strong hover:text-heading">
-                    {t.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <TocNav toc={toc} />
         )}
       </div>
     </div>

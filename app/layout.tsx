@@ -10,7 +10,13 @@ import { searchIndex } from "@/lib/search";
 export const metadata: Metadata = {
   title: { default: "ISTE Brand Hub", template: "%s · ISTE Brand Hub" },
   description: "Logos, colors, type and voice for ISTE+ASCD, in one place.",
-  icons: { icon: withBase("/favicon.svg") },
+  icons: {
+    icon: [
+      { url: withBase("/favicon.svg"), type: "image/svg+xml" },
+      { url: withBase("/favicon-32.png"), sizes: "32x32", type: "image/png" },
+    ],
+    apple: withBase("/apple-touch-icon.png"),
+  },
 };
 
 export const viewport: Viewport = {

@@ -182,14 +182,12 @@ export function LogoLibrary({ marks }: { marks: Mark[] }) {
                         <motion.li
                           key={m.id}
                           layout
-                          className={firstPaint.current ? "card-enter" : undefined}
-                          style={{ "--i": i } as React.CSSProperties}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1, transition: { duration: 0.15, ease: EASE_OUT } }}
                           exit={{ opacity: 0, transition: { duration: 0.15, ease: EASE_IN } }}
                           transition={{ layout: { duration: 0.2, ease: EASE_OUT } }}
                         >
-                          <LogoCard mark={m} priority={i < 4} reveal={firstPaint.current && i >= 8} />
+                          <LogoCard mark={m} priority={i < 4} reveal={firstPaint.current} />
                         </motion.li>
                       );
                     })}

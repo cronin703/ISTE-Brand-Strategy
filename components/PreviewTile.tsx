@@ -8,7 +8,7 @@ export function PreviewTile({ mark, retired }: { mark: LogoImageSource; retired:
   const [bg, setBg] = useState<"light" | "dark">("light");
   return (
     <div>
-      <div className="relative aspect-[16/10] overflow-hidden rounded-lg border border-border">
+      <div className="spotlight relative aspect-[16/10] overflow-hidden rounded-lg border border-border">
         <div
           aria-hidden
           className={`absolute inset-0 bg-[#f4f5f7] transition-opacity duration-[var(--motion-200)] ease-[var(--ease-out)] ${

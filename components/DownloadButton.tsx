@@ -22,7 +22,7 @@ export function DownloadButton({
 
   const styles =
     variant === "primary"
-      ? "bg-action text-on-action hover:bg-action-hover border-transparent"
+      ? "btn-sheen bg-action text-on-action hover:bg-action-hover border-transparent"
       : "border-border-strong text-heading hover:bg-tile";
 
   return (

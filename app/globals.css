@@ -9,6 +9,8 @@
   --motion-150: 150ms;
   --motion-200: 200ms;
   --motion-300: 300ms;
+  /* Signature moments only (hero mark, count-up): see docs/design-direction.md */
+  --motion-600: 600ms;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
 
@@ -44,6 +46,12 @@
   --info-bg: #e9f2ff;
   --shadow-hover: 0 8px 24px -12px rgb(9 30 66 / 0.28);
   --overlay: rgb(9 30 66 / 0.45);
+  --spot-fill: rgb(14 165 217 / 0.07);
+  --spot-ring: rgb(14 165 217 / 0.55);
+  --glow-a: rgb(40 168 212 / 0.22);
+  --glow-b: rgb(250 167 59 / 0.16);
+  --header-glass: rgb(255 255 255 / 0.78);
+  --grain-opacity: 0.06;
   color-scheme: light;
 }
 
@@ -72,6 +80,12 @@
   --info-bg: #1c2b41;
   --shadow-hover: 0 8px 24px -12px rgb(0 0 0 / 0.7);
   --overlay: rgb(0 0 0 / 0.6);
+  --spot-fill: rgb(56 189 240 / 0.08);
+  --spot-ring: rgb(125 211 245 / 0.6);
+  --glow-a: rgb(56 189 240 / 0.2);
+  --glow-b: rgb(250 167 59 / 0.12);
+  --header-glass: rgb(22 26 29 / 0.72);
+  --grain-opacity: 0.09;
   color-scheme: dark;
 }
 
@@ -137,10 +151,13 @@ a.link {
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+  transition: text-decoration-color var(--motion-150) var(--ease-out), text-underline-offset var(--motion-150) var(--ease-out);
 }
 .prose-hub a:not([class]):hover,
 a.link:hover {
-  text-decoration-thickness: 2px;
+  text-decoration-color: currentColor;
+  text-underline-offset: 4px;
 }
 }
 
@@ -215,6 +232,167 @@ a.link:hover {
     animation: fade-in 120ms linear both !important;
   }
   .swap > * { transition: opacity 120ms linear !important; }
+}
+
+/* ---------- Polish: signature motion and surfaces ---------- */
+
+/* Page enter on every route change (app/template.tsx). */
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.page-enter { animation: page-in var(--motion-300) var(--ease-out) both; }
+
+/* Hero headline: each word rises out of a mask. */
+@keyframes word-rise {
+  from { transform: translateY(105%); }
+  to { transform: none; }
+}
+.word-mask { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+.word-mask > span {
+  display: inline-block;
+  animation: word-rise var(--motion-600) var(--ease-out) both;
+  animation-delay: calc(120ms + var(--w, 0) * 90ms);
+}
+
+/* Hero mark assembles: parts rise in, the "+" turns into place. */
+@keyframes part-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes plus-in {
+  from { opacity: 0; transform: rotate(-90deg) scale(0.4); }
+  to { opacity: 1; transform: none; }
+}
+.mark-animate .mark-part {
+  animation: part-in var(--motion-600) var(--ease-out) both;
+  animation-delay: calc(200ms + var(--p, 0) * 70ms);
+}
+.mark-animate .mark-plus {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: plus-in var(--motion-600) var(--ease-out) both;
+  animation-delay: 620ms;
+}
+
+/* Hero tile: brand glow, fine grain and a gentle tilt toward the pointer. */
+.hero-tile {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform var(--motion-300) var(--ease-out);
+}
+.hero-tile::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  z-index: -1;
+  background:
+    radial-gradient(40% 45% at var(--gx, 30%) var(--gy, 25%), var(--glow-a), transparent 70%),
+    radial-gradient(35% 40% at 85% 90%, var(--glow-b), transparent 70%);
+  transition: background-position var(--motion-300) var(--ease-out);
+}
+.hero-tile::after,
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.hero-tile > * { position: relative; z-index: 1; }
+
+/* Cursor spotlight: a soft fill and a lit border that follow the pointer (set by <PointerFx>). */
+.spotlight { position: relative; isolation: isolate; }
+.spotlight::before,
+.spotlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--motion-200) var(--ease-out);
+}
+.spotlight::before {
+  z-index: -1;
+  background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%), var(--spot-fill), transparent 65%);
+}
+.spotlight::after {
+  z-index: 2;
+  padding: 1px;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), var(--spot-ring), transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+@media (hover: hover) and (pointer: fine) {
+  .spotlight:hover::before,
+  .spotlight:hover::after { opacity: 1; }
+}
+
+/* Primary button: a light sheen crosses once on hover. */
+.btn-sheen { overflow: hidden; isolation: isolate; }
+.btn-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.28) 50%, transparent 65%);
+  transform: translateX(-110%);
+}
+@media (hover: hover) {
+  .btn-sheen:hover::after {
+    transform: translateX(110%);
+    transition: transform var(--motion-600) var(--ease-out);
+  }
+}
+
+/* Header turns to frosted glass once the page scrolls. */
+.header-glass {
+  background: var(--bg);
+  transition: background-color var(--motion-200) var(--ease-out), border-color var(--motion-200) var(--ease-out),
+    box-shadow var(--motion-200) var(--ease-out);
+}
+.header-glass:not([data-scrolled]) { border-color: transparent; }
+.header-glass[data-scrolled] {
+  background: var(--header-glass);
+  box-shadow: 0 6px 20px -16px rgb(9 30 66 / 0.35);
+}
+@supports (backdrop-filter: blur(1px)) {
+  .header-glass[data-scrolled] { backdrop-filter: saturate(1.6) blur(14px); }
+}
+
+/* Sidebar: the active indicator grows in. */
+@keyframes indicator-in {
+  from { transform: scaleY(0); }
+  to { transform: none; }
+}
+.indicator-in { animation: indicator-in var(--motion-300) var(--ease-out) both; }
+
+/* Progress bar fills once revealed. */
+.meter-fill {
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform var(--motion-600) var(--ease-out) 150ms;
+}
+.is-visible .meter-fill,
+.no-js .meter-fill { transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-tile { transform: none !important; }
+  .word-mask > span,
+  .mark-animate .mark-part,
+  .mark-animate .mark-plus,
+  .indicator-in { animation: none !important; }
+  .meter-fill { transform: none; }
+  .btn-sheen::after { display: none; }
+  .page-enter { animation: fade-in 120ms linear both !important; }
 }
 
 /* Reversed master mark: indigo goes white on navy tiles. */

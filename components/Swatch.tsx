@@ -11,7 +11,7 @@ export function Swatch({ name, hex, role, rgb, border }: { name: string; hex: st
       <button
         type="button"
         onClick={() => copy(hex.toUpperCase())}
-        className="group block w-full overflow-hidden rounded-lg border border-border text-left transition-[transform,box-shadow] duration-[var(--motion-150)] ease-[var(--ease-out)] hover:-translate-y-0.5 hover:shadow-[var(--shadow-hover)]"
+        className="spotlight group block w-full overflow-hidden rounded-lg border border-border text-left transition-[transform,box-shadow] duration-[var(--motion-150)] ease-[var(--ease-out)] hover:-translate-y-0.5 hover:shadow-[var(--shadow-hover)]"
         aria-label={`${name}, ${hex.toUpperCase()}. Copy hex value`}
       >
         <span className={`block h-28 ${border ? "border-b border-border" : ""}`} style={{ background: hex }} aria-hidden />

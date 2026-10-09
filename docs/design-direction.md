@@ -56,7 +56,7 @@ Large preview on light and dark tiles (toggle), name, logo type, status and deci
 
 Follow the installed `vectorlab-ux-skills` motion, transitions and reduced-motion skills. Summary of their hard rules:
 
-- Duration tokens only: 100, 150, 200, 300ms.
+- Duration tokens only: 100, 150, 200, 300ms, plus 600ms (`--motion-600`) for the signature moments listed below and nothing else.
 - Ease-out on enter, ease-in on exit. No bounce, elastic or overshoot on chrome.
 - Animate `transform` and `opacity` only.
 - List stagger at most 30ms per item, about 200ms total. No stagger on filter updates.
@@ -85,3 +85,21 @@ Where the demo gets its movement:
 | Sidebar drawer (mobile) | Slides in on X, 200ms ease-out; out 150ms ease-in |
 | Page sections on scroll | Fade and rise 8px once as they enter, 200ms; never re-trigger |
 | Theme switch | Colours cross-fade 150ms |
+| Route change | Page fades and rises 6px, 300ms (`app/template.tsx`) |
+| Header on scroll | Turns to frosted glass with a hairline shadow, 200ms |
+| Sidebar active item | Indicator grows from the centre, 300ms |
+| Links | Underline deepens and drops 1px on hover, 150ms |
+
+Signature moments (600ms, home page only unless noted, all one-shot):
+
+| Moment | Motion |
+|---|---|
+| Hero headline | Each word rises out of a mask, 90ms apart |
+| Hero mark | Wordmark parts rise in, 70ms apart; the orange "+" turns 90deg into place last |
+| Hero tile | Brand glow and grain; tilts up to 3deg toward a mouse pointer and the glow follows it, 300ms |
+| Audit numbers | Count up from 0 when scrolled into view; progress bar fills from the left |
+| Primary button hover | One light sheen crosses the button |
+
+Cursor spotlight (`.spotlight`, fed by `components/PointerFx.tsx`): on cards, swatches and the logo preview, a soft accent fill and a lit border follow the pointer. Mouse only.
+
+With `prefers-reduced-motion: reduce`, all of the above render in their final state with no movement; the page fade drops to a 120ms opacity fade.

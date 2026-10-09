@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { BrandMark } from "@/components/BrandMark";
+import { CountUp } from "@/components/CountUp";
+import { HeroTile } from "@/components/HeroTile";
 import { DownloadButton } from "@/components/DownloadButton";
 import { ArrowIcon } from "@/components/icons";
 import { LogoCard } from "@/components/LogoCard";
@@ -30,7 +32,12 @@ export default function Home() {
         <div className="card-enter">
           <p className="text-sm font-semibold uppercase tracking-[0.08em] text-muted">ISTE+ASCD Brand Hub</p>
           <h1 className="mt-3 text-[44px] font-bold leading-[1.05] tracking-[-0.02em] text-heading sm:text-[56px]">
-            Education, Transformed.
+            {["Education,", "Transformed."].map((w, i) => (
+              <span key={w} className="word-mask" style={{ "--w": i } as React.CSSProperties}>
+                <span>{w}</span>
+                {i === 0 && " "}
+              </span>
+            ))}
           </h1>
           <p className="mt-5 max-w-[52ch] text-lg leading-relaxed text-muted">
             The logos, colors, type and voice behind ISTE+ASCD, in one place. Find the right mark, download it, and see
@@ -46,12 +53,12 @@ export default function Home() {
             </Link>
           </div>
         </div>
-        <div
+        <HeroTile
           className="card-enter flex aspect-[4/3] items-center justify-center rounded-xl border border-border bg-tile p-10 sm:p-16"
           style={{ "--i": 2 } as React.CSSProperties}
         >
-          <BrandMark className="h-auto w-full max-w-[360px]" title="ISTE+ASCD logo" />
-        </div>
+          <BrandMark className="h-auto w-full max-w-[360px]" title="ISTE+ASCD logo" animate />
+        </HeroTile>
       </section>
 
       <Reveal className="mt-16">
@@ -64,7 +71,7 @@ export default function Home() {
             [requestMailto(), "Request a logo", "Need a lockup or a missing file? Ask the brand team."],
           ].map(([href, title, desc], i) => {
             const cls =
-              "group flex h-full flex-col rounded-lg border border-border p-5 transition-[transform,box-shadow,border-color] duration-[var(--motion-150)] ease-[var(--ease-out)] hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[var(--shadow-hover)]";
+              "spotlight group flex h-full flex-col rounded-lg border border-border p-5 transition-[transform,box-shadow,border-color] duration-[var(--motion-150)] ease-[var(--ease-out)] hover:-translate-y-0.5 hover:border-border-strong hover:shadow-[var(--shadow-hover)]";
             const body = (
               <>
                 <span className="flex items-center justify-between text-lg font-semibold text-heading">
@@ -115,16 +122,16 @@ export default function Home() {
             {decisions.map(({ d, n }) => (
               <div key={d} className="bg-bg p-4">
                 <dt className="text-sm text-muted">{d}</dt>
-                <dd className="mt-1 text-3xl font-bold text-heading tabular-nums">{n}</dd>
+                <dd className="mt-1 text-3xl font-bold text-heading tabular-nums"><CountUp value={n} /></dd>
               </div>
             ))}
             <div className="col-span-2 bg-bg p-4 sm:col-span-5">
               <dt className="text-sm text-muted">Marks with a file so far</dt>
               <dd className="mt-1 flex items-center gap-3">
-                <span className="text-3xl font-bold text-heading tabular-nums">{c.withFile}</span>
+                <CountUp value={c.withFile} className="text-3xl font-bold text-heading tabular-nums" />
                 <span className="text-muted">of {c.total}</span>
                 <span className="ml-auto hidden h-2 w-40 overflow-hidden rounded-full bg-tile sm:block" aria-hidden>
-                  <span className="block h-full rounded-full bg-indicator" style={{ width: `${(c.withFile / c.total) * 100}%` }} />
+                  <span className="meter-fill block h-full rounded-full bg-indicator" style={{ width: `${(c.withFile / c.total) * 100}%` }} />
                 </span>
               </dd>
             </div>
@@ -137,7 +144,7 @@ export default function Home() {
         <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {NAV.filter((s) => s.href !== "/logos").map((s) => (
             <li key={s.href}>
-              <Link href={s.href} className="block h-full rounded-lg bg-bg-subtle p-5 hover:bg-tile">
+              <Link href={s.href} className="spotlight block h-full rounded-lg bg-bg-subtle p-5 transition-colors duration-[var(--motion-150)] hover:bg-tile">
                 <span className="text-lg font-semibold text-heading">{s.title}</span>
                 <span className="mt-1 block text-[15px] text-muted">{s.description}</span>
               </Link>

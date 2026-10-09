@@ -119,7 +119,7 @@ function NavLink({
       } ${current ? "bg-tile font-semibold text-heading" : "text-text"}`}
     >
       {current && (
-        <span aria-hidden className="absolute inset-y-1.5 left-0 w-[3px] rounded-full bg-indicator" />
+        <span aria-hidden className="indicator-in absolute inset-y-1.5 left-0 w-[3px] rounded-full bg-indicator" />
       )}
       {children}
     </Link>

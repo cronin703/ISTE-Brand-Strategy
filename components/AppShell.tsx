@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import type { SearchItem } from "./SearchPalette";
 import { SidebarNav } from "./Sidebar";
 import { ThemeToggle } from "./ThemeToggle";
+import { PointerFx } from "./PointerFx";
 import { useFocusTrap } from "./useFocusTrap";
 
 // The palette (and Fuse) load on first open.
@@ -19,6 +20,7 @@ export function AppShell({ searchItems, children }: { searchItems: SearchItem[];
   const [drawer, setDrawer] = useState<"closed" | "open" | "closing">("closed");
   const [isMac, setIsMac] = useState(true);
   const drawerRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
 
   const closeSearch = useCallback(() => setSearchOpen(false), []);
@@ -27,6 +29,16 @@ export function AppShell({ searchItems, children }: { searchItems: SearchItem[];
     if (reduce) return setDrawer("closed");
     setDrawer("closing");
     window.setTimeout(() => setDrawer("closed"), 150);
+  }, []);
+
+  // Header turns to glass once the page scrolls.
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const onScroll = () => el.toggleAttribute("data-scrolled", window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
@@ -61,7 +73,7 @@ export function AppShell({ searchItems, children }: { searchItems: SearchItem[];
       >
         Skip to content
       </a>
-      <header className="sticky top-0 z-40 h-16 border-b border-border bg-bg">
+      <header ref={headerRef} className="header-glass sticky top-0 z-40 h-16 border-b border-border">
         <div className="flex h-full items-center gap-2 px-3 sm:px-4">
           <button
             type="button"
@@ -132,6 +144,7 @@ export function AppShell({ searchItems, children }: { searchItems: SearchItem[];
         </div>
       )}
 
+      <PointerFx />
       {searchOpen && <SearchPalette items={searchItems} open={searchOpen} onClose={closeSearch} />}
     </>
   );

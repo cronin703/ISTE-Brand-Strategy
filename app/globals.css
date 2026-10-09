@@ -355,6 +355,13 @@ a.link:hover {
 }
 .header-glass:not([data-scrolled]) { border-color: transparent; }
 .header-glass[data-scrolled] { box-shadow: 0 6px 20px -16px rgb(9 30 66 / 0.35); }
+.header-glass.glass {
+  --glass-mix: 58%;
+  --glass-blur: 20px;
+  border-bottom-color: color-mix(in srgb, var(--border) 60%, transparent);
+}
+[data-theme="dark"] .header-glass.glass { --glass-mix: 55%; }
+.header-glass:not([data-scrolled]) { border-bottom-color: transparent; }
 
 /* Sidebar: the active indicator grows in. */
 @keyframes indicator-in {

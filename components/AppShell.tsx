@@ -77,7 +77,7 @@ export function AppShell({ searchItems, children }: { searchItems: SearchItem[];
       </a>
       {/* Home only: rendered here, outside the page-enter wrapper, so position: fixed stays tied to the viewport. */}
       {pathname === "/" && <HeroBackdrop />}
-      <header ref={headerRef} className="header-glass glass glass-strong sticky top-0 z-40 h-16 border-b border-border">
+      <header ref={headerRef} className="header-glass glass sticky top-0 z-40 h-16 border-b border-border">
         <div className="flex h-full items-center gap-2 px-3 sm:px-4">
           <button
             type="button"
@@ -99,7 +99,7 @@ export function AppShell({ searchItems, children }: { searchItems: SearchItem[];
               type="button"
               onClick={() => setSearchOpen(true)}
               aria-keyshortcuts="Meta+K Control+K"
-              className="flex h-10 items-center gap-2 rounded-md border border-border px-3 text-sm text-muted hover:border-border-strong md:w-64"
+              className="flex h-10 items-center gap-2 rounded-md border border-border bg-[color-mix(in_srgb,var(--bg)_82%,transparent)] px-3 text-sm text-muted hover:border-border-strong md:w-64"
             >
               <SearchIcon width={18} height={18} />
               <span className="hidden md:inline">Search</span>

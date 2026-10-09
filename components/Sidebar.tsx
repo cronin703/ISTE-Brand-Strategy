@@ -30,6 +30,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
     if (!nav || !pill) return;
     nav.dataset.pill = "";
     let ready = false;
+    let rot = Number(pill.dataset.rot ?? 0);
     function place() {
       const link = nav!.querySelector<HTMLElement>('[aria-current="page"]');
       const visible = link && link.offsetParent && !link.closest("[inert]");
@@ -39,7 +40,16 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
       }
       const n = nav!.getBoundingClientRect();
       const r = link.getBoundingClientRect();
-      pill!.style.setProperty("--y", `${r.top - n.top}px`);
+      const y = r.top - n.top;
+      // Roll the "+" a quarter turn toward the direction of travel, only when the current page changes
+      // (not when sections open or close and shift the pill).
+      const href = link.getAttribute("href") ?? "";
+      if (pill!.dataset.href && pill!.dataset.href !== href) rot += y > Number(pill!.dataset.y) ? 90 : -90;
+      pill!.dataset.href = href;
+      pill!.dataset.y = String(y);
+      pill!.dataset.rot = String(rot);
+      pill!.style.setProperty("--rot", `${rot}deg`);
+      pill!.style.setProperty("--y", `${y}px`);
       pill!.style.setProperty("--x", `${r.left - n.left}px`);
       pill!.style.width = `${r.width}px`;
       pill!.style.height = `${r.height}px`;
@@ -156,7 +166,7 @@ function NavLink({
       } ${current ? "bg-tile font-semibold text-heading" : "text-text"}`}
     >
       {current && (
-        <span aria-hidden className="nav-bar indicator-in absolute inset-y-2.5 left-0 w-[3px] rounded-full bg-indicator" />
+        <span aria-hidden data-plus className="nav-bar" />
       )}
       {children}
     </Link>

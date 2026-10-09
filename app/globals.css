@@ -392,18 +392,24 @@ a.link:hover {
   pointer-events: none;
   transform: translate(var(--x, 0), var(--y, 0));
 }
-/* The marker sits on the pill's straight left edge, clear of the rounded corners. */
-.nav-pill::before {
+/* Active marker: the orange "+" from the logo, centred on the pill's left edge.
+   It rolls a quarter turn in the direction of travel as the pill slides (rotation set by <SidebarNav>). */
+.nav-pill::before,
+[data-plus] {
   content: "";
   position: absolute;
   top: 50%;
-  left: 0;
-  width: 3px;
-  height: max(14px, calc(100% - 20px));
-  border-radius: 0 3px 3px 0;
-  background: var(--indicator);
-  transform: translateY(-50%);
+  left: -6px;
+  width: 12px;
+  height: 12px;
+  background: var(--mark-orange);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='749.7 130.9 140.6 140.6'%3E%3Cpath d='M749.8,182.2c0-4.5,3.4-8,8-8h33.4v-35.3c0-5.4,2.9-8,8.8-8h40.9c5.3,0,8,3.3,8,8v35.3h33.4c4.4,0,8.3,3.5,8,8v37.1c-.2,4.3-3.4,8.9-8,8.8h-33.4v35.4c0,4.7-3.2,8-8,8h-40.9c-4.3,0-8.8-3.1-8.8-8v-35.4h-33.4c-5.4,0-8-2.9-8-8.8v-37.1h0Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='749.7 130.9 140.6 140.6'%3E%3Cpath d='M749.8,182.2c0-4.5,3.4-8,8-8h33.4v-35.3c0-5.4,2.9-8,8.8-8h40.9c5.3,0,8,3.3,8,8v35.3h33.4c4.4,0,8.3,3.5,8,8v37.1c-.2,4.3-3.4,8.9-8,8.8h-33.4v35.4c0,4.7-3.2,8-8,8h-40.9c-4.3,0-8.8-3.1-8.8-8v-35.4h-33.4c-5.4,0-8-2.9-8-8.8v-37.1h0Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  transform: translateY(-50%) rotate(var(--rot, 0deg));
 }
+/* No-JS fallback inside the link (which clips overflow): smaller, clear of the text. */
+[data-plus] { left: 2px; width: 8px; height: 8px; }
+.nav-pill-ready::before { transition: transform var(--motion-600) var(--ease-out); }
 .nav-pill-ready {
   transition: transform var(--motion-300) var(--ease-out), height var(--motion-300) var(--ease-out),
     width var(--motion-300) var(--ease-out), opacity var(--motion-150) var(--ease-out);

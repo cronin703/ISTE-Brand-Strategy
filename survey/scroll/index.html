@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..700;1,62..125,400..500&display=swap" rel="stylesheet">
 
-<!-- Field IDs live in /config.js, shared with the focused format. -->
+<!-- Field IDs live in ../config.js, shared with the focused format. -->
 
 <style>
   :root{
@@ -18,6 +18,7 @@
     --raised:#1E2428;
     --line:#2E373D;
     --line-soft:#242C31;
+    --edge:#626F78;
     --ink:#E8EDF0;
     --muted:#8D9BA4;
     --accent:#26A7D5;
@@ -113,22 +114,22 @@
   .help{display:block;color:var(--muted);font-size:.92rem;margin:0 0 .9rem;max-width:var(--measure)}
   .field .help:last-of-type{margin-bottom:0}
 
-  input[type=text],textarea{
+  input[type=text],input[type=email],textarea{
     width:100%;
     background:transparent;
     color:var(--ink);
     font:inherit;
     border:0;
-    border-bottom:1px solid var(--line);
+    border-bottom:1px solid var(--edge);
     padding:.55rem 0;
     resize:vertical;
   }
   textarea{min-height:5.25rem;line-height:1.5}
-  input[type=text]:focus,textarea:focus{
+  input[type=text]:focus,input[type=email]:focus,textarea:focus{
     outline:none;
     border-bottom-color:var(--accent);
   }
-  input[type=text]::placeholder,textarea::placeholder{color:#5D6A72}
+  input::placeholder,textarea::placeholder{color:#828F98}
 
   /* ---------- identity row ---------- */
   .ident{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem 1.5rem}
@@ -145,7 +146,7 @@
     flex:1;
     display:flex;align-items:center;justify-content:center;
     height:2.9rem;
-    border:1px solid var(--line);
+    border:1px solid var(--edge);
     background:var(--base);
     color:var(--muted);
     font-variation-settings:"wdth" 100,"wght" 560;
@@ -170,7 +171,7 @@
   .choice input{position:absolute;opacity:0;width:0;height:0}
   .choice label{
     padding:.55rem 1.4rem;
-    border:1px solid var(--line);
+    border:1px solid var(--edge);
     color:var(--muted);
     cursor:pointer;
     transition:background .15s ease,color .15s ease,border-color .15s ease;
@@ -253,17 +254,17 @@
   </header>
 
   <!-- ================= SURVEY ================= -->
-  <form class="survey" id="survey" method="POST" target="sink" autocomplete="off">
+  <form class="survey" id="survey" method="POST" target="sink" novalidate>
 
     <section class="section">
       <div class="section-head"><h2>About you</h2></div>
 
       <div class="field">
         <div class="ident">
-          <label><span class="q">Name</span><input type="text" data-key="name"></label>
-          <label><span class="q">Title</span><input type="text" data-key="title"></label>
+          <label><span class="q">Name</span><input type="text" data-key="name" autocomplete="name"></label>
+          <label><span class="q">Title</span><input type="text" data-key="title" autocomplete="organization-title"></label>
           <label><span class="q">Department</span><input type="text" data-key="dept"></label>
-          <label><span class="q">Email</span><input type="text" data-key="email"></label>
+          <label><span class="q">Email</span><input type="email" data-key="email" autocomplete="email"></label>
         </div>
       </div>
     </section>
@@ -409,9 +410,9 @@
 
 <div class="progress" id="progress" aria-live="polite"><b>0</b> of 17 answered</div>
 
-<script src="/config.js"></script>
+<script src="../config.js"></script>
 <script>
-/* Config lives in /config.js so both formats share one source. */
+/* Config lives in ../config.js so both formats share one source. */
 const FORM_ID = window.SURVEY_CONFIG.FORM_ID;
 const ENTRY   = window.SURVEY_CONFIG.ENTRY;
 
@@ -450,7 +451,7 @@ document.querySelectorAll(".choice input").forEach(function(el){
 const progress = document.getElementById("progress").querySelector("b");
 function countAnswered(){
   const keys = new Set();
-  form.querySelectorAll("input[type=text], textarea").forEach(function(el){
+  form.querySelectorAll("input[type=text], input[type=email], textarea").forEach(function(el){
     if (el.value.trim()) keys.add(el.dataset.key);
   });
   form.querySelectorAll("input[type=radio]:checked").forEach(function(el){
@@ -461,8 +462,16 @@ function countAnswered(){
 form.addEventListener("input", countAnswered);
 form.addEventListener("change", countAnswered);
 
-/* submit */
-form.addEventListener("submit", function(){
+/* Enter in a one-line field must not send the whole survey */
+form.addEventListener("keydown", function(e){
+  if (e.key === "Enter" && e.target.tagName === "INPUT") e.preventDefault();
+});
+
+/* submit, once */
+let sent = false;
+form.addEventListener("submit", function(e){
+  if (sent) { e.preventDefault(); return; }
+  sent = true;
   setTimeout(function(){
     document.body.classList.add("sent");
     window.scrollTo({ top: 0, behavior: "smooth" });

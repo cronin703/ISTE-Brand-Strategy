@@ -33,10 +33,17 @@ Three static pages, no build step, no dependencies, in `survey/`:
 | `survey/scroll/index.html` | Every question on one vertical page. |
 | `survey/focused/index.html` | Two questions per full screen, slide motion, Enter to advance. |
 | `survey/config.js` | Shared config. The Form id and the 17 field ids, in one place. |
+| `survey/vercel.json` | Sets `trailingSlash: true` so the relative paths below always resolve. |
 
-Both formats read `window.SURVEY_CONFIG` from `/config.js` and POST to the
+Both formats read `window.SURVEY_CONFIG` from `../config.js` and POST to the
 Google Form's `formResponse` endpoint through a hidden iframe. There is exactly
 one place to edit field ids, deliberately.
+
+All paths between the pages are relative (`scroll/`, `../config.js`), so the
+survey works at the root of a domain or under a sub-path. That only holds while
+every URL ends in a slash, which `vercel.json` enforces on the standalone
+project. If the survey is ever served under another app, that app must also
+redirect `/survey` to `/survey/`.
 
 Design: dark ground `#161A1D` matched to lemoncakestudio.com, Archivo variable
 font using the width axis for display contrast, ISTE sky `#26A7D5` as the
@@ -74,7 +81,10 @@ The survey can stay separate or be folded in. This has not been decided.
 
 **Keep separate.** Point `lemoncakestudio.com/brand-governance/survey` at the
 standalone project with a Vercel rewrite, or attach a subdomain. Least work,
-leaves two deploys to think about.
+leaves two deploys to think about. A rewrite must cover
+`/brand-governance/survey/:path*` (not only the landing page) so `config.js`
+and the two formats are fetched from the survey project, and that path must be
+excluded from the `proxy.ts` matcher, or the password gate catches them.
 
 **Fold in.** Move `survey/` into real routes in this app and add the survey path
 to the `matcher` exclusion list in `proxy.ts` so it stays public while the rest

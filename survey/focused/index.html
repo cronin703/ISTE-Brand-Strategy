@@ -15,6 +15,7 @@
     --base:#161A1D;
     --line:#2E373D;
     --line-soft:#242C31;
+    --edge:#626F78;
     --ink:#E8EDF0;
     --muted:#8D9BA4;
     --accent:#26A7D5;
@@ -80,14 +81,14 @@
   .block:focus-within::before,.block:focus-within::after{border-color:var(--accent)}
 
   /* ---------- inputs ---------- */
-  input[type=text],textarea{
+  input[type=text],input[type=email],textarea{
     width:100%;background:transparent;color:var(--ink);font:inherit;
-    border:0;border-bottom:1px solid var(--line);
+    border:0;border-bottom:1px solid var(--edge);
     padding:.5rem 0;resize:none;
   }
   textarea{min-height:4.5rem;line-height:1.45}
-  input[type=text]:focus,textarea:focus{outline:none;border-bottom-color:var(--accent)}
-  ::placeholder{color:#5D6A72}
+  input[type=text]:focus,input[type=email]:focus,textarea:focus{outline:none;border-bottom-color:var(--accent)}
+  ::placeholder{color:#828F98}
 
   .pair{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem}
   @media (max-width:36rem){.pair{grid-template-columns:1fr}}
@@ -99,7 +100,7 @@
   .ramp input{position:absolute;opacity:0;width:0;height:0}
   .ramp label{
     flex:1;display:flex;align-items:center;justify-content:center;
-    height:3.1rem;border:1px solid var(--line);color:var(--muted);
+    height:3.1rem;border:1px solid var(--edge);color:var(--muted);
     font-variation-settings:"wdth" 100,"wght" 560;cursor:pointer;
     transition:background .15s ease,color .15s ease,border-color .15s ease;
   }
@@ -111,7 +112,7 @@
   .choice{display:flex;gap:.6rem;margin-top:.9rem}
   .choice input{position:absolute;opacity:0;width:0;height:0}
   .choice label{
-    padding:.6rem 1.6rem;border:1px solid var(--line);color:var(--muted);cursor:pointer;
+    padding:.6rem 1.6rem;border:1px solid var(--edge);color:var(--muted);cursor:pointer;
     transition:background .15s ease,color .15s ease,border-color .15s ease;
   }
   .choice label:hover{border-color:var(--accent);color:var(--ink)}
@@ -128,7 +129,7 @@
   .bar-inner{width:100%;max-width:44rem;margin:0 auto;display:flex;align-items:center;gap:1rem}
   button{
     font:inherit;font-variation-settings:"wdth" 104,"wght" 600;
-    cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--muted);
+    cursor:pointer;border:1px solid var(--edge);background:transparent;color:var(--muted);
     padding:.7rem 1.4rem;transition:color .15s ease,border-color .15s ease,background .15s ease;
   }
   button:hover{color:var(--ink);border-color:var(--accent)}
@@ -142,7 +143,7 @@
 
   /* marks progress */
   .pips{display:flex;gap:.3rem;align-items:center}
-  .pip{width:9px;height:9px;border:1px solid var(--line);transition:background .3s ease,border-color .3s ease}
+  .pip{width:9px;height:9px;border:1px solid var(--edge);transition:background .3s ease,border-color .3s ease}
   .pip.done{background:var(--accent);border-color:var(--accent)}
   .pip.now{background:var(--signal);border-color:var(--signal)}
   @media (max-width:40rem){.pips{display:none}}
@@ -150,7 +151,7 @@
   /* top rule */
   .rule{position:fixed;top:0;left:0;height:2px;background:var(--accent);width:0;transition:width .5s cubic-bezier(.22,.61,.36,1);z-index:5}
 
-  .kbd{color:#55636B;font-size:.78rem;margin-left:.2rem}
+  .kbd{color:var(--muted);font-size:.78rem;margin-left:.2rem}
   @media (max-width:40rem){.kbd{display:none}}
 
   @media (prefers-reduced-motion:reduce){
@@ -164,7 +165,7 @@
 
 <div class="rule" id="rule"></div>
 
-<form id="survey" method="POST" target="sink" autocomplete="off">
+<form id="survey" method="POST" target="sink">
 <div class="deck" id="deck">
 
   <!-- 0 intro -->
@@ -172,7 +173,7 @@
     <div class="inner">
       <h1>Before we draw a single logo</h1>
       <p class="lede">We're building a brand system and governance framework for ISTE+ASCD: a clear hierarchy for our logos, sub-brands and program marks, plus guidance on when to create new ones and who approves them.</p>
-      <p class="lede">Nine screens, two questions each, about ten minutes. There are no wrong answers and you can skip anything.</p>
+      <p class="lede">Nine short screens, about ten minutes. There are no wrong answers and you can skip anything.</p>
     </div>
   </section>
 
@@ -180,8 +181,8 @@
   <section class="slide" data-slide>
     <div class="inner">
       <div class="pair">
-        <div class="block"><label><span class="q">Your name</span><input type="text" data-key="name" placeholder="First and last"></label></div>
-        <div class="block"><label><span class="q">Your title</span><input type="text" data-key="title" placeholder="As it appears in the directory"></label></div>
+        <div class="block"><label><span class="q">Your name</span><input type="text" data-key="name" autocomplete="name" placeholder="First and last"></label></div>
+        <div class="block"><label><span class="q">Your title</span><input type="text" data-key="title" autocomplete="organization-title" placeholder="As it appears in the directory"></label></div>
       </div>
     </div>
   </section>
@@ -191,7 +192,7 @@
     <div class="inner">
       <div class="pair">
         <div class="block"><label><span class="q">Department</span><input type="text" data-key="dept" placeholder="Team or function"></label></div>
-        <div class="block"><label><span class="q">Email</span><input type="text" data-key="email" placeholder="So we can follow up if you want"></label></div>
+        <div class="block"><label><span class="q">Email</span><input type="email" data-key="email" autocomplete="email" placeholder="So we can follow up if you want"></label></div>
       </div>
     </div>
   </section>
@@ -340,7 +341,7 @@
 
 <iframe name="sink" style="display:none" title="Form submission target" aria-hidden="true"></iframe>
 
-<script src="/config.js"></script>
+<script src="../config.js"></script>
 <script>
 const FORM_ID = window.SURVEY_CONFIG.FORM_ID;
 const ENTRY   = window.SURVEY_CONFIG.ENTRY;
@@ -388,15 +389,21 @@ questionSlides.forEach(function(){
 });
 const pips = Array.from(pipsEl.children);
 
+/* only the active slide can take focus or be read aloud */
+slides.concat(doneEl).forEach(function(s){ s.inert = true; });
+
 let i = 0;
+let sent = false;
 function show(n, dir){
   const prev = slides[i];
   if (prev){
+    prev.inert = true;
     prev.classList.remove("is-active");
     prev.classList.toggle("is-past", dir !== "back");
   }
   i = n;
   const cur = slides[i];
+  cur.inert = false;
   cur.classList.remove("is-past");
   cur.classList.add("is-active");
   cur.scrollTop = 0;
@@ -417,19 +424,25 @@ function show(n, dir){
   });
   ruleEl.style.width = (isIntro ? 0 : (qIndex / questionSlides.length) * 100) + "%";
 
-  const field = cur.querySelector("input[type=text], textarea");
+  const field = cur.querySelector("input[type=text], input[type=email], textarea");
   if (field && !isIntro) setTimeout(function(){ field.focus({ preventScroll:true }); }, 420);
 }
 
 function next(){
+  if (sent) return;
   if (slides[i].hasAttribute("data-last")) { submit(); return; }
   if (i < slides.length - 1) show(i + 1, "fwd");
 }
-function back(){ if (i > 0) show(i - 1, "back"); }
+function back(){ if (!sent && i > 0) show(i - 1, "back"); }
 
 function submit(){
+  /* one response per visit, however often Enter is pressed */
+  if (sent) return;
+  sent = true;
   form.submit();
   setTimeout(function(){
+    slides[i].inert = true;
+    doneEl.inert = false;
     slides[i].classList.remove("is-active");
     slides[i].classList.add("is-past");
     doneEl.classList.add("is-active");
@@ -442,13 +455,17 @@ nextBtn.addEventListener("click", next);
 backBtn.addEventListener("click", back);
 
 document.addEventListener("keydown", function(e){
+  /* buttons handle their own Enter, so Back never moves forward */
+  if (e.target.tagName === "BUTTON") return;
   const inText = e.target.tagName === "TEXTAREA";
   if (e.key === "Enter"){
     if (inText && !(e.metaKey || e.ctrlKey)) return;  /* newline in textareas */
     e.preventDefault(); next();
   }
-  if (e.key === "ArrowRight" && !inText) next();
-  if (e.key === "ArrowLeft"  && !inText) back();
+  /* arrows move the caret in fields and the choice in rating groups, so they only change slides elsewhere */
+  const inField = inText || e.target.tagName === "INPUT";
+  if (e.key === "ArrowRight" && !inField) next();
+  if (e.key === "ArrowLeft"  && !inField) back();
 });
 
 show(0, "fwd");

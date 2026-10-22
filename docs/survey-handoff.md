@@ -33,7 +33,6 @@ Three static pages, no build step, no dependencies, in `survey/`:
 | `survey/scroll/index.html` | Every question on one vertical page. |
 | `survey/focused/index.html` | Two questions per full screen, slide motion, Enter to advance. |
 | `survey/config.js` | Shared config. The Form id and the 17 field ids, in one place. |
-| `survey/vercel.json` | Sets `trailingSlash: true` so the relative paths below always resolve. |
 
 Both formats read `window.SURVEY_CONFIG` from `../config.js` and POST to the
 Google Form's `formResponse` endpoint through a hidden iframe. There is exactly
@@ -41,9 +40,9 @@ one place to edit field ids, deliberately.
 
 All paths between the pages are relative (`scroll/`, `../config.js`), so the
 survey works at the root of a domain or under a sub-path. That only holds while
-every URL ends in a slash, which `vercel.json` enforces on the standalone
-project. If the survey is ever served under another app, that app must also
-redirect `/survey` to `/survey/`.
+every URL ends in a slash, so each page starts with a one-line script that adds
+the slash if it is missing. Server redirects were tried and dropped: Next
+matches `/survey` and `/survey/` as the same path, so a redirect loops.
 
 Design: dark ground `#161A1D` matched to lemoncakestudio.com, Archivo variable
 font using the width axis for display contrast, ISTE sky `#26A7D5` as the
@@ -51,6 +50,13 @@ accent, ISTE gold `#FDC343` spent once on the submit button. Form fields have no
 borders or fills, only corner ticks that turn accent on focus.
 
 ## Where it is deployed
+
+**Public URL: `https://lemoncakestudio.com/survey/`.** `next.config.ts` in this
+repo rewrites `/survey` and everything under it (outside the hub's
+`/brand-governance` base path) to the standalone project below. The password
+gate in `proxy.ts` only covers the base path, so the survey stays public.
+`skipTrailingSlashRedirect` is on so Next keeps the slash the survey needs.
+
 
 Its own Vercel project, not this one:
 
@@ -77,23 +83,10 @@ which would take lemoncakestudio.com down.
 
 ## Open decision
 
-The survey can stay separate or be folded in. This has not been decided.
-
-**Keep separate.** Point `lemoncakestudio.com/brand-governance/survey` at the
-standalone project with a Vercel rewrite, or attach a subdomain. Least work,
-leaves two deploys to think about. A rewrite must cover
-`/brand-governance/survey/:path*` (not only the landing page) so `config.js`
-and the two formats are fetched from the survey project, and that path must be
-excluded from the `proxy.ts` matcher, or the password gate catches them.
-
-**Fold in.** Move `survey/` into real routes in this app and add the survey path
-to the `matcher` exclusion list in `proxy.ts` so it stays public while the rest
-of the hub stays locked. Then retire the standalone project. One codebase, one
-deploy, one gate rule to reason about. Cleaner long term.
-
-Nothing in `survey/` is wired into the Next app yet. The files sit there as
-plain static pages so either path stays open. They are not in `public/`, because
-`public/` is behind the gate.
+The survey now runs as a separate project behind a rewrite. Folding it into this
+app as real routes, and retiring the standalone project, is still an option for
+later. Until then, a change to `survey/` reaches the live site only after it is
+deployed to `iste-brand-survey`, because that project has no git connection.
 
 ## Blockers, in priority order
 

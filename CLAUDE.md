@@ -13,6 +13,22 @@ Owner for the demo: Nick Cronin (cronin703@gmail.com). Every mark's owner is set
 | `data/logos.json` | All 57 marks from the ISTE Brand Lockup Checklist, with status, type, Drive file ids and local files |
 | `data/brand.json` | Working colors, typography, voice, imagery (not official yet) |
 | `public/logos/` | 45 logo files covering 37 of the 57 marks (local fallback copies) |
+| `docs/survey-handoff.md` | The stakeholder discovery survey in `survey/`: what is built, where it is deployed, what is blocking it. Read before touching `survey/`. |
+
+## Writing rules for this client
+
+Never use em dashes, anywhere, in any output. Slack messages use Slack markup
+(`*bold*` with single asterisks, `•` bullets, raw URLs). The organization is
+written "ISTE+ASCD". The ISTE logo lockup is used whole and never cropped.
+
+## The discovery survey
+
+`survey/` holds three static pages (a landing page and two survey formats) for
+the stakeholder discovery survey. They are plain HTML with no build step and are
+**not yet wired into this Next app**, because `proxy.ts` would put them behind
+the password gate and respondents are external. See `docs/survey-handoff.md`
+before changing anything there, including the open decision about whether to
+fold them into this app or keep them on their own Vercel project.
 
 ## Stack
 

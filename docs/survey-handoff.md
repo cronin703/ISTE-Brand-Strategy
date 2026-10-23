@@ -53,12 +53,17 @@ borders or fills, only corner ticks that turn accent on focus.
 
 ## Where it is deployed
 
-**Public URL: `https://lemoncakestudio.com/survey/`.** `next.config.ts` in this
-repo rewrites `/survey` and everything under it (outside the hub's
-`/brand-governance` base path) to the standalone project below. The password
-gate in `proxy.ts` only covers the base path, so the survey stays public.
-`skipTrailingSlashRedirect` is on so Next keeps the slash the survey needs.
+**URL: `https://lemoncakestudio.com/brand-governance/survey/`, behind the hub
+password (since 23 Oct 2026).** `next.config.ts` rewrites `/brand-governance/survey`
+and everything under it to the standalone project below, and `proxy.ts` gates it
+like every other hub page, so visitors see the hub's unlock page first and land
+back on the survey after the password. Old `/survey/...` links redirect to the
+new address. **To make the survey public**, add `survey/` to the matcher
+exclusions in `proxy.ts` and redeploy the hub. `skipTrailingSlashRedirect` is
+on so Next keeps the slash the survey needs.
 
+The raw project address (`iste-brand-survey.vercel.app`) is not behind the
+password.
 
 Its own Vercel project, not this one:
 

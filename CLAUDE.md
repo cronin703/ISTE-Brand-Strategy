@@ -24,11 +24,10 @@ written "ISTE+ASCD". The ISTE logo lockup is used whole and never cropped.
 ## The discovery survey
 
 `survey/` holds three static pages (a landing page and two survey formats) for
-the stakeholder discovery survey. They are plain HTML with no build step and are
-**not yet wired into this Next app**, because `proxy.ts` would put them behind
-the password gate and respondents are external. See `docs/survey-handoff.md`
-before changing anything there, including the open decision about whether to
-fold them into this app or keep them on their own Vercel project.
+the stakeholder discovery survey. They deploy as their own Vercel project and
+are shown at `lemoncakestudio.com/brand-governance/survey/` through a rewrite in
+`next.config.ts`, behind the hub password. See `docs/survey-handoff.md` before
+changing anything there.
 
 ## Stack
 

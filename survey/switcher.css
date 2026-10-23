@@ -2,19 +2,19 @@
    Temporary: remove the <nav class="switcher"> element and this file's <link>
    from the three pages before the survey goes to respondents. */
 .switcher{
-  position:fixed;top:.9rem;left:50%;transform:translateX(-50%);z-index:6;
-  display:flex;gap:2px;padding:3px;
-  background:rgba(22,26,29,.82);border:1px solid #3A454C;
+  position:fixed;top:.75rem;right:.75rem;z-index:6;
+  display:flex;gap:1px;padding:2px;
+  background:rgba(22,26,29,.6);border:1px solid rgba(169,180,187,.18);
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
   font-family:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
-  font-size:.82rem;line-height:1;white-space:nowrap;
+  font-size:.72rem;line-height:1;white-space:nowrap;
 }
 .switcher a{
-  display:block;padding:.55rem .85rem;color:#A9B4BB;text-decoration:none;
-  font-variation-settings:"wdth" 100,"wght" 560;
+  display:block;padding:.45rem .6rem;color:#A9B4BB;text-decoration:none;
+  font-variation-settings:"wdth" 100,"wght" 500;
   transition:color .15s ease,background .15s ease;
 }
 .switcher a:hover{color:#E8EDF0;background:rgba(255,255,255,.06)}
-.switcher a[aria-current="page"]{background:#26A7D5;color:#07171E}
+.switcher a[aria-current="page"]{background:rgba(232,237,240,.12);color:#E8EDF0}
 .switcher a:focus-visible{outline:2px solid #FDC343;outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.switcher a{transition:none}}

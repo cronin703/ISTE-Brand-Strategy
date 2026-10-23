@@ -15,10 +15,11 @@
 <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="switcher.css">
+<link rel="stylesheet" href="backdrop.css">
 <style>
   :root{
-    --base:#161A1D;--line:#2E373D;--line-soft:#242C31;
-    --ink:#E8EDF0;--muted:#8D9BA4;--accent:#26A7D5;--signal:#FDC343;--orange:#FAA73C;--royal:#0C258A;
+    --base:#161A1D;--line:#2E373D;--line-soft:#3A454C;
+    --ink:#E8EDF0;--muted:#A9B4BB;--accent:#26A7D5;--signal:#FDC343;--orange:#FAA73C;--royal:#0C258A;
   }
   *{box-sizing:border-box}
   body{
@@ -27,7 +28,7 @@
     font-variation-settings:"wdth" 100,"wght" 400;
     font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;
   }
-  .wrap{max-width:52rem;margin:0 auto;padding:clamp(5rem,11vh,7rem) 1.5rem 5rem}
+  .wrap{position:relative;z-index:1;max-width:52rem;margin:0 auto;padding:clamp(5rem,11vh,7rem) 1.5rem 5rem}
 
   .marks{display:block;width:100%;max-width:22rem;height:auto;margin-bottom:2.5rem}
   .marks g{
@@ -64,7 +65,8 @@
   }
   a.option::before{top:0;left:0;border-top-width:1px;border-left-width:1px}
   a.option::after{bottom:0;right:0;border-bottom-width:1px;border-right-width:1px}
-  a.option:hover{background:#1B2226}
+  a.option{background:rgba(22,26,29,.45)}
+  a.option:hover{background:rgba(22,26,29,.75)}
   a.option:hover::before,a.option:hover::after,
   a.option:focus-visible::before,a.option:focus-visible::after{border-color:var(--accent)}
   a.option:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
@@ -83,7 +85,7 @@
   .thumb{width:100%;height:84px}
   .thumb rect{fill:#2A3338}
   .thumb .hi{fill:var(--accent)}
-  .thumb .frame{fill:none;stroke:var(--line);stroke-width:1.5}
+  .thumb .frame{fill:none;stroke:#8D9BA4;stroke-width:1.5}
 
   .foot{
     margin-top:3rem;padding-top:1.3rem;border-top:1px solid var(--line-soft);
@@ -94,6 +96,8 @@
 </head>
 <body>
 <!-- Format switcher for the client demo; remove before sending to respondents (see ../switcher.css). -->
+<!-- Background photos: see backdrop.js -->
+<div class="bg" aria-hidden="true"><div class="bg-move" id="bgMove"></div></div>
 <nav class="switcher" aria-label="Survey formats">
   <a href="./" aria-current="page">Overview</a>
   <a href="scroll/">One page</a>
@@ -154,7 +158,9 @@
 
 </div>
 
+<script src="backdrop.js"></script>
 <script>
+  Backdrop(document.getElementById("bgMove"), { scroll: true }).set(1, 0);
   const marks = document.querySelector(".marks");
   if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
     requestAnimationFrame(function(){ setTimeout(function(){ marks.classList.add("settled"); }, 240); });

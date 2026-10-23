@@ -50,8 +50,8 @@
     color:var(--muted);font-size:.95rem;
   }
 
-  .options{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.4rem}
-  @media (max-width:42rem){.options{grid-template-columns:1fr}}
+  .options{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:1.4rem}
+  @media (max-width:52rem){.options{grid-template-columns:1fr}}
 
   a.option{
     position:relative;display:block;padding:1.9rem 1.9rem 1.7rem;
@@ -102,6 +102,7 @@
   <a href="./" aria-current="page">Overview</a>
   <a href="scroll/">One page</a>
   <a href="focused/">Slides</a>
+  <a href="cards/">Cards</a>
 </nav>
 <div class="wrap">
 
@@ -151,6 +152,19 @@
         <rect x="130" y="38" width="68" height="4" opacity=".45"/>
       </svg>
       <h2>One step at a time</h2>
+      <span class="go">Start</span>
+    </a>
+
+    <a class="option" href="cards/">
+      <svg class="thumb" viewBox="0 0 200 84" aria-hidden="true">
+        <rect class="frame" x="46" y="4" width="108" height="22"/>
+        <rect x="58" y="12" width="40" height="5" class="hi"/>
+        <rect class="frame" x="46" y="32" width="108" height="22"/>
+        <rect x="58" y="40" width="70" height="4"/>
+        <rect class="frame" x="46" y="60" width="108" height="20"/>
+        <rect x="58" y="67" width="56" height="4"/>
+      </svg>
+      <h2>Grouped in cards</h2>
       <span class="go">Start</span>
     </a>
 

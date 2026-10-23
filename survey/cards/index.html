@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Links between pages are relative, so every page URL must end in a slash. -->
+<script>if(!location.pathname.endsWith("/"))location.replace(location.pathname+"/"+location.search+location.hash)</script>
+<title>Brand System Discovery Survey · ISTE+ASCD</title>
+<meta name="description" content="We're building a brand system and governance framework for ISTE+ASCD: a clear hierarchy for our logos, sub-brands, and program marks, plus guidance on when to create new ones and who approves them.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&display=swap" rel="stylesheet">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="stylesheet" href="../switcher.css">
+<style>
+/* Cards format: the Brand Hub shell. Frosted header with the lockup, soft blue and
+   orange glow ground, one centred column of glass cards, fixed progress card. */
+:root{
+  --bg:#ffffff; --bg-subtle:#f7f8f9; --tile:#f4f5f7; --border:#dfe1e6; --border-strong:#b3b9c4;
+  --heading:#1b365d; --text:#3b3c3e; --muted:#58595b; --action:#0a6e93; --action-hover:#085a78; --on-action:#ffffff;
+  --accent:#0ea5d9; --orange:#faa73b; --glass:rgba(255,255,255,.62); --glass-edge:rgba(255,255,255,.6);
+  --glow-a:#28a8d438; --glow-b:#faa73b29; --success:#216e4e; --success-bg:#e3fcef; --danger:#ae2a19;
+  --shadow-hover:0 8px 24px -12px #091e4247;
+  --font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#161a1d; --bg-subtle:#1b1f23; --tile:#1d2125; --border:#2c333a; --border-strong:#5b6671;
+    --heading:#f1f4f8; --text:#c7d1db; --muted:#a7b0ba; --action:#38bdf0; --action-hover:#7dd3f5; --on-action:#0b1a2b;
+    --glass:rgba(29,33,37,.62); --glass-edge:rgba(255,255,255,.06); --glow-a:#38bdf033; --glow-b:#faa73b1f;
+    --success:#7ee2b8; --success-bg:#1c3329; --danger:#fd9891; --shadow-hover:0 8px 24px -12px #000a;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:1rem;line-height:1.6;-webkit-font-smoothing:antialiased}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(38rem 26rem at 12% 8%,var(--glow-a),transparent 70%),
+    radial-gradient(34rem 24rem at 88% 22%,var(--glow-b),transparent 70%),
+    radial-gradient(40rem 28rem at 70% 85%,var(--glow-a),transparent 70%),
+    radial-gradient(30rem 22rem at 5% 75%,var(--glow-b),transparent 70%);
+}
+
+/* header */
+.top{
+  position:sticky;top:0;z-index:40;height:4rem;
+  background:var(--glass);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);
+  border-bottom:1px solid var(--border);box-shadow:inset 0 1px 0 var(--glass-edge);
+  padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));
+}
+.top-in{height:100%;max-width:72rem;margin:0 auto;display:flex;align-items:center}
+/* the lockup is used whole; it sits on a white plate in dark mode so its colours stay true */
+.brand{display:flex;align-items:center;padding:.3rem .5rem;margin-left:-.5rem;border-radius:6px}
+.brand img{display:block;height:2.6rem;width:auto;max-width:100%}
+@media (prefers-color-scheme:dark){.brand{background:#fff}}
+@media (max-width:480px){.brand img{height:2rem}}
+/* the format switcher sits in the header's right side, and drops below it on narrow screens */
+.switcher{top:1rem;z-index:50}   /* above the frosted header */
+@media (max-width:560px){.switcher{top:4.6rem}}
+@media (prefers-color-scheme:light){
+  .switcher{background:rgba(255,255,255,.85);border-color:var(--border)}
+  .switcher a{color:var(--muted)}
+  .switcher a:hover{color:var(--heading);background:var(--tile)}
+  .switcher a[aria-current="page"]{background:var(--tile);color:var(--heading)}
+  .switcher a:focus-visible{outline-color:var(--action)}
+}
+
+.wrap{max-width:48rem;margin:0 auto;padding:3.5rem max(16px,env(safe-area-inset-right,0px)) 8rem max(16px,env(safe-area-inset-left,0px))}
+.eyebrow{font-size:.875rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 .75rem}
+h1{color:var(--heading);font-size:clamp(2.2rem,5.5vw,3.25rem);line-height:1.05;letter-spacing:-.02em;font-weight:700;margin:0 0 1.25rem;text-wrap:balance}
+h2{color:var(--heading);font-size:1.5rem;line-height:1.25;font-weight:700;margin:0 0 .35rem}
+.lede{max-width:38rem;display:flex;flex-direction:column;gap:.9rem;font-size:1.125rem;color:var(--muted)}
+.lede p{margin:0}
+.meta-row{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.5rem}
+.tag{display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;font-weight:600;padding:.25rem .6rem;border-radius:6px;background:var(--tile);color:var(--heading);border:1px solid var(--border)}
+.tag i{width:.5rem;height:.5rem;border-radius:50%;background:var(--accent)}
+.tag.o i{background:var(--orange)}
+
+/* cards */
+.card{
+  margin-top:2rem;padding:1.75rem;border:1px solid var(--border);border-radius:8px;
+  background:var(--glass);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);
+  box-shadow:inset 0 1px 0 var(--glass-edge);
+}
+.card-head{display:flex;flex-direction:column;gap:.2rem;margin-bottom:1.5rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)}
+.card-head p{margin:0;color:var(--muted);font-size:.95rem}
+.step{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--action)}
+@media (max-width:520px){.card{padding:1.25rem}}
+
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.1rem 1.25rem}
+@media (max-width:560px){.grid2{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:.35rem;min-width:0}
+.field label{font-size:.875rem;font-weight:600;color:var(--heading)}
+input[type=text],input[type=email],textarea{
+  font:inherit;font-size:.95rem;color:var(--text);background:var(--bg);width:100%;
+  border:1px solid var(--border-strong);border-radius:6px;padding:.55rem .75rem;
+  transition:border-color .15s,box-shadow .15s;
+}
+textarea{min-height:6.5rem;resize:vertical;line-height:1.5}
+input:focus,textarea:focus{outline:none;border-color:var(--action);box-shadow:0 0 0 3px color-mix(in srgb,var(--action) 22%,transparent)}
+
+.qs{display:flex;flex-direction:column}
+.q{padding:1.25rem 0;border:0;border-top:1px solid var(--border);margin:0;min-width:0;position:relative}
+.qs > .q:first-child{border-top:0;padding-top:0}
+.q h3,.q legend{color:var(--heading);font-size:1rem;font-weight:600;line-height:1.45;margin:0 0 .8rem;padding:0 1.75rem 0 0;text-wrap:pretty}
+.q legend{float:left;width:100%}
+.q legend + *{clear:both}
+.q h3 label{cursor:pointer}
+/* a small dot fills in once a question is answered */
+.q::after{content:"";position:absolute;right:0;top:1.4rem;width:1rem;height:1rem;border-radius:50%;border:1.5px solid var(--border-strong);transition:background .2s,border-color .2s}
+.qs > .q:first-child::after{top:.15rem}
+.q.done::after{background:var(--accent);border-color:var(--accent);box-shadow:inset 0 0 0 3px var(--bg)}
+.q .help{display:block;clear:both;color:var(--muted);font-size:.875rem;margin:-.4rem 0 .75rem}
+
+.ramp{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.5rem;clear:both}
+.ramp input,.choice input{position:absolute;opacity:0;pointer-events:none}
+.ramp label,.choice label{
+  display:flex;align-items:center;justify-content:center;height:2.75rem;border-radius:6px;
+  border:1px solid var(--border-strong);background:var(--bg);color:var(--heading);
+  font-weight:600;font-size:.95rem;cursor:pointer;font-variant-numeric:tabular-nums;
+  transition:background .15s,color .15s,border-color .15s;
+}
+.ramp label:hover,.choice label:hover{background:var(--tile)}
+.ramp input:checked + label,.choice input:checked + label{background:var(--action);border-color:var(--action);color:var(--on-action)}
+.ramp input:focus-visible + label,.choice input:focus-visible + label{outline:2px solid var(--action);outline-offset:2px}
+.ends{display:flex;justify-content:space-between;color:var(--muted);font-size:.8rem;margin-top:.45rem;gap:1rem}
+.choice{display:grid;grid-template-columns:repeat(2,minmax(0,7.5rem));gap:.5rem}
+
+/* required-answer notes (validate.js) */
+.err{color:var(--danger);font-size:.85rem;font-weight:500;margin:.5rem 0 0}
+input[aria-invalid=true],textarea[aria-invalid=true]{border-color:var(--danger)}
+.ramp input[aria-invalid=true] + label,.choice input[aria-invalid=true] + label{border-color:var(--danger)}
+
+.submit-row{margin-top:2rem;display:flex;flex-wrap:wrap;gap:1rem 1.25rem;align-items:center}
+.btn{
+  font:inherit;font-size:.95rem;font-weight:600;display:inline-flex;align-items:center;gap:.5rem;
+  height:2.75rem;padding:0 1.25rem;border-radius:6px;cursor:pointer;
+  border:1px solid transparent;background:var(--action);color:var(--on-action);transition:background .15s;
+}
+.btn:hover{background:var(--action-hover)}
+.btn:focus-visible{outline:2px solid var(--action);outline-offset:3px}
+.btn svg{width:1rem;height:1rem}
+
+.progress{
+  position:fixed;z-index:30;width:13.5rem;
+  right:calc(20px + env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));
+  padding:.7rem .9rem;border-radius:8px;border:1px solid var(--border);
+  background:var(--glass);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);
+  box-shadow:var(--shadow-hover);font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums;
+}
+.progress b{color:var(--heading);font-size:1.15rem;font-weight:700;margin-right:.15rem}
+.progress .track{display:block;height:6px;border-radius:999px;background:var(--tile);margin-top:.45rem;overflow:hidden}
+.progress .fill{display:block;height:100%;border-radius:999px;background:var(--accent);width:0;transition:width .4s var(--ease)}
+@media (max-width:520px){.progress{width:auto;left:calc(16px + env(safe-area-inset-left,0px))}}
+
+.thanks{padding-top:1rem}
+.check{width:3rem;height:3rem;border-radius:50%;background:var(--success-bg);color:var(--success);display:grid;place-items:center;margin-bottom:1.25rem}
+.check svg{width:1.4rem;height:1.4rem}
+[hidden]{display:none !important}
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}
+</style>
+</head>
+<body>
+<!-- Format switcher for the client demo; remove before sending to respondents (see ../switcher.css). -->
+<nav class="switcher" aria-label="Survey formats">
+  <a href="../">Overview</a>
+  <a href="../scroll/">One page</a>
+  <a href="../focused/">Slides</a>
+  <a href="./" aria-current="page">Cards</a>
+</nav>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <img src="../lockup.png" alt="ISTE+ASCD, International Society for Transforming Education" width="1696" height="346">
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="view-survey">
+    <p class="eyebrow">ISTE+ASCD Brand Hub</p>
+    <h1>Brand System Discovery Survey</h1>
+    <div class="lede">
+      <p>We're building a brand system and governance framework for ISTE+ASCD: a clear hierarchy for our logos, sub-brands, and program marks, plus guidance on when to create new ones and who approves them.</p>
+      <p>The goal is to make your work easier, so you're not inventing a brand from scratch every time you launch something.</p>
+    </div>
+    <div class="meta-row">
+      <span class="tag"><i></i>About 10 minutes</span>
+      <span class="tag o"><i></i>Mostly open-ended, no wrong answers</span>
+    </div>
+
+    <form id="survey" method="POST" target="sink" novalidate>
+      <section class="card" aria-labelledby="h-about">
+        <div class="card-head">
+          <span class="step">About you</span>
+          <h2 id="h-about">Who's answering</h2>
+          <p>Before we design anything, we want to hear from the people closest to the work.</p>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="name">Name</label><input type="text" id="name" data-key="name" autocomplete="name"></div>
+          <div class="field"><label for="title">Title</label><input type="text" id="title" data-key="title" autocomplete="organization-title"></div>
+          <div class="field"><label for="dept">Department</label><input type="text" id="dept" data-key="dept"></div>
+          <div class="field"><label for="email">Email</label><input type="email" id="email" data-key="email" autocomplete="email"></div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="h-ratings">
+        <div class="card-head">
+          <span class="step">Part one</span>
+          <h2 id="h-ratings">Quick ratings</h2>
+          <p>Rate each from 1 to 5. These give us a baseline to measure against when we run this again next year.</p>
+        </div>
+        <div class="qs">
+          <fieldset class="q" data-q="r_find"><legend>How easy is it to find the current approved version of a brand asset when you need it?</legend>
+            <div class="ramp" data-key="r_find" data-lo="Not easy at all" data-hi="Very easy"></div>
+            <div class="ends"><span>Not easy at all</span><span>Very easy</span></div></fieldset>
+          <fieldset class="q" data-q="r_clear"><legend>How clear are you on when something gets its own logo versus using the ISTE+ASCD logo with a product name?</legend>
+            <div class="ramp" data-key="r_clear" data-lo="Not clear at all" data-hi="Very clear"></div>
+            <div class="ends"><span>Not clear at all</span><span>Very clear</span></div></fieldset>
+          <fieldset class="q" data-q="r_consistent"><legend>How consistent does ISTE+ASCD's brand look across our products and materials today?</legend>
+            <div class="ramp" data-key="r_consistent" data-lo="Not consistent at all" data-hi="Very consistent"></div>
+            <div class="ends"><span>Not consistent at all</span><span>Very consistent</span></div></fieldset>
+          <fieldset class="q" data-q="r_timelines"><legend>How well does the current process for getting brand assets support your timelines?</legend>
+            <div class="ramp" data-key="r_timelines" data-lo="Not well at all" data-hi="Very well"></div>
+            <div class="ends"><span>Not well at all</span><span>Very well</span></div></fieldset>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="h-open">
+        <div class="card-head">
+          <span class="step">Part two</span>
+          <h2 id="h-open">Open questions</h2>
+        </div>
+        <div class="qs">
+          <div class="q" data-q="q_own"><h3><label for="q_own">What products, programs or initiatives do you own or work on?</label></h3>
+            <textarea id="q_own" data-key="q_own" rows="4"></textarea></div>
+          <div class="q" data-q="q_where"><h3><label for="q_where">When you need an approved brand asset like a logo or template, where do you go to get it today?</label></h3>
+            <span class="help" id="q_where-help">For example the intranet, a shared drive, Slack, a folder someone sent you, a website, or you ask a person.</span>
+            <textarea id="q_where" data-key="q_where" rows="4" aria-describedby="q_where-help"></textarea></div>
+          <div class="q" data-q="q_hard"><h3><label for="q_hard">If you have needed a new logo, lockup or other brand asset in the past year, what did you need it for, and what was hard about getting it?</label></h3>
+            <textarea id="q_hard" data-key="q_hard" rows="4"></textarea></div>
+          <div class="q" data-q="q_rule"><h3><label for="q_rule">In your own words, when does something at ISTE+ASCD get its own logo, versus using the ISTE+ASCD logo with the product name?</label></h3>
+            <textarea id="q_rule" data-key="q_rule" rows="4"></textarea></div>
+          <div class="q" data-q="q_upcoming"><h3><label for="q_upcoming">Is there anything you are working on that is launching or in development between now and the end of next year that might need a name, logo or brand treatment?</label></h3>
+            <span class="help" id="q_upcoming-help">Early and uncertain is fine. A one-line heads up is more useful than nothing.</span>
+            <textarea id="q_upcoming" data-key="q_upcoming" rows="4" aria-describedby="q_upcoming-help"></textarea></div>
+          <div class="q" data-q="q_confuse"><h3><label for="q_confuse">Are there any existing logos or names you think confuse members, or that you're not sure we still use?</label></h3>
+            <span class="help" id="q_confuse-help">List as many as come to mind.</span>
+            <textarea id="q_confuse" data-key="q_confuse" rows="4" aria-describedby="q_confuse-help"></textarea></div>
+          <div class="q" data-q="q_gain"><h3><label for="q_gain">If you could gain one thing from the creation of a brand system, what would it be?</label></h3>
+            <span class="help" id="q_gain-help">For example: a logo request form, ready-made templates, a clear approval contact, a decision guide, or something else.</span>
+            <textarea id="q_gain" data-key="q_gain" rows="4" aria-describedby="q_gain-help"></textarea></div>
+          <div class="q" data-q="q_else"><h3><label for="q_else">Anything else on your mind?</label></h3>
+            <textarea id="q_else" data-key="q_else" rows="4"></textarea></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="qs">
+          <fieldset class="q" data-q="followup"><legend>Would you be interested in providing additional feedback?</legend>
+            <span class="help">Please indicate if you would be open to a follow up conversation.</span>
+            <div class="choice">
+              <input type="radio" id="fu-yes" value="Yes"><label for="fu-yes">Yes</label>
+              <input type="radio" id="fu-no" value="No"><label for="fu-no">No</label>
+            </div></fieldset>
+        </div>
+      </section>
+
+      <div class="submit-row">
+        <button type="submit" class="btn" id="send">Send responses <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+      </div>
+    </form>
+
+    <section class="thanks" id="thanks" hidden>
+      <div class="check"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5"/></svg></div>
+      <h1 tabindex="-1" id="thanks-h">Thank you.</h1>
+      <div class="lede"><p>Your responses are in. They will shape how ISTE+ASCD names, marks and approves what we launch next.</p></div>
+    </section>
+  </div>
+</main>
+
+<div class="progress" id="progress" aria-live="polite"><b id="pcount">0</b> of 17 answered<span class="track"><span class="fill" id="pfill"></span></span></div>
+
+<iframe name="sink" style="display:none" title="Form submission target" aria-hidden="true"></iframe>
+
+<script src="../config.js"></script>
+<script src="../validate.js"></script>
+<script>
+const FORM_ID = window.SURVEY_CONFIG.FORM_ID;
+const ENTRY   = window.SURVEY_CONFIG.ENTRY;
+const DRAFT_KEY = "iste-brand-survey-cards-draft";
+const form = document.getElementById("survey");
+form.action = "https://docs.google.com/forms/d/" + FORM_ID + "/formResponse";
+
+/* build the 1 to 5 ramps */
+document.querySelectorAll(".ramp").forEach(function(ramp){
+  const key = ramp.dataset.key;
+  for (let n = 1; n <= 5; n++){
+    const input = document.createElement("input");
+    input.type = "radio"; input.id = key + "-" + n; input.value = n; input.dataset.key = key;
+    const label = document.createElement("label");
+    label.setAttribute("for", input.id); label.textContent = n;
+    if (n === 1) label.setAttribute("aria-label", "1, " + ramp.dataset.lo);
+    if (n === 5) label.setAttribute("aria-label", "5, " + ramp.dataset.hi);
+    ramp.append(input, label);
+  }
+});
+
+/* name every control from the shared config */
+form.querySelectorAll("[data-key]").forEach(function(el){
+  if (el.tagName === "DIV") return;
+  if (ENTRY[el.dataset.key]) el.name = ENTRY[el.dataset.key];
+});
+form.querySelectorAll(".choice input").forEach(function(el){ el.name = ENTRY.followup; el.dataset.key = "followup"; });
+
+/* progress and the per-question dots */
+function answered(q){
+  const t = q.querySelector("input[type=text], input[type=email], textarea");
+  if (t) return t.value.trim() !== "";
+  return !!q.querySelector("input[type=radio]:checked");
+}
+function updateProgress(){
+  let n = 0;
+  form.querySelectorAll("input[type=text], input[type=email], textarea").forEach(function(el){ if (el.value.trim()) n++; });
+  const groups = new Set(); form.querySelectorAll("input[type=radio]:checked").forEach(function(el){ groups.add(el.name); });
+  n += groups.size;
+  document.getElementById("pcount").textContent = n;
+  document.getElementById("pfill").style.width = (n / 17 * 100) + "%";
+  form.querySelectorAll(".q").forEach(function(q){ q.classList.toggle("done", answered(q)); });
+}
+
+/* keep a draft on this device in case the tab closes */
+function saveDraft(){
+  if (sent) return;   /* never write a draft back after sending */
+  const d = {};
+  form.querySelectorAll("input[type=text], input[type=email], textarea").forEach(function(el){ d[el.id] = el.value; });
+  form.querySelectorAll("input[type=radio]:checked").forEach(function(el){ d[el.name] = el.value; });
+  try { localStorage.setItem(DRAFT_KEY, JSON.stringify(d)); } catch (e) {}
+}
+try {
+  const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
+  if (d){
+    form.querySelectorAll("input[type=text], input[type=email], textarea").forEach(function(el){ if (d[el.id] != null) el.value = d[el.id]; });
+    form.querySelectorAll("input[type=radio]").forEach(function(el){ if (d[el.name] === el.value) el.checked = true; });
+  }
+} catch (e) {}
+let draftTimer;
+form.addEventListener("input", function(){ updateProgress(); clearTimeout(draftTimer); draftTimer = setTimeout(saveDraft, 400); });
+form.addEventListener("change", updateProgress);
+/* also save when the tab is hidden or closed, so the last few keystrokes are kept */
+addEventListener("pagehide", function(){ if (!sent) saveDraft(); });
+document.addEventListener("visibilitychange", function(){ if (document.hidden && !sent) saveDraft(); });
+updateProgress();
+
+/* Enter in a one-line field must not send the whole survey */
+form.addEventListener("keydown", function(e){ if (e.key === "Enter" && e.target.tagName === "INPUT") e.preventDefault(); });
+
+/* submit once, after every question is answered */
+SurveyValidate.watch(form);
+let sent = false;
+form.addEventListener("submit", function(e){
+  if (sent) { e.preventDefault(); return; }
+  const missing = SurveyValidate.check(form);
+  if (missing){
+    e.preventDefault();
+    missing.focus({ preventScroll: true });
+    missing.closest(".q, .field").scrollIntoView({ block: "center", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    return;
+  }
+  sent = true;
+  clearTimeout(draftTimer);
+  setTimeout(function(){
+    try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+    form.hidden = true;
+    document.getElementById("progress").hidden = true;
+    document.getElementById("thanks").hidden = false;
+    window.scrollTo({ top: 0 });
+    document.getElementById("thanks-h").focus({ preventScroll: true });
+  }, 150);
+});
+</script>
+</body>
+</html>

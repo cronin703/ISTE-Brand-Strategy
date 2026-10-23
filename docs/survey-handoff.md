@@ -32,6 +32,7 @@ Three static pages, no build step, no dependencies, in `survey/`:
 | `survey/index.html` | Landing page. Explains the engagement, offers the two formats. |
 | `survey/scroll/index.html` | Every question on one vertical page. |
 | `survey/focused/index.html` | Two questions per full screen, slide motion, Enter to advance. |
+| `survey/cards/index.html` | Brand Hub style: light (and dark) glass cards with the lockup header, one page. Built from the Claude artifact the client shared on 23 Oct 2026; sends to the Google Form like the others and keeps a draft on the device. |
 | `survey/config.js` | Shared config. The Form id and the 17 field ids, in one place. |
 | `survey/backdrop.js`, `backdrop.css` | Shared background photos and parallax for both formats. The Pexels photo list lives here. |
 | `survey/switcher.css` and the `<nav class="switcher">` on each page | Temporary format switcher for client demos. Remove both before sending the survey to respondents. |

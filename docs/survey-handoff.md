@@ -92,18 +92,11 @@ deployed to `iste-brand-survey`, because that project has no git connection.
 
 ## Blockers, in priority order
 
-**1. The field ids in `survey/config.js` are placeholders.** They read
-`entry.0000001` through `entry.0000017`. Until they are real, both formats POST
-into nothing and every response is silently dropped. Nothing else is wrong; the
-pages work end to end, a test submit just does not record.
-
-To get the real ids: open the Google Form, three-dot menu, "Get pre-filled
-link", fill every field with junk, submit, and read the `entry.NNNNNNNNN` values
-out of the resulting URL. Map them to the keys in `config.js` in question order.
-Running `finishSetup` in the Apps Script does the same thing.
-
-Form id `1nVEKaP7wZkt73tBAdJLQJwoqj4fGSTQVwSGyJXrxZv4`, 17 items in the order
-`config.js` lists them.
+**1. Field ids: done (23 Oct 2026).** `survey/config.js` now holds the real
+entry ids and the Form's published id, read from the live form. A test response
+("TEST submission (delete me)") was recorded by the Form; delete it from the
+Form's Responses tab before launch. Every question is required in both formats
+(`survey/validate.js`); the Google Form itself does not enforce this.
 
 **2. The Form is not linked to its response Sheet.** The sheet exists at
 `1SLO5sAPi-shvzxIVrpCfcCR_3N0fXqhLmZtKc2c_Yn4` and nothing writes to it. One

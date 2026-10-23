@@ -164,7 +164,36 @@
   .kbd{color:var(--muted);font-size:.78rem;margin-left:.2rem}
   @media (max-width:40rem){.kbd{display:none}}
 
+
+  /* ---------- required-answer notes ---------- */
+  .err{color:#FF9B8A;font-size:.88rem;margin:.55rem 0 0;font-variation-settings:"wdth" 100,"wght" 500}
+  input[aria-invalid=true],textarea[aria-invalid=true]{border-bottom-color:#FF9B8A}
+  .ramp input[aria-invalid=true] + label,.choice input[aria-invalid=true] + label{border-color:#FF9B8A}
+
+  /* ---------- welcome slide ---------- */
+  .bar.is-hidden{display:none}
+  .intro .inner{max-width:40rem}
+  .eyebrow{margin:0 0 .9rem;color:var(--accent);font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;font-variation-settings:"wdth" 112,"wght" 650}
+  .intro h1{font-size:clamp(2.4rem,6vw,4.2rem);line-height:1;margin:0 0 1.4rem}
+  .intro .lead{font-size:clamp(1.2rem,2.4vw,1.5rem);line-height:1.35;color:var(--ink);margin:0 0 .8rem;max-width:34rem;font-variation-settings:"wdth" 100,"wght" 450}
+  .intro .lede{margin:0 0 1.8rem}
+  .facts{display:flex;flex-wrap:wrap;gap:.5rem;margin:0 0 2.2rem;padding:0;list-style:none}
+  .facts li{padding:.4rem .75rem;border:1px solid rgba(169,180,187,.3);background:rgba(22,26,29,.45);color:var(--muted);font-size:.85rem}
+  .start{display:flex;align-items:center;gap:1rem}
+  .start button{font-size:1.05rem;padding:.95rem 2.2rem}
+  .start .hint{color:var(--muted);font-size:.85rem}
+  @media (max-width:40rem){.start .hint{display:none}}
+  /* the welcome slide's pieces arrive one after another */
+  .intro.is-active .rise{animation:rise .7s cubic-bezier(.22,.61,.36,1) both}
+  .intro.is-active .rise:nth-child(2){animation-delay:.08s}
+  .intro.is-active .rise:nth-child(3){animation-delay:.16s}
+  .intro.is-active .rise:nth-child(4){animation-delay:.24s}
+  .intro.is-active .rise:nth-child(5){animation-delay:.32s}
+  .intro.is-active .rise:nth-child(6){animation-delay:.40s}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
   @media (prefers-reduced-motion:reduce){
+    .intro.is-active .rise{animation:none}
     .slide{transition:opacity .01ms;transform:none}
     .slide.is-past{transform:none}
     *{transition-duration:.01ms !important}
@@ -188,12 +217,21 @@
 <div class="deck" id="deck">
 
   <!-- 0 intro -->
-  <section class="slide" data-slide data-intro>
+  <section class="slide intro" data-slide data-intro>
     <div class="inner">
-      <h1>ISTE+ASCD Brand System Discovery Survey</h1>
-      <p class="lede">We're building a brand system and governance framework for ISTE+ASCD: a clear hierarchy for our logos, sub-brands, and program marks, plus guidance on when to create new ones and who approves them.</p>
-      <p class="lede">The goal is to make your work easier, so you're not inventing a brand from scratch every time you launch something.</p>
-      <p class="lede">Before we design anything, we want to hear from the people closest to the work. The survey takes about 10 minutes. Most questions are open-ended, and there are no wrong answers.</p>
+      <p class="eyebrow rise">ISTE+ASCD</p>
+      <h1 class="rise">Brand System Discovery Survey</h1>
+      <p class="lead rise">Before we design anything, we want to hear from the people closest to the work.</p>
+      <p class="lede rise">The goal is to make your work easier, so you're not inventing a brand from scratch every time you launch something.</p>
+      <ul class="facts rise">
+        <li>About 10 minutes</li>
+        <li>Mostly open-ended</li>
+        <li>No wrong answers</li>
+      </ul>
+      <div class="start rise">
+        <button type="button" class="primary" id="begin">Begin</button>
+        <span class="hint">or press Enter</span>
+      </div>
     </div>
   </section>
 
@@ -363,6 +401,7 @@
 
 <script src="../config.js"></script>
 <script src="../backdrop.js"></script>
+<script src="../validate.js"></script>
 <script>
 const FORM_ID = window.SURVEY_CONFIG.FORM_ID;
 const ENTRY   = window.SURVEY_CONFIG.ENTRY;
@@ -441,6 +480,7 @@ function show(n, dir){
   setPhoto(g, GROUP.indexOf(g) === i ? 0 : 1);
 
   backBtn.hidden = i === 0;
+  bar.classList.toggle("is-hidden", isIntro);
   nextBtn.textContent = isIntro ? "Begin" : (isLast ? "Send responses" : "Next");
   nextBtn.classList.toggle("send", isLast);
   kbdEl.textContent = isIntro ? "" : "Enter";
@@ -459,6 +499,11 @@ function show(n, dir){
 
 function next(){
   if (sent) return;
+  /* every question is required: stay on this slide until it is answered */
+  if (!slides[i].hasAttribute("data-intro")){
+    const missing = SurveyValidate.check(slides[i]);
+    if (missing){ missing.focus(); return; }
+  }
   if (slides[i].hasAttribute("data-last")) { submit(); return; }
   if (i < slides.length - 1) show(i + 1, "fwd");
 }
@@ -482,6 +527,8 @@ function submit(){
 }
 
 nextBtn.addEventListener("click", next);
+document.getElementById("begin").addEventListener("click", next);
+SurveyValidate.watch(form);
 backBtn.addEventListener("click", back);
 
 document.addEventListener("keydown", function(e){

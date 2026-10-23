@@ -223,6 +223,12 @@
   body.sent .survey,body.sent .progress{display:none}
   body.sent .done{display:block}
 
+
+  /* ---------- required-answer notes ---------- */
+  .err{color:#FF9B8A;font-size:.88rem;margin:.55rem 0 0;font-variation-settings:"wdth" 100,"wght" 500}
+  input[aria-invalid=true],textarea[aria-invalid=true]{border-bottom-color:#FF9B8A}
+  .ramp input[aria-invalid=true] + label,.choice input[aria-invalid=true] + label{border-color:#FF9B8A}
+
   @media (prefers-reduced-motion:reduce){
     .marks g{transition:none;transform:none}
     *{transition-duration:.01ms !important}
@@ -421,6 +427,7 @@
 
 <script src="../config.js"></script>
 <script src="../backdrop.js"></script>
+<script src="../validate.js"></script>
 <script>
 /* Config lives in ../config.js so both formats share one source. */
 const FORM_ID = window.SURVEY_CONFIG.FORM_ID;
@@ -479,8 +486,17 @@ form.addEventListener("keydown", function(e){
 
 /* submit, once */
 let sent = false;
+SurveyValidate.watch(form);
 form.addEventListener("submit", function(e){
   if (sent) { e.preventDefault(); return; }
+  /* every question is required: point to the first one still missing */
+  const missing = SurveyValidate.check(form);
+  if (missing){
+    e.preventDefault();
+    missing.focus({ preventScroll: true });
+    missing.closest(".field").scrollIntoView({ block: "center", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    return;
+  }
   sent = true;
   setTimeout(function(){
     document.body.classList.add("sent");

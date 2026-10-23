@@ -6,7 +6,7 @@
 <!-- Links between pages are relative, so every page URL must end in a slash. -->
 <script>if(!location.pathname.endsWith("/"))location.replace(location.pathname+"/"+location.search+location.hash)</script>
 <title>Brand System Discovery Survey · ISTE+ASCD</title>
-<meta name="description" content="A short discovery survey for the ISTE+ASCD brand system and governance framework.">
+<meta name="description" content="We're building a brand system and governance framework for ISTE+ASCD: a clear hierarchy for our logos, sub-brands, and program marks, plus guidance on when to create new ones and who approves them.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,9 +17,9 @@
     --base:#161A1D;
     --line:#2E373D;
     --line-soft:#242C31;
-    --edge:#626F78;
+    --edge:#8D9BA4;
     --ink:#E8EDF0;
-    --muted:#8D9BA4;
+    --muted:#A9B4BB;
     --accent:#26A7D5;
     --signal:#FDC343;
     --orange:#FAA73C;
@@ -37,7 +37,31 @@
   }
 
   /* ---------- deck ---------- */
-  .deck{position:relative;height:100vh;height:100dvh;width:100%}
+  .deck{position:relative;z-index:1;height:100vh;height:100dvh;width:100%;overflow:hidden}
+
+  /* ---------- photo backdrop with parallax ----------
+     Three layers move at different rates: the photo drifts slowly, shifts a little
+     between slides that share it, and follows the pointer; the questions move most. */
+  .bg{position:fixed;inset:0;z-index:0;overflow:hidden;background:var(--base)}
+  .bg-move{position:absolute;inset:0;transform:translate3d(calc(var(--mx,0) * -14px),calc(var(--my,0) * -10px),0);transition:transform .8s cubic-bezier(.22,.61,.36,1)}
+  .photo{
+    position:absolute;inset:-7%;
+    opacity:0;transform:translate3d(5%,0,0);
+    transition:opacity 1s ease,transform 1.6s cubic-bezier(.22,.61,.36,1);
+  }
+  .photo.is-on{opacity:1;transform:translate3d(calc(var(--step,0) * -2.5%),0,0)}
+  .photo.is-off{transform:translate3d(-5%,0,0)}
+  .photo-img{
+    position:absolute;inset:0;background:center/cover no-repeat;
+    filter:grayscale(.35) contrast(1.05);
+  }
+  .photo.is-on .photo-img{animation:drift 26s ease-in-out infinite alternate}
+  @keyframes drift{from{transform:scale(1.02)}to{transform:scale(1.09)}}
+  /* tint keeps every text and border colour at AA even over a white photo */
+  .bg::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(22,26,29,.84) 0%,rgba(22,26,29,.86) 55%,rgba(22,26,29,.92) 100%);
+  }
   .slide{
     position:absolute;inset:0;
     display:flex;flex-direction:column;justify-content:center;
@@ -66,6 +90,8 @@
     margin:0 0 .35rem;
   }
   .help{display:block;color:var(--muted);font-size:.95rem;margin:0 0 .75rem;max-width:34rem}
+  .section-head{padding:0 1.5rem;margin:0 0 .4rem}
+  .section-head h2{margin:0 0 .3rem;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-variation-settings:"wdth" 110,"wght" 620}
 
   /* ---------- question block with ticks ---------- */
   .block{position:relative;padding:1.3rem 1.5rem 1.4rem}
@@ -90,7 +116,6 @@
   }
   textarea{min-height:4.5rem;line-height:1.45}
   input[type=text]:focus,input[type=email]:focus,textarea:focus{outline:none;border-bottom-color:var(--accent)}
-  ::placeholder{color:#828F98}
 
   .pair{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem}
   @media (max-width:36rem){.pair{grid-template-columns:1fr}}
@@ -102,7 +127,7 @@
   .ramp input{position:absolute;opacity:0;width:0;height:0}
   .ramp label{
     flex:1;display:flex;align-items:center;justify-content:center;
-    height:3.1rem;border:1px solid var(--edge);color:var(--muted);
+    height:3.1rem;border:1px solid var(--edge);color:var(--muted);background:rgba(22,26,29,.55);
     font-variation-settings:"wdth" 100,"wght" 560;cursor:pointer;
     transition:background .15s ease,color .15s ease,border-color .15s ease;
   }
@@ -114,7 +139,7 @@
   .choice{display:flex;gap:.6rem;margin-top:.9rem}
   .choice input{position:absolute;opacity:0;width:0;height:0}
   .choice label{
-    padding:.6rem 1.6rem;border:1px solid var(--edge);color:var(--muted);cursor:pointer;
+    padding:.6rem 1.6rem;border:1px solid var(--edge);color:var(--muted);cursor:pointer;background:rgba(22,26,29,.55);
     transition:background .15s ease,color .15s ease,border-color .15s ease;
   }
   .choice label:hover{border-color:var(--accent);color:var(--ink)}
@@ -123,7 +148,7 @@
 
   /* ---------- controls ---------- */
   .bar{
-    position:fixed;left:0;right:0;bottom:0;
+    position:fixed;left:0;right:0;bottom:0;z-index:2;
     padding:1.1rem 1.5rem 1.3rem;
     display:flex;align-items:center;gap:1rem;
     background:linear-gradient(to top,var(--base) 62%,rgba(22,26,29,0));
@@ -159,6 +184,8 @@
   @media (prefers-reduced-motion:reduce){
     .slide{transition:opacity .01ms;transform:none}
     .slide.is-past{transform:none}
+    .bg-move,.photo,.photo.is-on,.photo.is-off{transform:none}
+    .photo.is-on .photo-img{animation:none}
     *{transition-duration:.01ms !important}
   }
 </style>
@@ -167,15 +194,26 @@
 
 <div class="rule" id="rule"></div>
 
+<!-- Background photos from Pexels (free under the Pexels License, no attribution required):
+     31367512 University lecture hall with diverse students
+     7683734  College students studying together
+     32016079 Teenagers in classroom with blackboard background
+     8199759  Students studying in a library using laptop and books
+     16420473 A group of students sitting in a library and studying
+     7972949  Students studying on laptop outdoors together
+     Pages: https://www.pexels.com/photo/<id>/ -->
+<div class="bg" aria-hidden="true"><div class="bg-move" id="bgMove"></div></div>
+
 <form id="survey" method="POST" target="sink">
 <div class="deck" id="deck">
 
   <!-- 0 intro -->
   <section class="slide" data-slide data-intro>
     <div class="inner">
-      <h1>Before we draw a single logo</h1>
-      <p class="lede">We're building a brand system and governance framework for ISTE+ASCD: a clear hierarchy for our logos, sub-brands and program marks, plus guidance on when to create new ones and who approves them.</p>
-      <p class="lede">Nine short screens, about ten minutes. There are no wrong answers and you can skip anything.</p>
+      <h1>ISTE+ASCD Brand System Discovery Survey</h1>
+      <p class="lede">We're building a brand system and governance framework for ISTE+ASCD: a clear hierarchy for our logos, sub-brands, and program marks, plus guidance on when to create new ones and who approves them.</p>
+      <p class="lede">The goal is to make your work easier, so you're not inventing a brand from scratch every time you launch something.</p>
+      <p class="lede">Before we design anything, we want to hear from the people closest to the work. The survey takes about 10 minutes. Most questions are open-ended, and there are no wrong answers.</p>
     </div>
   </section>
 
@@ -183,8 +221,8 @@
   <section class="slide" data-slide>
     <div class="inner">
       <div class="pair">
-        <div class="block"><label><span class="q">Your name</span><input type="text" data-key="name" autocomplete="name" placeholder="First and last"></label></div>
-        <div class="block"><label><span class="q">Your title</span><input type="text" data-key="title" autocomplete="organization-title" placeholder="As it appears in the directory"></label></div>
+        <div class="block"><label><span class="q">Name</span><input type="text" data-key="name" autocomplete="name"></label></div>
+        <div class="block"><label><span class="q">Title</span><input type="text" data-key="title" autocomplete="organization-title"></label></div>
       </div>
     </div>
   </section>
@@ -193,8 +231,8 @@
   <section class="slide" data-slide>
     <div class="inner">
       <div class="pair">
-        <div class="block"><label><span class="q">Department</span><input type="text" data-key="dept" placeholder="Team or function"></label></div>
-        <div class="block"><label><span class="q">Email</span><input type="email" data-key="email" autocomplete="email" placeholder="So we can follow up if you want"></label></div>
+        <div class="block"><label><span class="q">Department</span><input type="text" data-key="dept"></label></div>
+        <div class="block"><label><span class="q">Email</span><input type="email" data-key="email" autocomplete="email"></label></div>
       </div>
     </div>
   </section>
@@ -202,6 +240,10 @@
   <!-- 3 -->
   <section class="slide" data-slide>
     <div class="inner">
+      <div class="section-head">
+        <h2>Quick ratings</h2>
+        <p class="help">Rate each from 1 to 5. These give us a baseline to measure against when we run this again next year.</p>
+      </div>
       <div class="block">
         <fieldset>
           <legend class="q">How easy is it to find the current approved version of a brand asset when you need it?</legend>
@@ -242,13 +284,14 @@
   <!-- 5 -->
   <section class="slide" data-slide>
     <div class="inner">
+      <div class="section-head"><h2>Open questions</h2></div>
       <div class="block">
         <label><span class="q">What products, programs or initiatives do you own or work on?</span>
         <textarea data-key="q_own" rows="2"></textarea></label>
       </div>
       <div class="block">
-        <label><span class="q">When you need an approved brand asset, where do you go to get it today?</span>
-        <span class="help">The intranet, a shared drive, Slack, a folder someone sent you, or you ask a person.</span>
+        <label><span class="q">When you need an approved brand asset like a logo or template, where do you go to get it today?</span>
+        <span class="help">For example the intranet, a shared drive, Slack, a folder someone sent you, a website, or you ask a person.</span>
         <textarea data-key="q_where" rows="2"></textarea></label>
       </div>
     </div>
@@ -258,12 +301,11 @@
   <section class="slide" data-slide>
     <div class="inner">
       <div class="block">
-        <label><span class="q">If you've needed a new logo or brand asset in the past year, what was it for, and what was hard about getting it?</span>
+        <label><span class="q">If you have needed a new logo, lockup or other brand asset in the past year, what did you need it for, and what was hard about getting it?</span>
         <textarea data-key="q_hard" rows="2"></textarea></label>
       </div>
       <div class="block">
-        <label><span class="q">In your own words, when does something get its own logo, versus the ISTE+ASCD logo with a product name?</span>
-        <span class="help">There's no documented answer right now. We're asking what you believe today.</span>
+        <label><span class="q">In your own words, when does something at ISTE+ASCD get its own logo, versus using the ISTE+ASCD logo with the product name?</span>
         <textarea data-key="q_rule" rows="2"></textarea></label>
       </div>
     </div>
@@ -273,12 +315,13 @@
   <section class="slide" data-slide>
     <div class="inner">
       <div class="block">
-        <label><span class="q">Anything launching or in development before the end of next year that might need a name, logo or brand treatment?</span>
+        <label><span class="q">Is there anything you are working on that is launching or in development between now and the end of next year that might need a name, logo or brand treatment?</span>
         <span class="help">Early and uncertain is fine. A one-line heads up is more useful than nothing.</span>
         <textarea data-key="q_upcoming" rows="2"></textarea></label>
       </div>
       <div class="block">
-        <label><span class="q">Any existing logos or names you think confuse members, or that you're not sure we still use?</span>
+        <label><span class="q">Are there any existing logos or names you think confuse members, or that you're not sure we still use?</span>
+        <span class="help">List as many as come to mind.</span>
         <textarea data-key="q_confuse" rows="2"></textarea></label>
       </div>
     </div>
@@ -288,8 +331,8 @@
   <section class="slide" data-slide>
     <div class="inner">
       <div class="block">
-        <label><span class="q">If you could gain one thing from a brand system, what would it be?</span>
-        <span class="help">A logo request form, ready-made templates, a clear approval contact, a decision guide, or something else.</span>
+        <label><span class="q">If you could gain one thing from the creation of a brand system, what would it be?</span>
+        <span class="help">For example: a logo request form, ready-made templates, a clear approval contact, a decision guide, or something else.</span>
         <textarea data-key="q_gain" rows="2"></textarea></label>
       </div>
       <div class="block">
@@ -305,15 +348,12 @@
       <div class="block">
         <fieldset>
           <legend class="q">Would you be interested in providing additional feedback?</legend>
-          <span class="help">We're holding a few short follow-up conversations.</span>
+          <span class="help">Please indicate if you would be open to a follow up conversation.</span>
           <div class="choice" data-key="followup">
             <input type="radio" id="fu-yes" value="Yes"><label for="fu-yes">Yes</label>
             <input type="radio" id="fu-no" value="No"><label for="fu-no">No</label>
           </div>
         </fieldset>
-      </div>
-      <div class="block">
-        <p class="lede" style="margin:0">That's everything. Thanks for taking the time, this genuinely shapes what gets built.</p>
       </div>
     </div>
   </section>
@@ -322,8 +362,6 @@
   <section class="slide" data-done>
     <div class="inner">
       <h1>Thank you</h1>
-      <p class="lede">Your answers are in. We're reading everything before we propose a hierarchy.</p>
-      <p class="lede">If you said yes to a follow-up, someone will be in touch to find twenty minutes.</p>
     </div>
   </section>
 
@@ -391,6 +429,52 @@ questionSlides.forEach(function(){
 });
 const pips = Array.from(pipsEl.children);
 
+/* background photos: one per group of slides */
+const PHOTOS = ["31367512","7683734","32016079","8199759","16420473","7972949"];
+const GROUP  = [0, 1,1, 2,2, 3,3, 4,4, 5];   /* photo index for each slide; the thank-you screen reuses the last */
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const bgMove = document.getElementById("bgMove");
+const photoEls = PHOTOS.map(function(){
+  const el = document.createElement("div");
+  el.className = "photo";
+  el.innerHTML = '<div class="photo-img"></div>';
+  bgMove.appendChild(el);
+  return el;
+});
+function photoUrl(id){
+  const w = Math.min(2400, Math.round(window.innerWidth * (window.devicePixelRatio || 1) * 1.15));
+  return "https://images.pexels.com/photos/" + id + "/pexels-photo-" + id + ".jpeg?auto=compress&cs=tinysrgb&w=" + w;
+}
+function loadPhoto(n){
+  const el = photoEls[n];
+  if (!el || el.dataset.loaded) return;
+  el.dataset.loaded = "1";
+  el.firstChild.style.backgroundImage = 'url("' + photoUrl(PHOTOS[n]) + '")';
+}
+let photoNow = -1;
+function setPhoto(n, step){
+  loadPhoto(n); loadPhoto(n + 1);              /* fetch the next one early */
+  photoEls.forEach(function(el, k){
+    el.classList.toggle("is-on", k === n);
+    el.classList.toggle("is-off", k !== n && k < n);
+  });
+  photoEls[n].style.setProperty("--step", step);
+  photoNow = n;
+}
+/* pointer parallax on devices with a mouse, off when motion is reduced */
+if (!reduceMotion && window.matchMedia("(pointer: fine)").matches){
+  let raf = 0, mx = 0, my = 0;
+  window.addEventListener("pointermove", function(e){
+    mx = (e.clientX / window.innerWidth) * 2 - 1;
+    my = (e.clientY / window.innerHeight) * 2 - 1;
+    if (!raf) raf = requestAnimationFrame(function(){
+      raf = 0;
+      bgMove.style.setProperty("--mx", mx.toFixed(3));
+      bgMove.style.setProperty("--my", my.toFixed(3));
+    });
+  });
+}
+
 /* only the active slide can take focus or be read aloud */
 slides.concat(doneEl).forEach(function(s){ s.inert = true; });
 
@@ -412,6 +496,9 @@ function show(n, dir){
 
   const isIntro = cur.hasAttribute("data-intro");
   const isLast  = cur.hasAttribute("data-last");
+
+  const g = GROUP[i];
+  setPhoto(g, GROUP.indexOf(g) === i ? 0 : 1);
 
   backBtn.hidden = i === 0;
   nextBtn.textContent = isIntro ? "Begin" : (isLast ? "Send responses" : "Next");
@@ -448,6 +535,7 @@ function submit(){
     slides[i].classList.remove("is-active");
     slides[i].classList.add("is-past");
     doneEl.classList.add("is-active");
+    setPhoto(PHOTOS.length - 1, 2);
     bar.style.display = "none";
     ruleEl.style.width = "100%";
   }, 180);

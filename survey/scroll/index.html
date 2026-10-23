@@ -6,7 +6,7 @@
 <!-- Links between pages are relative, so every page URL must end in a slash. -->
 <script>if(!location.pathname.endsWith("/"))location.replace(location.pathname+"/"+location.search+location.hash)</script>
 <title>Brand System Discovery Survey · ISTE+ASCD</title>
-<meta name="description" content="A short discovery survey for the ISTE+ASCD brand system and governance framework.">
+<meta name="description" content="We're building a brand system and governance framework for ISTE+ASCD: a clear hierarchy for our logos, sub-brands, and program marks, plus guidance on when to create new ones and who approves them.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -249,18 +249,16 @@
       <g style="--dx:-11px;--dy:-12px;--r:12deg"><circle cx="490" cy="105" r="12" fill="#26A7D5"/></g>
     </svg>
 
-    <h1>Fifty-six marks, one organization</h1>
-    <p class="standfirst">We're building a brand system and governance framework for ISTE+ASCD: a clear hierarchy for our logos, sub-brands and program marks, plus guidance on when to create new ones and who approves them.</p>
-    <p class="standfirst">The goal is to make your work easier, so you're not inventing a brand from scratch every time you launch something. Before we design anything, we want to hear from the people closest to the work.</p>
-    <p class="meta">About 10 minutes. Most questions are open-ended, and there are no wrong answers. Responses are summarized as themes.</p>
+    <h1>ISTE+ASCD Brand System Discovery Survey</h1>
+    <p class="standfirst">We're building a brand system and governance framework for ISTE+ASCD: a clear hierarchy for our logos, sub-brands, and program marks, plus guidance on when to create new ones and who approves them.</p>
+    <p class="standfirst">The goal is to make your work easier, so you're not inventing a brand from scratch every time you launch something.</p>
+    <p class="meta">Before we design anything, we want to hear from the people closest to the work. The survey takes about 10 minutes. Most questions are open-ended, and there are no wrong answers.</p>
   </header>
 
   <!-- ================= SURVEY ================= -->
   <form class="survey" id="survey" method="POST" target="sink" novalidate>
 
     <section class="section">
-      <div class="section-head"><h2>About you</h2></div>
-
       <div class="field">
         <div class="ident">
           <label><span class="q">Name</span><input type="text" data-key="name" autocomplete="name"></label>
@@ -273,8 +271,8 @@
 
     <section class="section">
       <div class="section-head">
-        <h2>Four quick ratings</h2>
-        <p class="section-note">One tap each. These set a baseline we'll measure against when we run this again next year.</p>
+        <h2>Quick ratings</h2>
+        <p class="section-note">Rate each from 1 to 5. These give us a baseline to measure against when we run this again next year.</p>
       </div>
 
       <div class="field">
@@ -312,8 +310,7 @@
 
     <section class="section">
       <div class="section-head">
-        <h2>In your words</h2>
-        <p class="section-note">Answer what's relevant to you. Skipping one is fine.</p>
+        <h2>Open questions</h2>
       </div>
 
       <div class="field">
@@ -341,14 +338,13 @@
       <div class="field">
         <label>
           <span class="q">In your own words, when does something at ISTE+ASCD get its own logo, versus using the ISTE+ASCD logo with the product name?</span>
-          <span class="help">There's no documented answer right now. We're asking what you believe today.</span>
           <textarea data-key="q_rule"></textarea>
         </label>
       </div>
 
       <div class="field">
         <label>
-          <span class="q">Is there anything you're working on that's launching or in development between now and the end of next year that might need a name, logo or brand treatment?</span>
+          <span class="q">Is there anything you are working on that is launching or in development between now and the end of next year that might need a name, logo or brand treatment?</span>
           <span class="help">Early and uncertain is fine. A one-line heads up is more useful than nothing.</span>
           <textarea data-key="q_upcoming"></textarea>
         </label>
@@ -365,7 +361,7 @@
       <div class="field">
         <label>
           <span class="q">If you could gain one thing from the creation of a brand system, what would it be?</span>
-          <span class="help">For example a logo request form, ready-made templates, a clear approval contact, a decision guide, or something else.</span>
+          <span class="help">For example: a logo request form, ready-made templates, a clear approval contact, a decision guide, or something else.</span>
           <textarea data-key="q_gain"></textarea>
         </label>
       </div>
@@ -382,7 +378,7 @@
       <div class="field">
         <fieldset>
           <legend class="q">Would you be interested in providing additional feedback?</legend>
-          <span class="help">We're holding a few short follow-up conversations.</span>
+          <span class="help">Please indicate if you would be open to a follow up conversation.</span>
           <div class="choice" data-key="followup">
             <input type="radio" id="fu-yes" value="Yes"><label for="fu-yes">Yes</label>
             <input type="radio" id="fu-no" value="No"><label for="fu-no">No</label>
@@ -392,7 +388,6 @@
 
       <div class="send">
         <button type="submit">Send responses</button>
-        <p>Your answers go to the brand team at ISTE+ASCD and to Lemon Cake Studio.</p>
       </div>
     </section>
 
@@ -401,9 +396,6 @@
   <!-- ================= THANK YOU ================= -->
   <div class="done" id="done">
     <h1>Thank you</h1>
-    <p class="standfirst">Your answers are in. We're reading everything before we propose a hierarchy, and what you told us here shapes what gets built.</p>
-    <p class="standfirst">If you said yes to a follow-up conversation, someone will be in touch to find 20 minutes.</p>
-    <p class="meta">Remembered something after the fact? Send it to the brand team and we'll fold it in.</p>
   </div>
 
 </div>

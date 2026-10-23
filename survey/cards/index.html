@@ -27,15 +27,6 @@
   --font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
   --ease:cubic-bezier(.16,1,.3,1);
 }
-@media (prefers-color-scheme:dark){
-  :root{
-    --bg:#161a1d; --bg-subtle:#1b1f23; --tile:#1d2125; --border:#2c333a; --border-strong:#5b6671;
-    --heading:#f1f4f8; --text:#c7d1db; --muted:#a7b0ba; --action:#38bdf0; --action-hover:#7dd3f5; --on-action:#0b1a2b;
-    --glass:rgba(29,33,37,.62); --glass-edge:rgba(255,255,255,.06); --glow-a:#38bdf033; --glow-b:#faa73b1f;
-    --success:#7ee2b8; --success-bg:#1c3329; --danger:#fd9891; --shadow-hover:0 8px 24px -12px #000a;
-    color-scheme:dark;
-  }
-}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:1rem;line-height:1.6;-webkit-font-smoothing:antialiased}
 body::after{
@@ -55,21 +46,13 @@ body::after{
   padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));
 }
 .top-in{height:100%;max-width:72rem;margin:0 auto;display:flex;align-items:center}
-/* the lockup is used whole; it sits on a white plate in dark mode so its colours stay true */
+/* the lockup is used whole */
 .brand{display:flex;align-items:center;padding:.3rem .5rem;margin-left:-.5rem;border-radius:6px}
 .brand img{display:block;height:2.6rem;width:auto;max-width:100%}
-@media (prefers-color-scheme:dark){.brand{background:#fff}}
 @media (max-width:480px){.brand img{height:2rem}}
 /* the format switcher sits in the header's right side, and drops below it on narrow screens */
 .switcher{top:1rem;z-index:50}   /* above the frosted header */
 @media (max-width:560px){.switcher{top:4.6rem}}
-@media (prefers-color-scheme:light){
-  .switcher{background:rgba(255,255,255,.85);border-color:var(--border)}
-  .switcher a{color:var(--muted)}
-  .switcher a:hover{color:var(--heading);background:var(--tile)}
-  .switcher a[aria-current="page"]{background:var(--tile);color:var(--heading)}
-  .switcher a:focus-visible{outline-color:var(--action)}
-}
 
 .wrap{max-width:48rem;margin:0 auto;padding:3.5rem max(16px,env(safe-area-inset-right,0px)) 8rem max(16px,env(safe-area-inset-left,0px))}
 .eyebrow{font-size:.875rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 .75rem}

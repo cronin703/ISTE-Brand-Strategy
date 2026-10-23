@@ -2,7 +2,7 @@
    Layers move at different rates for a parallax feel: the photo drifts slowly,
    shifts with progress (slides or scroll) and follows the pointer, while the
    questions in front move most. */
-.bg{position:fixed;inset:0;z-index:0;overflow:hidden;background:#161A1D}
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;background:#ffffff}
 .bg-move{
   position:absolute;inset:0;
   transform:translate3d(calc(var(--mx,0) * -14px),calc(var(--my,0) * -10px + var(--sy,0) * -48px),0);
@@ -21,10 +21,10 @@
 }
 .photo.is-on .photo-img{animation:drift 26s ease-in-out infinite alternate}
 @keyframes drift{from{transform:scale(1)}to{transform:scale(1.05)}}
-/* The tint keeps every text and border colour at AA even over a white photo. */
+/* The light tint keeps every text and border colour at AA even over a black photo. */
 .bg::after{
   content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(22,26,29,.84) 0%,rgba(22,26,29,.86) 55%,rgba(22,26,29,.92) 100%);
+  background:linear-gradient(180deg,rgba(255,255,255,.86) 0%,rgba(255,255,255,.88) 55%,rgba(255,255,255,.93) 100%);
 }
 @media (prefers-reduced-motion:reduce){
   .bg-move,.photo,.photo.is-on,.photo.is-off{transform:none;transition:opacity .01ms}

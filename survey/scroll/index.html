@@ -21,15 +21,15 @@
 
 <style>
   :root{
-    --base:#161A1D;
-    --raised:#1E2428;
-    --line:#2E373D;
-    --line-soft:#3A454C;
-    --edge:#8D9BA4;
-    --ink:#E8EDF0;
-    --muted:#A9B4BB;
-    --accent:#26A7D5;
-    --accent-dim:#1B6E8C;
+    --base:#ffffff;
+    --raised:#ffffff;
+    --line:#c9ced6;
+    --line-soft:#dfe1e6;
+    --edge:#5f6875;
+    --ink:#1b365d;
+    --muted:#4f5154;
+    --accent:#085a78;
+    --accent-dim:#0a6e93;
     --signal:#FDC343;
     --ok:#7FD4A8;
     --measure:34rem;
@@ -136,7 +136,7 @@
     outline:none;
     border-bottom-color:var(--accent);
   }
-  input::placeholder,textarea::placeholder{color:#828F98}
+  input::placeholder,textarea::placeholder{color:#6b7480}
 
   /* ---------- identity row ---------- */
   .ident{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem 1.5rem}
@@ -154,7 +154,7 @@
     display:flex;align-items:center;justify-content:center;
     height:2.9rem;
     border:1px solid var(--edge);
-    background:rgba(22,26,29,.55);
+    background:rgba(255,255,255,.75);
     color:var(--muted);
     font-variation-settings:"wdth" 100,"wght" 560;
     font-size:.98rem;
@@ -165,7 +165,7 @@
   .ramp input:checked + label{
     background:var(--accent);
     border-color:var(--accent);
-    color:#07171E;
+    color:#ffffff;
   }
   .ramp input:focus-visible + label{
     outline:2px solid var(--signal);
@@ -179,13 +179,13 @@
   .choice label{
     padding:.55rem 1.4rem;
     border:1px solid var(--edge);
-    background:rgba(22,26,29,.55);
+    background:rgba(255,255,255,.75);
     color:var(--muted);
     cursor:pointer;
     transition:background .15s ease,color .15s ease,border-color .15s ease;
   }
   .choice label:hover{border-color:var(--accent-dim);color:var(--ink)}
-  .choice input:checked + label{background:var(--accent);border-color:var(--accent);color:#07171E}
+  .choice input:checked + label{background:var(--accent);border-color:var(--accent);color:#ffffff}
   .choice input:focus-visible + label{outline:2px solid var(--signal);outline-offset:2px}
 
   /* ---------- submit ---------- */
@@ -225,9 +225,9 @@
 
 
   /* ---------- required-answer notes ---------- */
-  .err{color:#FF9B8A;font-size:.88rem;margin:.55rem 0 0;font-variation-settings:"wdth" 100,"wght" 500}
-  input[aria-invalid=true],textarea[aria-invalid=true]{border-bottom-color:#FF9B8A}
-  .ramp input[aria-invalid=true] + label,.choice input[aria-invalid=true] + label{border-color:#FF9B8A}
+  .err{color:#ae2a19;font-size:.88rem;margin:.55rem 0 0;font-variation-settings:"wdth" 100,"wght" 500}
+  input[aria-invalid=true],textarea[aria-invalid=true]{border-bottom-color:#ae2a19}
+  .ramp input[aria-invalid=true] + label,.choice input[aria-invalid=true] + label{border-color:#ae2a19}
 
   @media (prefers-reduced-motion:reduce){
     .marks g{transition:none;transform:none}
@@ -255,7 +255,7 @@
       <g style="--dx:-14px;--dy:9px;--r:-8deg"><circle cx="26" cy="40" r="19" fill="#26A7D5"/></g>
       <g style="--dx:11px;--dy:-13px;--r:6deg"><rect x="78" y="20" width="40" height="40" fill="#FDC343"/></g>
       <g style="--dx:-9px;--dy:-7px;--r:11deg"><rect x="140" y="26" width="46" height="28" rx="14" fill="#0C258A"/></g>
-      <g style="--dx:16px;--dy:11px;--r:-5deg"><circle cx="230" cy="40" r="13" fill="none" stroke="#E8EDF0" stroke-width="3"/></g>
+      <g style="--dx:16px;--dy:11px;--r:-5deg"><circle cx="230" cy="40" r="13" fill="none" stroke="#1b365d" stroke-width="3"/></g>
       <g style="--dx:-12px;--dy:14px;--r:9deg"><rect x="266" y="24" width="32" height="32" fill="#FAA73C"/></g>
       <g style="--dx:8px;--dy:-10px;--r:-12deg"><path d="M330 58 L352 18 L374 58 Z" fill="#26A7D5"/></g>
       <g style="--dx:-15px;--dy:-6px;--r:7deg"><rect x="396" y="30" width="54" height="20" fill="#3C4A52"/></g>
@@ -264,7 +264,7 @@
       <g style="--dx:12px;--dy:-11px;--r:10deg"><rect x="10" y="88" width="34" height="34" rx="17" fill="#FDC343"/></g>
       <g style="--dx:-10px;--dy:12px;--r:-7deg"><rect x="66" y="92" width="62" height="26" fill="#26A7D5"/></g>
       <g style="--dx:14px;--dy:7px;--r:5deg"><circle cx="166" cy="105" r="17" fill="none" stroke="#FAA73C" stroke-width="4"/></g>
-      <g style="--dx:-13px;--dy:-9px;--r:-11deg"><rect x="206" y="90" width="30" height="30" fill="#E8EDF0"/></g>
+      <g style="--dx:-13px;--dy:-9px;--r:-11deg"><rect x="206" y="90" width="30" height="30" fill="#1b365d"/></g>
       <g style="--dx:9px;--dy:13px;--r:8deg"><rect x="258" y="96" width="70" height="18" rx="9" fill="#3C4A52"/></g>
       <g style="--dx:-16px;--dy:-8px;--r:6deg"><circle cx="366" cy="105" r="20" fill="#0C258A"/></g>
       <g style="--dx:10px;--dy:10px;--r:-6deg"><rect x="408" y="94" width="40" height="22" fill="#FAA73C"/></g>

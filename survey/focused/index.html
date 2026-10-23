@@ -196,11 +196,11 @@
 
 <!-- Background photos from Pexels (free under the Pexels License, no attribution required):
      31367512 University lecture hall with diverse students
-     7683734  College students studying together
+     6147160  Multiethnic students walking near entrance with books and backpacks
      32016079 Teenagers in classroom with blackboard background
-     8199759  Students studying in a library using laptop and books
-     16420473 A group of students sitting in a library and studying
-     7972949  Students studying on laptop outdoors together
+     5940711  Concentrated young diverse students using laptops during lesson in library
+     6146978  Cheerful multiethnic students with books sitting near university
+     5940712  Serious young woman with diverse groupmates working on laptops in library
      Pages: https://www.pexels.com/photo/<id>/ -->
 <div class="bg" aria-hidden="true"><div class="bg-move" id="bgMove"></div></div>
 
@@ -430,7 +430,7 @@ questionSlides.forEach(function(){
 const pips = Array.from(pipsEl.children);
 
 /* background photos: one per group of slides */
-const PHOTOS = ["31367512","7683734","32016079","8199759","16420473","7972949"];
+const PHOTOS = ["31367512","6147160","32016079","5940711","6146978","5940712"];
 const GROUP  = [0, 1,1, 2,2, 3,3, 4,4, 5];   /* photo index for each slide; the thank-you screen reuses the last */
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const bgMove = document.getElementById("bgMove");

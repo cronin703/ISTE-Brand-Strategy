@@ -33,6 +33,7 @@ Three static pages, no build step, no dependencies, in `survey/`:
 | `survey/scroll/index.html` | Every question on one vertical page. |
 | `survey/focused/index.html` | Two questions per full screen, slide motion, Enter to advance. |
 | `survey/config.js` | Shared config. The Form id and the 17 field ids, in one place. |
+| `survey/backdrop.js`, `backdrop.css` | Shared background photos and parallax for both formats. The Pexels photo list lives here. |
 
 Both formats read `window.SURVEY_CONFIG` from `../config.js` and POST to the
 Google Form's `formResponse` endpoint through a hidden iframe. There is exactly

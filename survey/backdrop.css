@@ -1,0 +1,32 @@
+/* Photo backdrop shared by both survey formats.
+   Layers move at different rates for a parallax feel: the photo drifts slowly,
+   shifts with progress (slides or scroll) and follows the pointer, while the
+   questions in front move most. */
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;background:#161A1D}
+.bg-move{
+  position:absolute;inset:0;
+  transform:translate3d(calc(var(--mx,0) * -14px),calc(var(--my,0) * -10px + var(--sy,0) * -48px),0);
+  transition:transform .8s cubic-bezier(.22,.61,.36,1);
+}
+.photo{
+  position:absolute;inset:-8%;
+  opacity:0;transform:translate3d(5%,0,0);
+  transition:opacity 1s ease,transform 1.6s cubic-bezier(.22,.61,.36,1);
+}
+.photo.is-on{opacity:1;transform:translate3d(calc(var(--step,0) * -2.5%),0,0)}
+.photo.is-off{transform:translate3d(-5%,0,0)}
+.photo-img{
+  position:absolute;inset:0;background:center/cover no-repeat;
+  filter:grayscale(.35) contrast(1.05);
+}
+.photo.is-on .photo-img{animation:drift 26s ease-in-out infinite alternate}
+@keyframes drift{from{transform:scale(1.02)}to{transform:scale(1.09)}}
+/* The tint keeps every text and border colour at AA even over a white photo. */
+.bg::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(22,26,29,.84) 0%,rgba(22,26,29,.86) 55%,rgba(22,26,29,.92) 100%);
+}
+@media (prefers-reduced-motion:reduce){
+  .bg-move,.photo,.photo.is-on,.photo.is-off{transform:none;transition:opacity .01ms}
+  .photo.is-on .photo-img{animation:none}
+}

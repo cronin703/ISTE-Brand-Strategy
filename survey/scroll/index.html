@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..700;1,62..125,400..500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../backdrop.css">
 
 <!-- Field IDs live in ../config.js, shared with the focused format. -->
 
@@ -19,10 +20,10 @@
     --base:#161A1D;
     --raised:#1E2428;
     --line:#2E373D;
-    --line-soft:#242C31;
-    --edge:#626F78;
+    --line-soft:#3A454C;
+    --edge:#8D9BA4;
     --ink:#E8EDF0;
-    --muted:#8D9BA4;
+    --muted:#A9B4BB;
     --accent:#26A7D5;
     --accent-dim:#1B6E8C;
     --signal:#FDC343;
@@ -44,7 +45,7 @@
     -webkit-font-smoothing:antialiased;
   }
 
-  .wrap{max-width:46rem;margin:0 auto;padding:0 1.5rem 6rem}
+  .wrap{position:relative;z-index:1;max-width:46rem;margin:0 auto;padding:0 1.5rem 6rem}
 
   /* ---------- hero ---------- */
   .hero{padding:5rem 0 3.25rem;border-bottom:1px solid var(--line-soft)}
@@ -149,7 +150,7 @@
     display:flex;align-items:center;justify-content:center;
     height:2.9rem;
     border:1px solid var(--edge);
-    background:var(--base);
+    background:rgba(22,26,29,.55);
     color:var(--muted);
     font-variation-settings:"wdth" 100,"wght" 560;
     font-size:.98rem;
@@ -174,6 +175,7 @@
   .choice label{
     padding:.55rem 1.4rem;
     border:1px solid var(--edge);
+    background:rgba(22,26,29,.55);
     color:var(--muted);
     cursor:pointer;
     transition:background .15s ease,color .15s ease,border-color .15s ease;
@@ -200,7 +202,7 @@
 
   /* ---------- progress ---------- */
   .progress{
-    position:fixed;right:1.25rem;bottom:1.25rem;
+    position:fixed;right:1.25rem;bottom:1.25rem;z-index:2;
     background:var(--raised);
     border:1px solid var(--line);
     color:var(--muted);
@@ -225,10 +227,13 @@
 </head>
 <body>
 
+<!-- Background photos: see ../backdrop.js -->
+<div class="bg" aria-hidden="true"><div class="bg-move" id="bgMove"></div></div>
+
 <div class="wrap">
 
   <!-- ================= HERO ================= -->
-  <header class="hero">
+  <header class="hero" data-photo="0">
     <svg class="marks" viewBox="0 0 520 132" role="img" aria-label="A field of mismatched marks settling into alignment">
       <g style="--dx:-14px;--dy:9px;--r:-8deg"><circle cx="26" cy="40" r="19" fill="#26A7D5"/></g>
       <g style="--dx:11px;--dy:-13px;--r:6deg"><rect x="78" y="20" width="40" height="40" fill="#FDC343"/></g>
@@ -258,7 +263,7 @@
   <!-- ================= SURVEY ================= -->
   <form class="survey" id="survey" method="POST" target="sink" novalidate>
 
-    <section class="section">
+    <section class="section" data-photo="1">
       <div class="field">
         <div class="ident">
           <label><span class="q">Name</span><input type="text" data-key="name" autocomplete="name"></label>
@@ -269,7 +274,7 @@
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" data-photo="2">
       <div class="section-head">
         <h2>Quick ratings</h2>
         <p class="section-note">Rate each from 1 to 5. These give us a baseline to measure against when we run this again next year.</p>
@@ -308,7 +313,7 @@
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" data-photo="3">
       <div class="section-head">
         <h2>Open questions</h2>
       </div>
@@ -342,7 +347,7 @@
         </label>
       </div>
 
-      <div class="field">
+      <div class="field" data-photo="4">
         <label>
           <span class="q">Is there anything you are working on that is launching or in development between now and the end of next year that might need a name, logo or brand treatment?</span>
           <span class="help">Early and uncertain is fine. A one-line heads up is more useful than nothing.</span>
@@ -374,7 +379,7 @@
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" data-photo="5">
       <div class="field">
         <fieldset>
           <legend class="q">Would you be interested in providing additional feedback?</legend>
@@ -405,6 +410,7 @@
 <div class="progress" id="progress" aria-live="polite"><b>0</b> of 17 answered</div>
 
 <script src="../config.js"></script>
+<script src="../backdrop.js"></script>
 <script>
 /* Config lives in ../config.js so both formats share one source. */
 const FORM_ID = window.SURVEY_CONFIG.FORM_ID;
@@ -468,9 +474,24 @@ form.addEventListener("submit", function(e){
   sent = true;
   setTimeout(function(){
     document.body.classList.add("sent");
+    io.disconnect();
+    backdrop.set(backdrop.count - 1, 0);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, 150);
 });
+
+/* background photo follows the section in the middle of the screen */
+const backdrop = Backdrop(document.getElementById("bgMove"), { scroll: true });
+backdrop.set(0, 0);
+const marked = Array.from(document.querySelectorAll("[data-photo]"));
+const seen = new Map();
+const io = new IntersectionObserver(function(entries){
+  entries.forEach(function(en){ seen.set(en.target, en.isIntersecting); });
+  let pick = -1;
+  marked.forEach(function(el){ if (seen.get(el)) pick = Math.max(pick, +el.dataset.photo); });
+  if (pick >= 0) backdrop.set(pick, 0);
+}, { rootMargin: "-45% 0px -45% 0px" });
+marked.forEach(function(el){ io.observe(el); });
 
 /* one settling moment on load */
 const marks = document.querySelector(".marks");

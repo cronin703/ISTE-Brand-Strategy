@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..700;1,62..125,400..500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../backdrop.css">
 
 <style>
   :root{
@@ -39,29 +40,6 @@
   /* ---------- deck ---------- */
   .deck{position:relative;z-index:1;height:100vh;height:100dvh;width:100%;overflow:hidden}
 
-  /* ---------- photo backdrop with parallax ----------
-     Three layers move at different rates: the photo drifts slowly, shifts a little
-     between slides that share it, and follows the pointer; the questions move most. */
-  .bg{position:fixed;inset:0;z-index:0;overflow:hidden;background:var(--base)}
-  .bg-move{position:absolute;inset:0;transform:translate3d(calc(var(--mx,0) * -14px),calc(var(--my,0) * -10px),0);transition:transform .8s cubic-bezier(.22,.61,.36,1)}
-  .photo{
-    position:absolute;inset:-7%;
-    opacity:0;transform:translate3d(5%,0,0);
-    transition:opacity 1s ease,transform 1.6s cubic-bezier(.22,.61,.36,1);
-  }
-  .photo.is-on{opacity:1;transform:translate3d(calc(var(--step,0) * -2.5%),0,0)}
-  .photo.is-off{transform:translate3d(-5%,0,0)}
-  .photo-img{
-    position:absolute;inset:0;background:center/cover no-repeat;
-    filter:grayscale(.35) contrast(1.05);
-  }
-  .photo.is-on .photo-img{animation:drift 26s ease-in-out infinite alternate}
-  @keyframes drift{from{transform:scale(1.02)}to{transform:scale(1.09)}}
-  /* tint keeps every text and border colour at AA even over a white photo */
-  .bg::after{
-    content:"";position:absolute;inset:0;
-    background:linear-gradient(180deg,rgba(22,26,29,.84) 0%,rgba(22,26,29,.86) 55%,rgba(22,26,29,.92) 100%);
-  }
   .slide{
     position:absolute;inset:0;
     display:flex;flex-direction:column;justify-content:center;
@@ -184,8 +162,6 @@
   @media (prefers-reduced-motion:reduce){
     .slide{transition:opacity .01ms;transform:none}
     .slide.is-past{transform:none}
-    .bg-move,.photo,.photo.is-on,.photo.is-off{transform:none}
-    .photo.is-on .photo-img{animation:none}
     *{transition-duration:.01ms !important}
   }
 </style>
@@ -194,14 +170,7 @@
 
 <div class="rule" id="rule"></div>
 
-<!-- Background photos from Pexels (free under the Pexels License, no attribution required):
-     31367512 University lecture hall with diverse students
-     6147160  Multiethnic students walking near entrance with books and backpacks
-     32016079 Teenagers in classroom with blackboard background
-     5940711  Concentrated young diverse students using laptops during lesson in library
-     6146978  Cheerful multiethnic students with books sitting near university
-     5940712  Serious young woman with diverse groupmates working on laptops in library
-     Pages: https://www.pexels.com/photo/<id>/ -->
+<!-- Background photos: see ../backdrop.js -->
 <div class="bg" aria-hidden="true"><div class="bg-move" id="bgMove"></div></div>
 
 <form id="survey" method="POST" target="sink">
@@ -382,6 +351,7 @@
 <iframe name="sink" style="display:none" title="Form submission target" aria-hidden="true"></iframe>
 
 <script src="../config.js"></script>
+<script src="../backdrop.js"></script>
 <script>
 const FORM_ID = window.SURVEY_CONFIG.FORM_ID;
 const ENTRY   = window.SURVEY_CONFIG.ENTRY;
@@ -429,51 +399,10 @@ questionSlides.forEach(function(){
 });
 const pips = Array.from(pipsEl.children);
 
-/* background photos: one per group of slides */
-const PHOTOS = ["31367512","6147160","32016079","5940711","6146978","5940712"];
-const GROUP  = [0, 1,1, 2,2, 3,3, 4,4, 5];   /* photo index for each slide; the thank-you screen reuses the last */
-const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const bgMove = document.getElementById("bgMove");
-const photoEls = PHOTOS.map(function(){
-  const el = document.createElement("div");
-  el.className = "photo";
-  el.innerHTML = '<div class="photo-img"></div>';
-  bgMove.appendChild(el);
-  return el;
-});
-function photoUrl(id){
-  const w = Math.min(2400, Math.round(window.innerWidth * (window.devicePixelRatio || 1) * 1.15));
-  return "https://images.pexels.com/photos/" + id + "/pexels-photo-" + id + ".jpeg?auto=compress&cs=tinysrgb&w=" + w;
-}
-function loadPhoto(n){
-  const el = photoEls[n];
-  if (!el || el.dataset.loaded) return;
-  el.dataset.loaded = "1";
-  el.firstChild.style.backgroundImage = 'url("' + photoUrl(PHOTOS[n]) + '")';
-}
-let photoNow = -1;
-function setPhoto(n, step){
-  loadPhoto(n); loadPhoto(n + 1);              /* fetch the next one early */
-  photoEls.forEach(function(el, k){
-    el.classList.toggle("is-on", k === n);
-    el.classList.toggle("is-off", k !== n && k < n);
-  });
-  photoEls[n].style.setProperty("--step", step);
-  photoNow = n;
-}
-/* pointer parallax on devices with a mouse, off when motion is reduced */
-if (!reduceMotion && window.matchMedia("(pointer: fine)").matches){
-  let raf = 0, mx = 0, my = 0;
-  window.addEventListener("pointermove", function(e){
-    mx = (e.clientX / window.innerWidth) * 2 - 1;
-    my = (e.clientY / window.innerHeight) * 2 - 1;
-    if (!raf) raf = requestAnimationFrame(function(){
-      raf = 0;
-      bgMove.style.setProperty("--mx", mx.toFixed(3));
-      bgMove.style.setProperty("--my", my.toFixed(3));
-    });
-  });
-}
+/* background photos: one per group of slides (list in ../backdrop.js) */
+const backdrop = Backdrop(document.getElementById("bgMove"));
+const GROUP = [0, 1,1, 2,2, 3,3, 4,4, 5];   /* photo index for each slide; the thank-you screen reuses the last */
+function setPhoto(n, step){ backdrop.set(n, step); }
 
 /* only the active slide can take focus or be read aloud */
 slides.concat(doneEl).forEach(function(s){ s.inert = true; });
@@ -535,7 +464,7 @@ function submit(){
     slides[i].classList.remove("is-active");
     slides[i].classList.add("is-past");
     doneEl.classList.add("is-active");
-    setPhoto(PHOTOS.length - 1, 2);
+    setPhoto(backdrop.count - 1, 2);
     bar.style.display = "none";
     ruleEl.style.width = "100%";
   }, 180);

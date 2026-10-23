@@ -11,6 +11,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..700;1,62..125,400..500&display=swap" rel="stylesheet">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="switcher.css">
 <style>
   :root{
     --base:#161A1D;--line:#2E373D;--line-soft:#242C31;
@@ -23,7 +27,7 @@
     font-variation-settings:"wdth" 100,"wght" 400;
     font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;
   }
-  .wrap{max-width:52rem;margin:0 auto;padding:clamp(3.5rem,9vh,6.5rem) 1.5rem 5rem}
+  .wrap{max-width:52rem;margin:0 auto;padding:clamp(5rem,11vh,7rem) 1.5rem 5rem}
 
   .marks{display:block;width:100%;max-width:22rem;height:auto;margin-bottom:2.5rem}
   .marks g{
@@ -89,6 +93,12 @@
 </style>
 </head>
 <body>
+<!-- Format switcher for the client demo; remove before sending to respondents (see ../switcher.css). -->
+<nav class="switcher" aria-label="Survey formats">
+  <a href="./" aria-current="page">Overview</a>
+  <a href="scroll/">One page</a>
+  <a href="focused/">Slides</a>
+</nav>
 <div class="wrap">
 
   <svg class="marks" viewBox="0 0 420 60" role="img" aria-label="A row of mismatched marks settling into alignment">

@@ -11,6 +11,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..700;1,62..125,400..500&display=swap" rel="stylesheet">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="stylesheet" href="../switcher.css">
 <link rel="stylesheet" href="../backdrop.css">
 
 <!-- Field IDs live in ../config.js, shared with the focused format. -->
@@ -226,6 +230,12 @@
 </style>
 </head>
 <body>
+<!-- Format switcher for the client demo; remove before sending to respondents (see ../switcher.css). -->
+<nav class="switcher" aria-label="Survey formats">
+  <a href="../">Overview</a>
+  <a href="../scroll/" aria-current="page">One page</a>
+  <a href="../focused/">Slides</a>
+</nav>
 
 <!-- Background photos: see ../backdrop.js -->
 <div class="bg" aria-hidden="true"><div class="bg-move" id="bgMove"></div></div>

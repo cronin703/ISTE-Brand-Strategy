@@ -11,6 +11,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..700;1,62..125,400..500&display=swap" rel="stylesheet">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="stylesheet" href="../switcher.css">
 <link rel="stylesheet" href="../backdrop.css">
 
 <style>
@@ -74,6 +78,7 @@
   /* ---------- question block with ticks ---------- */
   .block{position:relative;padding:1.3rem 1.5rem 1.4rem}
   .block + .block{margin-top:1.6rem}
+  .pair > .block + .block{margin-top:0}   /* side-by-side fields share one top line */
   .block::before,.block::after{
     content:"";position:absolute;width:14px;height:14px;
     border-color:var(--line);border-style:solid;border-width:0;
@@ -167,6 +172,12 @@
 </style>
 </head>
 <body>
+<!-- Format switcher for the client demo; remove before sending to respondents (see ../switcher.css). -->
+<nav class="switcher" aria-label="Survey formats">
+  <a href="../">Overview</a>
+  <a href="../scroll/">One page</a>
+  <a href="../focused/" aria-current="page">Slides</a>
+</nav>
 
 <div class="rule" id="rule"></div>
 

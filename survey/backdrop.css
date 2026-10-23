@@ -9,18 +9,18 @@
   transition:transform .8s cubic-bezier(.22,.61,.36,1);
 }
 .photo{
-  position:absolute;inset:-8%;
+  position:absolute;inset:-5%;
   opacity:0;transform:translate3d(5%,0,0);
   transition:opacity 1s ease,transform 1.6s cubic-bezier(.22,.61,.36,1);
 }
 .photo.is-on{opacity:1;transform:translate3d(calc(var(--step,0) * -2.5%),0,0)}
 .photo.is-off{transform:translate3d(-5%,0,0)}
 .photo-img{
-  position:absolute;inset:0;background:center/cover no-repeat;
+  position:absolute;inset:0;background:50% 30%/cover no-repeat;transform-origin:50% 30%;
   filter:grayscale(.35) contrast(1.05);
 }
 .photo.is-on .photo-img{animation:drift 26s ease-in-out infinite alternate}
-@keyframes drift{from{transform:scale(1.02)}to{transform:scale(1.09)}}
+@keyframes drift{from{transform:scale(1)}to{transform:scale(1.05)}}
 /* The tint keeps every text and border colour at AA even over a white photo. */
 .bg::after{
   content:"";position:absolute;inset:0;

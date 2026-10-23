@@ -1,16 +1,25 @@
 /* Photo backdrop shared by both survey formats.
    Photos are from Pexels (free under the Pexels License, no attribution required),
    loaded from their CDN. Page: https://www.pexels.com/photo/<id>/
+   Each was checked for face masks with an image model, and "pos" keeps the
+   detected faces in frame when the photo is cropped to fill the screen.
      5940830  Black students and teacher sitting at conference in university
      6147160  Multiethnic students walking near entrance with books and backpacks
      5940713  Attentive young black groupmates using laptop while preparing for exams
-     5965612  Serious young black female student using laptop near university building
-     6146978  Cheerful multiethnic students with books sitting near university
+     6140679  Young male and female students sitting with papers and laptop in cafeteria
+     6147069  Happy diverse groupmates walking along street after studies
      5940829  Group of multiracial students studying in library with teacher
    Usage: const bg = Backdrop(document.getElementById("bgMove"), { scroll: true });
           bg.set(photoIndex, step); */
 (function(){
-  var PHOTOS = ["5940830","6147160","5940713","5965612","6146978","5940829"];
+  var PHOTOS = [
+    { id: "5940830", pos: "50% 30%" },
+    { id: "6147160", pos: "60% 35%" },
+    { id: "5940713", pos: "50% 30%" },
+    { id: "6140679", pos: "55% 30%" },
+    { id: "6147069", pos: "55% 35%" },
+    { id: "5940829", pos: "70% 25%" }
+  ];
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   window.Backdrop = function(host, opts){
@@ -31,7 +40,8 @@
       var el = els[n];
       if (!el || el.dataset.loaded) return;
       el.dataset.loaded = "1";
-      el.firstChild.style.backgroundImage = 'url("' + url(PHOTOS[n]) + '")';
+      el.firstChild.style.backgroundImage = 'url("' + url(PHOTOS[n].id) + '")';
+      el.firstChild.style.backgroundPosition = PHOTOS[n].pos;
     }
     var now = -1;
     function set(n, step){

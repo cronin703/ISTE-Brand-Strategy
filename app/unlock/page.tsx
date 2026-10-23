@@ -27,6 +27,9 @@ export default async function Unlock({ searchParams }: { searchParams: Promise<{
             required
             autoFocus
             autoComplete="current-password"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             aria-invalid={error ? true : undefined}
             aria-describedby={error ? "password-error" : undefined}
             className="mt-2 h-11 w-full rounded-md border border-border-strong bg-[color-mix(in_srgb,var(--bg)_85%,transparent)] px-3 text-heading"

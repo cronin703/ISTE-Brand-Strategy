@@ -2,9 +2,20 @@ import { NextResponse, type NextRequest } from "next/server";
 import { BASE_PATH } from "@/lib/basePath";
 import { GATE_COOKIE, safeNext, tokenFor, tokenIsValid } from "@/lib/gate";
 
+/** Undo what chat apps and docs add when a password is copied out of them: code-format
+ *  backticks or quotes around it, invisible characters, non-breaking spaces and
+ *  "smart" dashes in place of hyphens. */
+function cleanPassword(raw: string) {
+  return raw
+    .normalize("NFKC")
+    .replace(/[\u200B-\u200D\u2060\uFEFF\u00AD]/g, "")
+    .replace(/[\u2010-\u2015\u2212]/g, "-")
+    .replace(/^[\s`'"\u2018\u2019\u201C\u201D*_]+|[\s`'"\u2018\u2019\u201C\u201D*_]+$/g, "");
+}
+
 export async function POST(request: NextRequest) {
   const form = await request.formData();
-  const password = String(form.get("password") ?? "").trim();
+  const password = cleanPassword(String(form.get("password") ?? ""));
   const next = safeNext(String(form.get("next") ?? ""));
   const token = await tokenFor(password);
   const ok = await tokenIsValid(token);

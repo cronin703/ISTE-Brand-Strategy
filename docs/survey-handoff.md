@@ -38,7 +38,7 @@ Static pages, no build step, no dependencies, in `survey/`:
 | `survey/index.html` | **The survey.** Cards format, Brand Hub style: glass cards with the lockup header, one page. No format switcher or nav. Sends to the Google Form and keeps a draft on the device. |
 | `survey/config.js` | Shared config. The Form id and the field ids, in one place. |
 | `survey/validate.js` | Required-answer checks. |
-| `survey/vercel.json` | Deployed at the project root (not under `survey/`): sends `/` to `/survey/` and keeps trailing slashes. |
+| `survey/vercel.json`, `survey/.vercelignore` | The project deploys `survey/` as its root folder. `vercel.json` serves the files under `/survey/`, sends `/` there, and keeps trailing slashes; `.vercelignore` and a redirect keep the hidden formats off the live site. |
 | `survey/overview/`, `survey/scroll/`, `survey/focused/` | **Hidden.** The old landing page and the One page and Slides formats. Kept in the repo, not deployed. They still use `switcher.css`, `backdrop.*` and have the old seventeen questions. |
 
 The page reads `window.SURVEY_CONFIG` from `config.js` and POSTs to the
@@ -57,9 +57,9 @@ missing.
   rewrites it to the project below, and `proxy.ts` leaves `survey` out of the
   hub password gate.
 
-Only these files are deployed, at these paths: `survey/index.html`,
-`survey/config.js`, `survey/validate.js`, `survey/lockup.png`, the three icons
-under `survey/`, and `survey/vercel.json` at the root as `vercel.json`.
+To deploy: create a production deployment of `iste-brand-survey` from this
+repo's branch with root directory `survey` (the project is not git-connected,
+so pushing alone does not deploy it).
 
 Its own Vercel project, not this one:
 
@@ -67,8 +67,9 @@ Its own Vercel project, not this one:
 - Team `team_UT5ntN82kRB4ftRQQ3iXZYry`
 - Vercel SSO and password protection are both cleared, so respondents are not
   blocked by a Vercel login wall.
-- **No git connection.** It was deployed by pushing inline files through the
-  API. Connecting it to a repo is a reasonable next step.
+- **No git connection.** Since 27 Oct 2026 it is deployed from this repo's
+  branch through the API with root directory `survey` (earlier deploys pushed
+  inline files). Connecting it to the repo is a reasonable next step.
 
 ### Why it is a separate project
 

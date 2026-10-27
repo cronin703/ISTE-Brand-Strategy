@@ -1,6 +1,10 @@
 {
   "trailingSlash": true,
   "redirects": [
-    { "source": "/", "destination": "/survey/", "permanent": false }
+    { "source": "/", "destination": "/survey/", "permanent": false },
+    { "source": "/(overview|scroll|focused)/:path*", "destination": "/survey/", "permanent": false }
+  ],
+  "rewrites": [
+    { "source": "/survey/:path*", "destination": "/:path*" }
   ]
 }

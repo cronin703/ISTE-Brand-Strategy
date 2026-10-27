@@ -5,6 +5,8 @@
     { "source": "/(overview|scroll|focused)/:path*", "destination": "/survey/", "permanent": false }
   ],
   "rewrites": [
-    { "source": "/survey/:path*", "destination": "/:path*" }
+    { "source": "/survey", "destination": "/index.html" },
+    { "source": "/survey/", "destination": "/index.html" },
+    { "source": "/survey/:path+", "destination": "/:path+" }
   ]
 }

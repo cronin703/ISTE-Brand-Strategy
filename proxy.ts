@@ -12,6 +12,6 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Everything except the unlock page, Next's static chunks, the icons and the background photo (shown on the unlock page).
-  matcher: ["/", "/((?!unlock|_next/|favicon|apple-touch-icon|hero/).*)"],
+  // Everything except the unlock page, the public survey, Next's static chunks, the icons and the background photo (shown on the unlock page).
+  matcher: ["/", "/((?!unlock|survey|_next/|favicon|apple-touch-icon|hero/).*)"],
 };

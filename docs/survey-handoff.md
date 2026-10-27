@@ -1,6 +1,6 @@
 # Discovery survey: state of play
 
-Written 22 Oct 2026. Read this before touching anything in `survey/`.
+Written 22 Oct 2026, updated 27 Oct 2026. Read this before touching anything in `survey/`.
 
 This note exists so a fresh session can pick the survey up without re-deriving
 it. Everything below is current as of the date above.
@@ -9,8 +9,14 @@ it. Everything below is current as of the date above.
 
 A stakeholder discovery survey for the ISTE+ASCD brand system and governance
 engagement. It goes out to ISTE staff before any logo hierarchy is proposed.
-Seventeen questions: four identity fields, four 1-5 ratings, eight open
+Fifteen questions: four identity fields, four 1-5 ratings, six open
 questions, one yes/no follow-up ask.
+
+27 Oct 2026, from Maressa: the two "where do you get assets" and "what was hard
+about getting a new asset" questions are now one question (it posts to the
+`q_where` Form field), and "If you could gain one thing..." is removed. The
+Form's `q_hard` and `q_gain` fields stay empty from here on. Only the Cards page
+has these edits; the hidden formats still show the old seventeen.
 
 The questions themselves were built from two kickoff call transcripts and then
 revised against ISTE's own feedback. **The Google Doc is the source of truth for
@@ -25,52 +31,40 @@ her comment anchor.
 
 ## What is built
 
-Three static pages, no build step, no dependencies, in `survey/`:
+Static pages, no build step, no dependencies, in `survey/`:
 
 | Path | What it is |
 |---|---|
-| `survey/index.html` | Landing page. Explains the engagement, offers the two formats. |
-| `survey/scroll/index.html` | Every question on one vertical page. |
-| `survey/focused/index.html` | Two questions per full screen, slide motion, Enter to advance. |
-| `survey/cards/index.html` | Brand Hub style: light (and dark) glass cards with the lockup header, one page. Built from the Claude artifact the client shared on 23 Oct 2026; sends to the Google Form like the others and keeps a draft on the device. |
-| `survey/config.js` | Shared config. The Form id and the 17 field ids, in one place. |
-| `survey/backdrop.js`, `backdrop.css` | Shared background photos and parallax for both formats. The Pexels photo list lives here. |
-| `survey/switcher.css` and the `<nav class="switcher">` on each page | Temporary format switcher for client demos. Remove both before sending the survey to respondents. |
+| `survey/index.html` | **The survey.** Cards format, Brand Hub style: glass cards with the lockup header, one page. No format switcher or nav. Sends to the Google Form and keeps a draft on the device. |
+| `survey/config.js` | Shared config. The Form id and the field ids, in one place. |
+| `survey/validate.js` | Required-answer checks. |
+| `survey/vercel.json` | Deployed at the project root (not under `survey/`): sends `/` to `/survey/` and keeps trailing slashes. |
+| `survey/overview/`, `survey/scroll/`, `survey/focused/` | **Hidden.** The old landing page and the One page and Slides formats. Kept in the repo, not deployed. They still use `switcher.css`, `backdrop.*` and have the old seventeen questions. |
 
-Both formats read `window.SURVEY_CONFIG` from `../config.js` and POST to the
-Google Form's `formResponse` endpoint through a hidden iframe. There is exactly
-one place to edit field ids, deliberately.
-
-All paths between the pages are relative (`scroll/`, `../config.js`), so the
-survey works at the root of a domain or under a sub-path. That only holds while
-every URL ends in a slash, so each page starts with a one-line script that adds
-the slash if it is missing. Server redirects were tried and dropped: Next
-matches `/survey` and `/survey/` as the same path, so a redirect loops.
-
-Design: dark ground `#161A1D` matched to lemoncakestudio.com, Archivo variable
-font using the width axis for display contrast, ISTE sky `#26A7D5` as the
-accent, ISTE gold `#FDC343` spent once on the submit button. Form fields have no
-borders or fills, only corner ticks that turn accent on focus.
+The page reads `window.SURVEY_CONFIG` from `config.js` and POSTs to the
+Google Form's `formResponse` endpoint through a hidden iframe. Links are
+relative, so the page URL must end in a slash; a one-line script adds it if
+missing.
 
 ## Where it is deployed
 
-**URL: `https://lemoncakestudio.com/brand-governance/survey/`, behind the hub
-password (since 23 Oct 2026).** `next.config.ts` rewrites `/brand-governance/survey`
-and everything under it to the standalone project below, and `proxy.ts` gates it
-like every other hub page, so visitors see the hub's unlock page first and land
-back on the survey after the password. Old `/survey/...` links redirect to the
-new address. **To make the survey public**, add `survey/` to the matcher
-exclusions in `proxy.ts` and redeploy the hub. `skipTrailingSlashRedirect` is
-on so Next keeps the slash the survey needs.
+**Public, no password (since 27 Oct 2026).**
 
-The raw project address (`iste-brand-survey.vercel.app`) is not behind the
-password.
+- Target address: `https://brand.iste.org/survey/` (domain added to the
+  project; waiting on ISTE to add the DNS records).
+- Live now: `https://iste-brand-survey.vercel.app/survey/`
+- Also at `https://lemoncakestudio.com/brand-governance/survey/`: `next.config.ts`
+  rewrites it to the project below, and `proxy.ts` leaves `survey` out of the
+  hub password gate.
+
+Only these files are deployed, at these paths: `survey/index.html`,
+`survey/config.js`, `survey/validate.js`, `survey/lockup.png`, the three icons
+under `survey/`, and `survey/vercel.json` at the root as `vercel.json`.
 
 Its own Vercel project, not this one:
 
 - Project `iste-brand-survey`, id `prj_7nITv997PEYovpqoIuZ94HPiG8We`
 - Team `team_UT5ntN82kRB4ftRQQ3iXZYry`
-- Live at `https://iste-brand-survey.vercel.app`
 - Vercel SSO and password protection are both cleared, so respondents are not
   blocked by a Vercel login wall.
 - **No git connection.** It was deployed by pushing inline files through the

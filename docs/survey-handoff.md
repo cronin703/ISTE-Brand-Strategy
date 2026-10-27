@@ -96,8 +96,10 @@ deployed to `iste-brand-survey`, because that project has no git connection.
 **1. Field ids: done (23 Oct 2026).** `survey/config.js` now holds the real
 entry ids and the Form's published id, read from the live form. A test response
 ("TEST submission (delete me)") was recorded by the Form; delete it from the
-Form's Responses tab before launch. Every question is required in both formats
-(`survey/validate.js`); the Google Form itself does not enforce this.
+Form's Responses tab before launch. Every question is required
+(`survey/validate.js`) except open questions 2 to 6 on the Cards page, which are
+optional since 27 Oct 2026 (marked `data-optional`). The Google Form itself does
+not enforce any of this.
 
 **2. The Form is not linked to its response Sheet.** The sheet exists at
 `1SLO5sAPi-shvzxIVrpCfcCR_3N0fXqhLmZtKc2c_Yn4` and nothing writes to it. One

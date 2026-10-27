@@ -1,7 +1,8 @@
 /* Required-answer checks shared by both survey formats.
    SurveyValidate.check(root)  marks every unanswered question inside root and
                                returns the first control to focus, or null.
-   SurveyValidate.watch(root)  clears a question's note as soon as it is answered. */
+   SurveyValidate.watch(root)  clears a question's note as soon as it is answered.
+   Controls marked data-optional are never required. */
 (function(){
   var MSG = {
     text:   "Add an answer to continue.",
@@ -15,6 +16,7 @@
   function units(root){
     var out = [], seen = {};
     root.querySelectorAll("input[type=text], input[type=email], textarea, input[type=radio]").forEach(function(el){
+      if (el.hasAttribute("data-optional")) return;
       if (el.type === "radio"){
         if (seen[el.name]) return;
         seen[el.name] = 1;

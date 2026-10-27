@@ -91,6 +91,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--action);box-shadow:0 
 .q legend{float:left;width:100%}
 .q legend + *{clear:both}
 .q h3 label{cursor:pointer}
+.opt{display:inline-block;margin-left:.35rem;font-size:.75rem;font-weight:600;color:var(--muted);vertical-align:.08em}
 /* a small dot fills in once a question is answered */
 .q::after{content:"";position:absolute;right:0;top:1.4rem;width:1rem;height:1rem;border-radius:50%;border:1.5px solid var(--border-strong);transition:background .2s,border-color .2s}
 .qs > .q:first-child::after{top:.15rem}
@@ -208,23 +209,24 @@ input[aria-invalid=true],textarea[aria-invalid=true]{border-color:var(--danger)}
         <div class="card-head">
           <span class="step">Part two</span>
           <h2 id="h-open">Open questions</h2>
+          <p>Only the first question is required. Answer as many of the rest as you like.</p>
         </div>
         <div class="qs">
           <div class="q" data-q="q_own"><h3><label for="q_own">What products, programs or initiatives do you own or work on?</label></h3>
             <textarea id="q_own" data-key="q_own" rows="4"></textarea></div>
-          <div class="q" data-q="q_where"><h3><label for="q_where">When you need an approved brand asset like a logo or template, where do you go to get it today? And if you've needed a new logo, lockup, or other asset in the past year, what did you need it for and what was hard about getting it?</label></h3>
+          <div class="q" data-q="q_where"><h3><label for="q_where">When you need an approved brand asset like a logo or template, where do you go to get it today? And if you've needed a new logo, lockup, or other asset in the past year, what did you need it for and what was hard about getting it? <span class="opt">Optional</span></label></h3>
             <span class="help" id="q_where-help">For example the intranet, a shared drive, Slack, a folder someone sent you, a website, or you ask a person.</span>
-            <textarea id="q_where" data-key="q_where" rows="4" aria-describedby="q_where-help"></textarea></div>
-          <div class="q" data-q="q_rule"><h3><label for="q_rule">In your own words, when does something at ISTE+ASCD get its own logo, versus using the ISTE+ASCD logo with the product name?</label></h3>
-            <textarea id="q_rule" data-key="q_rule" rows="4"></textarea></div>
-          <div class="q" data-q="q_upcoming"><h3><label for="q_upcoming">Is there anything you are working on that is launching or in development between now and the end of next year that might need a name, logo or brand treatment?</label></h3>
+            <textarea id="q_where" data-key="q_where" data-optional rows="4" aria-describedby="q_where-help"></textarea></div>
+          <div class="q" data-q="q_rule"><h3><label for="q_rule">In your own words, when does something at ISTE+ASCD get its own logo, versus using the ISTE+ASCD logo with the product name? <span class="opt">Optional</span></label></h3>
+            <textarea id="q_rule" data-key="q_rule" data-optional rows="4"></textarea></div>
+          <div class="q" data-q="q_upcoming"><h3><label for="q_upcoming">Is there anything you are working on that is launching or in development between now and the end of next year that might need a name, logo or brand treatment? <span class="opt">Optional</span></label></h3>
             <span class="help" id="q_upcoming-help">Early and uncertain is fine. A one-line heads up is more useful than nothing.</span>
-            <textarea id="q_upcoming" data-key="q_upcoming" rows="4" aria-describedby="q_upcoming-help"></textarea></div>
-          <div class="q" data-q="q_confuse"><h3><label for="q_confuse">Are there any existing logos or names you think confuse members, or that you're not sure we still use?</label></h3>
+            <textarea id="q_upcoming" data-key="q_upcoming" data-optional rows="4" aria-describedby="q_upcoming-help"></textarea></div>
+          <div class="q" data-q="q_confuse"><h3><label for="q_confuse">Are there any existing logos or names you think confuse members, or that you're not sure we still use? <span class="opt">Optional</span></label></h3>
             <span class="help" id="q_confuse-help">List as many as come to mind.</span>
-            <textarea id="q_confuse" data-key="q_confuse" rows="4" aria-describedby="q_confuse-help"></textarea></div>
-          <div class="q" data-q="q_else"><h3><label for="q_else">Anything else on your mind?</label></h3>
-            <textarea id="q_else" data-key="q_else" rows="4"></textarea></div>
+            <textarea id="q_confuse" data-key="q_confuse" data-optional rows="4" aria-describedby="q_confuse-help"></textarea></div>
+          <div class="q" data-q="q_else"><h3><label for="q_else">Anything else on your mind? <span class="opt">Optional</span></label></h3>
+            <textarea id="q_else" data-key="q_else" data-optional rows="4"></textarea></div>
         </div>
       </section>
 

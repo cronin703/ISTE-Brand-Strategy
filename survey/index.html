@@ -56,10 +56,6 @@ h1{color:var(--heading);font-size:clamp(2.2rem,5.5vw,3.25rem);line-height:1.05;l
 h2{color:var(--heading);font-size:1.5rem;line-height:1.25;font-weight:700;margin:0 0 .35rem}
 .lede{max-width:38rem;display:flex;flex-direction:column;gap:.9rem;font-size:1.125rem;color:var(--muted)}
 .lede p{margin:0}
-.meta-row{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.5rem}
-.tag{display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;font-weight:600;padding:.25rem .6rem;border-radius:6px;background:var(--tile);color:var(--heading);border:1px solid var(--border)}
-.tag i{width:.5rem;height:.5rem;border-radius:50%;background:var(--accent)}
-.tag.o i{background:var(--orange)}
 
 /* cards */
 .card{
@@ -87,15 +83,11 @@ input:focus,textarea:focus{outline:none;border-color:var(--action);box-shadow:0 
 .qs{display:flex;flex-direction:column}
 .q{padding:1.25rem 0;border:0;border-top:1px solid var(--border);margin:0;min-width:0;position:relative}
 .qs > .q:first-child{border-top:0;padding-top:0}
-.q h3,.q legend{color:var(--heading);font-size:1rem;font-weight:600;line-height:1.45;margin:0 0 .8rem;padding:0 1.75rem 0 0;text-wrap:pretty}
+.q h3,.q legend{color:var(--heading);font-size:1rem;font-weight:600;line-height:1.45;margin:0 0 .8rem;padding:0;text-wrap:pretty}
 .q legend{float:left;width:100%}
 .q legend + *{clear:both}
 .q h3 label{cursor:pointer}
 .opt{display:inline-block;margin-left:.35rem;font-size:.75rem;font-weight:600;color:var(--muted);vertical-align:.08em}
-/* a small dot fills in once a question is answered */
-.q::after{content:"";position:absolute;right:0;top:1.4rem;width:1rem;height:1rem;border-radius:50%;border:1.5px solid var(--border-strong);transition:background .2s,border-color .2s}
-.qs > .q:first-child::after{top:.15rem}
-.q.done::after{background:var(--accent);border-color:var(--accent);box-shadow:inset 0 0 0 3px var(--bg)}
 .q .help{display:block;clear:both;color:var(--muted);font-size:.875rem;margin:-.4rem 0 .75rem}
 
 .ramp{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.5rem;clear:both}
@@ -157,15 +149,13 @@ input[aria-invalid=true],textarea[aria-invalid=true]{border-color:var(--danger)}
 
 <main class="wrap">
   <div id="view-survey">
-    <p class="eyebrow">ISTE+ASCD Brand Hub</p>
-    <h1>Brand System Discovery Survey</h1>
-    <div class="lede">
-      <p>We're building a brand system and governance framework for ISTE+ASCD: a clear hierarchy for our logos, sub-brands, and program marks, plus guidance on when to create new ones and who approves them.</p>
-      <p>The goal is to make your work easier, so you're not inventing a brand from scratch every time you launch something.</p>
-    </div>
-    <div class="meta-row">
-      <span class="tag"><i></i>About 10 minutes</span>
-      <span class="tag o"><i></i>Mostly open-ended, no wrong answers</span>
+    <div id="intro">
+      <p class="eyebrow">ISTE+ASCD Brand Hub</p>
+      <h1>Brand System Discovery Survey</h1>
+      <div class="lede">
+        <p>We're building a brand system and governance framework for the <em>International Society for Transforming Education</em>. A clear hierarchy for our logos, sub-brands, and program marks, plus guidance on when to create new ones and who approves them.</p>
+        <p>The goal is to make your work easier, so you're not inventing a brand from scratch every time you launch a product, program or initiative.</p>
+      </div>
     </div>
 
     <form id="survey" method="POST" target="sink" novalidate>
@@ -193,7 +183,7 @@ input[aria-invalid=true],textarea[aria-invalid=true]{border-color:var(--danger)}
           <fieldset class="q" data-q="r_find"><legend>How easy is it to find the current approved version of a brand asset when you need it?</legend>
             <div class="ramp" data-key="r_find" data-lo="Not easy at all" data-hi="Very easy"></div>
             <div class="ends"><span>Not easy at all</span><span>Very easy</span></div></fieldset>
-          <fieldset class="q" data-q="r_clear"><legend>How clear are you on when something gets its own logo versus using the ISTE+ASCD logo with a product name?</legend>
+          <fieldset class="q" data-q="r_clear"><legend>How clear are you on when a product, program or initiative gets its own logo versus using the ISTE+ASCD logo with a product name?</legend>
             <div class="ramp" data-key="r_clear" data-lo="Not clear at all" data-hi="Very clear"></div>
             <div class="ends"><span>Not clear at all</span><span>Very clear</span></div></fieldset>
           <fieldset class="q" data-q="r_consistent"><legend>How consistent does ISTE+ASCD's brand look across our products and materials today?</legend>
@@ -217,7 +207,7 @@ input[aria-invalid=true],textarea[aria-invalid=true]{border-color:var(--danger)}
           <div class="q" data-q="q_where"><h3><label for="q_where">When you need an approved brand asset like a logo or template, where do you go to get it today? And if you've needed a new logo, lockup, or other asset in the past year, what did you need it for and what was hard about getting it? <span class="opt">Optional</span></label></h3>
             <span class="help" id="q_where-help">For example the intranet, a shared drive, Slack, a folder someone sent you, a website, or you ask a person.</span>
             <textarea id="q_where" data-key="q_where" data-optional rows="4" aria-describedby="q_where-help"></textarea></div>
-          <div class="q" data-q="q_rule"><h3><label for="q_rule">In your own words, when does something at ISTE+ASCD get its own logo, versus using the ISTE+ASCD logo with the product name? <span class="opt">Optional</span></label></h3>
+          <div class="q" data-q="q_rule"><h3><label for="q_rule">In your own words, when does a product, program or initiative at ISTE+ASCD get its own logo, versus using the ISTE+ASCD logo with the product name? <span class="opt">Optional</span></label></h3>
             <textarea id="q_rule" data-key="q_rule" data-optional rows="4"></textarea></div>
           <div class="q" data-q="q_upcoming"><h3><label for="q_upcoming">Is there anything you are working on that is launching or in development between now and the end of next year that might need a name, logo or brand treatment? <span class="opt">Optional</span></label></h3>
             <span class="help" id="q_upcoming-help">Early and uncertain is fine. A one-line heads up is more useful than nothing.</span>
@@ -289,11 +279,6 @@ form.querySelectorAll("[data-key]").forEach(function(el){
 form.querySelectorAll(".choice input").forEach(function(el){ el.name = ENTRY.followup; el.dataset.key = "followup"; });
 
 /* progress and the per-question dots */
-function answered(q){
-  const t = q.querySelector("input[type=text], input[type=email], textarea");
-  if (t) return t.value.trim() !== "";
-  return !!q.querySelector("input[type=radio]:checked");
-}
 function updateProgress(){
   let n = 0;
   form.querySelectorAll("input[type=text], input[type=email], textarea").forEach(function(el){ if (el.value.trim()) n++; });
@@ -301,7 +286,6 @@ function updateProgress(){
   n += groups.size;
   document.getElementById("pcount").textContent = n;
   document.getElementById("pfill").style.width = (n / 15 * 100) + "%";
-  form.querySelectorAll(".q").forEach(function(q){ q.classList.toggle("done", answered(q)); });
 }
 
 /* keep a draft on this device in case the tab closes */
@@ -347,6 +331,7 @@ form.addEventListener("submit", function(e){
   setTimeout(function(){
     try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
     form.hidden = true;
+    document.getElementById("intro").hidden = true;
     document.getElementById("progress").hidden = true;
     document.getElementById("thanks").hidden = false;
     window.scrollTo({ top: 0 });

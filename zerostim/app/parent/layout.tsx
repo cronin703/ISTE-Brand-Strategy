@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { requireParent } from "@/lib/auth";
 import { Logo } from "@/components/logo";
-import { logout } from "../actions";
+import { dbConfigured } from "@/lib/db";
+import { SetupNeeded } from "@/components/setup-needed";
 
 export default async function ParentLayout({ children }: { children: React.ReactNode }) {
   await requireParent();
+  if (!dbConfigured()) return <SetupNeeded />;
   return (
     <main className="page">
       <header className="topbar has-nav">
@@ -12,7 +14,7 @@ export default async function ParentLayout({ children }: { children: React.React
         <nav className="topnav" aria-label="Parent">
           <Link href="/parent" className="btn btn-ghost">Week</Link>
           <Link href="/parent/history" className="btn btn-ghost">History</Link>
-          <form action={logout}><button className="btn btn-ghost">Log out</button></form>
+          <Link href="/parent/share" className="btn btn-ghost">Share</Link>
         </nav>
       </header>
       {children}

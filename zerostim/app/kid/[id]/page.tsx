@@ -7,12 +7,16 @@ import { loadWeek } from "@/lib/load";
 import { ChoreGrid, PayoutPoster, Tallies } from "@/components/week";
 import { Logo } from "@/components/logo";
 import { logout } from "../../actions";
+import { dbConfigured } from "@/lib/db";
+import { SetupNeeded } from "@/components/setup-needed";
+import { Avatar } from "@/components/avatar";
 
 export default async function KidPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const kid = getKid(id);
   if (!kid) notFound();
   const session = await requireKidAccess(kid.id);
+  if (!dbConfigured()) return <SetupNeeded />;
   const week = weekStart(today());
   const { summary, paid } = await loadWeek(kid, week);
 
@@ -23,7 +27,10 @@ export default async function KidPage({ params }: { params: Promise<{ id: string
         {session.role === "parent" ? (
           <Link href={`/parent?kid=${kid.id}`} className="btn btn-ghost">Back to manage</Link>
         ) : (
-          <form action={logout}><button className="btn btn-ghost">Switch user</button></form>
+          <form action={logout} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Avatar id={kid.id} name={kid.name} size={32} />
+            <button className="btn btn-ghost">Switch user</button>
+          </form>
         )}
       </header>
       <PayoutPoster kid={kid} s={summary} paid={paid} heading={`Hi ${kid.name}`} />

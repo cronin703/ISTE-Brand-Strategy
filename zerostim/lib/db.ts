@@ -186,6 +186,11 @@ function pgStore(url: string): Store {
   };
 }
 
+/** False on Vercel until a Postgres database is connected. */
+export function dbConfigured(): boolean {
+  return Boolean(process.env.DATABASE_URL) || !process.env.VERCEL;
+}
+
 export function db(): Store {
   const url = process.env.DATABASE_URL;
   if (url) return pgStore(url);

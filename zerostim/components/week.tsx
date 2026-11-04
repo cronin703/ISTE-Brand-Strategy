@@ -12,7 +12,7 @@ export function PayoutPoster(p: { kid: Kid; s: WeekSummary; paid: boolean; headi
     <section className="poster" aria-labelledby="payout-h">
       <div className="poster-top">
         <div>
-          <h1 className="puffy poster-name">{p.heading}</h1>
+          <h1 className="display poster-name">{p.heading}</h1>
           <p className="poster-sub">{MOOD_LINE[mood]}</p>
         </div>
         <Mascot mood={mood} size={104} className="mascot" />
@@ -21,7 +21,7 @@ export function PayoutPoster(p: { kid: Kid; s: WeekSummary; paid: boolean; headi
         <h2 id="payout-h" className="poster-label">
           Payout this week {p.paid && <span className="paid-chip">Paid</span>}
         </h2>
-        <p key={s.payoutCents} className="puffy poster-amount" aria-live="polite">{money(s.payoutCents)}</p>
+        <p key={s.payoutCents} className="display poster-amount" aria-live="polite">{money(s.payoutCents)}</p>
       </div>
       <dl className="math">
         <div><dt>Start</dt><dd>{money(s.baseCents)}</dd></div>

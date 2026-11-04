@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource/bagel-fat-one";
-import "@fontsource-variable/rubik";
+import "@fontsource-variable/bricolage-grotesque/standard.css";
 import "./globals.css";
 
 export const metadata: Metadata = {

@@ -6,7 +6,7 @@ import { login, type LoginState } from "../actions";
 export function LoginForm({ who, isParent }: { who: string; isParent: boolean }) {
   const [state, action, pending] = useActionState<LoginState, FormData>(login, {});
   return (
-    <form action={action} className="card">
+    <form action={action} className="panel">
       <input type="hidden" name="who" value={who} />
       <div className="field">
         <label htmlFor="secret">{isParent ? "Password" : "PIN"}</label>
@@ -23,7 +23,7 @@ export function LoginForm({ who, isParent }: { who: string; isParent: boolean })
         />
         {state.error && <p id="login-error" className="error" role="alert">{state.error}</p>}
       </div>
-      <button className="btn btn-primary" disabled={pending} aria-busy={pending || undefined}>
+      <button className="btn btn-solid" disabled={pending} aria-busy={pending || undefined}>
         {pending ? "Checking…" : isParent ? "Log in" : "See my week"}
       </button>
     </form>

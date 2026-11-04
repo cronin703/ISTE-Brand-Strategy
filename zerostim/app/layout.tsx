@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import "@fontsource/bagel-fat-one";
+import "@fontsource-variable/rubik";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -12,8 +14,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f6f4ef" },
-    { media: "(prefers-color-scheme: dark)", color: "#16181d" },
+    { media: "(prefers-color-scheme: light)", color: "#fff0f2" },
+    { media: "(prefers-color-scheme: dark)", color: "#17151e" },
   ],
 };
 

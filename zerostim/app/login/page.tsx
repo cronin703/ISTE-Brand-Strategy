@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { getKid } from "@/lib/family";
+import { Logo } from "@/components/logo";
+import { Mascot } from "@/components/mascot";
 import { LoginForm } from "./form";
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ who?: string }> }) {
@@ -8,16 +10,21 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const isParent = !kid;
 
   return (
-    <main className="page">
+    <main className="page" data-world={isParent ? "parent" : kid.id}>
       <header className="topbar">
-        <Link href="/" className="brand"><img src="/icon.svg" alt="" />ZeroStim</Link>
+        <Logo href="/" />
+        <Link href="/" className="btn btn-ghost">Not you?</Link>
       </header>
-      <div>
-        <h1>{isParent ? "Parent log in" : `Hi, ${kid.name}`}</h1>
-        <p className="muted">{isParent ? "Manage chores, tallies, and payouts." : "Type your PIN to see your week."}</p>
+      <section className="login-hero enter-1">
+        <div style={{ flex: 1 }}>
+          <h1 className="puffy">{isParent ? "Parent" : `Hi ${kid.name}`}</h1>
+          <p>{isParent ? "Log in to manage chores and payouts." : "Type your PIN to see your week."}</p>
+        </div>
+        <Mascot size={88} className="mascot" mood="great" />
+      </section>
+      <div className="enter-2">
+        <LoginForm who={isParent ? "parent" : kid.id} isParent={isParent} />
       </div>
-      <LoginForm who={isParent ? "parent" : kid.id} isParent={isParent} />
-      <Link href="/" className="btn btn-ghost">Not you? Go back</Link>
     </main>
   );
 }

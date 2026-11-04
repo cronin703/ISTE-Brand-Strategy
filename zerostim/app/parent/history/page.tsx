@@ -21,18 +21,19 @@ export default async function History({ searchParams }: { searchParams: Promise<
   const hasData = entries.length > 0;
 
   return (
-    <>
+    <div data-world={kid.id} style={{ display: "contents" }}>
       <KidTabs base="/parent/history" current={kid.id} />
-      <div>
-        <h1>{kid.name}&apos;s last {WEEKS} weeks</h1>
-        <p className="muted small">Paid out {money(totalPaid)} · Chores {chorePossible ? Math.round((choreDone / chorePossible) * 100) : 0}% done</p>
-      </div>
+      <h1 className="history-title enter-1">{kid.name}&apos;s last {WEEKS} weeks</h1>
+      <dl className="stats enter-2">
+        <div className="stat"><dt>Paid out</dt><dd>{money(totalPaid)}</dd></div>
+        <div className="stat"><dt>Chores done</dt><dd>{chorePossible ? Math.round((choreDone / chorePossible) * 100) : 0}%</dd></div>
+      </dl>
 
       {!hasData && (
         <p className="notice">Nothing logged yet. Check off chores and tally deductions on This week, and trends show up here.</p>
       )}
 
-      <section className="card" aria-labelledby="pay-h">
+      <section className="panel" aria-labelledby="pay-h">
         <h2 id="pay-h">Weekly payout</h2>
         <div className="bars">
           {weeks.map((w) => (
@@ -47,7 +48,7 @@ export default async function History({ searchParams }: { searchParams: Promise<
         </div>
       </section>
 
-      <section className="card" aria-labelledby="tbl-h">
+      <section className="panel" aria-labelledby="tbl-h">
         <h2 id="tbl-h">Week by week</h2>
         <div className="scroll-x">
           <table className="table">
@@ -67,10 +68,10 @@ export default async function History({ searchParams }: { searchParams: Promise<
             </tbody>
           </table>
         </div>
-        <p className="muted small">✓ = marked paid</p>
+        <p className="muted small">✓ means marked paid</p>
       </section>
 
-      <section className="card" aria-labelledby="ded-h">
+      <section className="panel" aria-labelledby="ded-h">
         <h2 id="ded-h">Most common deductions</h2>
         {dedCounts.length === 0 ? (
           <p className="muted small">No deductions in the last {WEEKS} weeks.</p>
@@ -88,6 +89,6 @@ export default async function History({ searchParams }: { searchParams: Promise<
           </div>
         )}
       </section>
-    </>
+    </div>
   );
 }

@@ -4,7 +4,8 @@ import { getKid, HOUSE_RULES } from "@/lib/family";
 import { formatRange, today, weekStart } from "@/lib/dates";
 import { requireKidAccess } from "@/lib/auth";
 import { loadWeek } from "@/lib/load";
-import { ChoreGrid, PayoutCard, Tallies } from "@/components/week";
+import { ChoreGrid, PayoutPoster, Tallies } from "@/components/week";
+import { Logo } from "@/components/logo";
 import { logout } from "../../actions";
 
 export default async function KidPage({ params }: { params: Promise<{ id: string }> }) {
@@ -16,24 +17,21 @@ export default async function KidPage({ params }: { params: Promise<{ id: string
   const { summary, paid } = await loadWeek(kid, week);
 
   return (
-    <main className="page">
+    <main className="page" data-world={kid.id}>
       <header className="topbar">
-        <span className="brand"><img src="/icon.svg" alt="" />ZeroStim</span>
+        <Logo />
         {session.role === "parent" ? (
           <Link href={`/parent?kid=${kid.id}`} className="btn btn-ghost">Back to manage</Link>
         ) : (
           <form action={logout}><button className="btn btn-ghost">Switch user</button></form>
         )}
       </header>
-      <div>
-        <h1>Hi {kid.name}!</h1>
-        <p className="muted">Here&apos;s your week, {formatRange(week)}.</p>
-      </div>
-      <PayoutCard kid={kid} s={summary} paid={paid} />
+      <PayoutPoster kid={kid} s={summary} paid={paid} heading={`Hi ${kid.name}`} />
+      <p className="muted small" style={{ textAlign: "center" }}>Week of {formatRange(week)}</p>
       <ChoreGrid kid={kid} s={summary} editable={false} />
       <Tallies kid={kid} s={summary} kind="bonus" editable={false} />
       <Tallies kid={kid} s={summary} kind="deduction" editable={false} />
-      <section className="card" aria-labelledby="rules-h">
+      <section className="panel" aria-labelledby="rules-h">
         <h2 id="rules-h">House rules</h2>
         <ul className="rules">{HOUSE_RULES.map((r) => <li key={r}>{r}</li>)}</ul>
       </section>

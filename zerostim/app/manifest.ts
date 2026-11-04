@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "ZeroStim",
     start_url: "/",
     display: "standalone",
-    background_color: "#f6f4ef",
-    theme_color: "#f6f4ef",
+    background_color: "#e8173a",
+    theme_color: "#e8173a",
     icons: [{ src: "/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" }],
   };
 }

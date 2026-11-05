@@ -1,49 +1,12 @@
-import { KIDS, money, type Item } from "@/lib/family";
+import { KIDS, money } from "@/lib/family";
 import { addDays, formatRange, today, weekStart } from "@/lib/dates";
 import { kidIn, loadSettingsBook } from "@/lib/settings";
 import { Avatar } from "@/components/avatar";
 import { saveSettings } from "../../actions";
 import { Pending } from "../../ui";
+import { ListEditor } from "@/components/list-editor";
 
 const dollars = (c: number) => (c / 100).toFixed(2);
-
-function ItemRows({ prefix, items, blanks }: { prefix: string; items: Item[]; blanks: number }) {
-  const rows = [...items, ...Array.from({ length: blanks }, () => ({ id: "", label: "", cents: 0 }))];
-  return (
-    <div className="item-rows">
-      <input type="hidden" name={`${prefix}_count`} value={rows.length} />
-      <div className="item-row item-row-head" aria-hidden="true">
-        <span>What</span>
-        <span>Amount</span>
-      </div>
-      {rows.map((it, i) => (
-        <div className="item-row" key={`${prefix}-${i}`}>
-          <input type="hidden" name={`${prefix}_id_${i}`} value={it.id} />
-          <label className="sr-only" htmlFor={`${prefix}_label_${i}`}>Name for line {i + 1}</label>
-          <input
-            id={`${prefix}_label_${i}`}
-            name={`${prefix}_label_${i}`}
-            defaultValue={it.label}
-            placeholder={it.id ? "" : "Add another"}
-            maxLength={80}
-          />
-          <label className="sr-only" htmlFor={`${prefix}_amt_${i}`}>Amount for item {i + 1}</label>
-          <span className="money-input">
-            <span aria-hidden="true">$</span>
-            <input
-              id={`${prefix}_amt_${i}`}
-              name={`${prefix}_amt_${i}`}
-              inputMode="decimal"
-              defaultValue={it.id ? dollars(it.cents) : ""}
-              placeholder="0.00"
-            />
-          </span>
-        </div>
-      ))}
-      <p className="muted small">Clear a name to remove that line.</p>
-    </div>
-  );
-}
 
 export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ saved?: string; error?: string }> }) {
   const sp = await searchParams;
@@ -87,9 +50,13 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
                 <p className="muted small">All the week&apos;s chores add up to this. That&apos;s {money(Math.round(kid.baseCents / 7))} a day, or {money(Math.round(kid.baseCents / 7 / Math.max(1, kid.chores.length)))} per chore. Anything not signed off comes off.</p>
               </div>
               <div className="field">
-                <label htmlFor={`chores_${k.id}`}>Daily chores</label>
-                <textarea id={`chores_${k.id}`} name={`chores_${k.id}`} rows={kid.chores.length + 1} defaultValue={kid.chores.map((c) => c.label).join("\n")} />
-                <p className="muted small">One chore per line.</p>
+                <span className="field-label" id={`chores-l-${k.id}`}>Daily chores</span>
+                <ListEditor
+                  prefix={`chore_${k.id}`}
+                  initial={kid.chores.map((c) => ({ id: c.id, label: c.label }))}
+                  addLabel="Add a chore"
+                  itemName="chore"
+                />
               </div>
             </section>
           );
@@ -97,12 +64,12 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
 
         <section className="panel" aria-labelledby="set-ded">
           <h2 id="set-ded">Deductions</h2>
-          <ItemRows prefix="ded" items={s.deductions} blanks={2} />
+          <ListEditor prefix="ded" withAmount initial={s.deductions.map((d) => ({ id: d.id, label: d.label, amount: dollars(d.cents) }))} addLabel="Add a deduction" itemName="deduction" />
         </section>
 
         <section className="panel" aria-labelledby="set-bon">
           <h2 id="set-bon">Bonuses</h2>
-          <ItemRows prefix="bon" items={s.bonuses} blanks={2} />
+          <ListEditor prefix="bon" withAmount initial={s.bonuses.map((b) => ({ id: b.id, label: b.label, amount: dollars(b.cents) }))} addLabel="Add a bonus" itemName="bonus" />
           <div className="field">
             <label htmlFor="bonusCap">Most bonus money a kid can earn in a week</label>
             <span className="money-input money-input-lg">

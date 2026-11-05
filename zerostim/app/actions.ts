@@ -126,17 +126,16 @@ export async function saveSettings(form: FormData) {
       // Keep each chore's id when its wording is unchanged, so past check marks still line up.
       const existing = new Map(before.kids[k.id].chores.map((c) => [c.label.toLowerCase(), c.id]));
       const used = new Set<string>();
-      const chores = String(form.get(`chores_${k.id}`) ?? "")
-        .split("\n")
-        .map((l) => l.trim().slice(0, 80))
-        .filter(Boolean)
-        .slice(0, 15)
-        .map((label) => {
-          let id = existing.get(label.toLowerCase()) ?? slug(label);
-          while (used.has(id)) id = `${id}-x`;
-          used.add(id);
-          return { id, label };
-        });
+      const count = Math.min(Number(form.get(`chore_${k.id}_count`)) || 0, 15);
+      const chores: { id: string; label: string }[] = [];
+      for (let i = 0; i < count; i++) {
+        const label = String(form.get(`chore_${k.id}_label_${i}`) ?? "").trim().slice(0, 80);
+        if (!label) continue; // blank row = nothing
+        let id = String(form.get(`chore_${k.id}_id_${i}`) || "") || existing.get(label.toLowerCase()) || slug(label);
+        while (used.has(id)) id = `${id}-x`;
+        used.add(id);
+        chores.push({ id, label });
+      }
       kids[k.id] = { baseCents: cents(form.get(`base_${k.id}`), `${k.name}'s starting amount`), chores };
     }
     data = {

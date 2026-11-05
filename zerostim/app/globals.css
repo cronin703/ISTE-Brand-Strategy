@@ -288,13 +288,13 @@ span.day { cursor: default; }
 .login-hero p { margin-top: 8px; font-weight: 600; }
 .field { display: grid; gap: 8px; }
 .field label { font-weight: 650; }
-.field input {
+.field input[name="secret"] {
   min-height: 56px; padding: 0 16px; border-radius: var(--r-md);
   border: 2px solid var(--border); background: var(--surface); font-size: 1.5rem; letter-spacing: 0.2em;
   transition: border-color var(--m-150) var(--ease-out);
 }
-.field input:focus { border-color: var(--text); outline: none; }
-.field input[aria-invalid="true"] { border-color: var(--minus); }
+.field input[name="secret"]:focus { border-color: var(--text); outline: none; }
+.field input[name="secret"][aria-invalid="true"] { border-color: var(--minus); }
 .error { color: var(--minus); font-size: 0.9375rem; font-weight: 600; }
 
 /* ---------- History ---------- */
@@ -538,3 +538,31 @@ span.day { cursor: default; }
 .kind-tag { display: inline-block; margin-right: 6px; padding: 1px 8px; border-radius: 999px; background: var(--surface-2); color: var(--plus); font-size: 0.75rem; font-weight: 750; }
 .waiting-dot { font-weight: 650; opacity: 0.8; }
 @media (prefers-reduced-motion: reduce) { .ws-fill span { transition: none; } }
+
+/* ---------- Settings list editor ---------- */
+textarea, select { color: inherit; }
+.field-label { font-weight: 650; }
+.list-editor { display: grid; gap: 10px; }
+.le-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.le-row { display: grid; grid-template-columns: 1fr 44px; gap: 8px; align-items: center; }
+.le-row-amt { grid-template-columns: 1fr 112px 44px; }
+@media (max-width: 560px) {
+  .le-row-amt { grid-template-columns: 1fr 44px; }
+  .le-row-amt .le-name { grid-column: 1 / -1; }
+  .le-row-amt .le-amt { grid-column: 1; max-width: 160px; }
+  .le-row-amt .le-remove { grid-column: 2; grid-row: 2; }
+  .le-row-amt + .le-row-amt { padding-top: 8px; border-top: 2px solid var(--surface-2); }
+}
+.le-name {
+  width: 100%; min-width: 0; min-height: 48px; padding: 0 12px; border: 2px solid var(--border); border-radius: var(--r-md);
+  background: var(--surface); color: var(--text); font: 500 1rem var(--font-body);
+}
+.le-name:focus { border-color: var(--text); outline: none; }
+.le-remove {
+  width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--border); background: var(--surface);
+  color: var(--muted); display: grid; place-items: center; cursor: pointer;
+  transition: background-color var(--m-150) var(--ease-out), color var(--m-150) var(--ease-out);
+}
+.le-remove:hover { background: var(--surface-2); color: var(--minus); }
+.le-add { justify-self: start; border-style: dashed; }
+.money-input input { color: inherit; }

@@ -35,6 +35,7 @@ export default async function ParentWeek({ searchParams }: { searchParams: Promi
 
   return (
     <div data-world={kid.color} style={{ display: "contents" }}>
+      <div className="week-bar">
       <KidTabs kids={ctx.kids} base="/parent" current={kid.id} query={weekQ} />
 
       <nav className="weeknav" aria-label="Week">
@@ -49,7 +50,10 @@ export default async function ParentWeek({ searchParams }: { searchParams: Promi
           <span className="btn" aria-hidden="true" style={{ visibility: "hidden" }}>→</span>
         )}
       </nav>
+      </div>
 
+      <div className="split">
+      <div className="split-a">
       <PayoutPoster
         kid={kid}
         s={summary}
@@ -73,6 +77,8 @@ export default async function ParentWeek({ searchParams }: { searchParams: Promi
       </div>
 
       <WaitingForMom kid={kid} s={summary} rules={rules} />
+      </div>
+      <div className="split-b">
       <ChoreGrid kid={kid} s={summary} mode="mom" />
       <Tallies kid={kid} s={summary} rules={rules} kind="deduction" editable />
       <Tallies kid={kid} s={summary} rules={rules} kind="bonus" editable />
@@ -81,6 +87,8 @@ export default async function ParentWeek({ searchParams }: { searchParams: Promi
         <h2 id="rules-h">House rules</h2>
         <ul className="rules">{HOUSE_RULES.map((r) => <li key={r}>{r}</li>)}</ul>
       </section>
+      </div>
+      </div>
     </div>
   );
 }

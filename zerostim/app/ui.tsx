@@ -2,7 +2,7 @@
 
 import { useOptimistic } from "react";
 import { useFormStatus } from "react-dom";
-import { changeTally, kidToggleChore, toggleChore } from "./actions";
+import { changeTally, kidBonus, kidToggleChore, toggleChore } from "./actions";
 
 /** Submit button that dims while its form is saving. */
 export function Pending({ className, children, ...rest }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
@@ -112,5 +112,74 @@ export function Stepper(p: { count: number; itemLabel: string; fields: Record<st
         <button className="step step-add" aria-label={`Add one: ${p.itemLabel}`}>+</button>
       </form>
     </div>
+  );
+}
+
+/** Dashboard chore row: the whole row is the button. Kid taps wait for Mom or Dad; parent taps approve. */
+export function ChoreRow(p: { state: ChoreState; as: "mom" | "kid"; label: string; fields: Record<string, string>; disabled?: boolean }) {
+  const [state, setState] = useOptimistic(p.state);
+  const next = (s: ChoreState): ChoreState =>
+    p.as === "mom" ? (s === "done" ? "none" : "done") : s === "none" ? "pending" : s === "pending" ? "none" : "done";
+  const locked = p.disabled || (p.as === "kid" && state === "done");
+  return (
+    <li className={`is-${state}`}>
+      <form
+        action={async (fd) => {
+          setState(next(state));
+          await (p.as === "mom" ? toggleChore(fd) : kidToggleChore(fd));
+        }}
+      >
+        <Hidden fields={p.fields} />
+        <button
+          className="dash-row"
+          aria-pressed={state === "done" ? true : state === "pending" ? "mixed" : false}
+          aria-label={`${p.label}: ${STATE_WORDS[state]}${p.as === "mom" && state === "pending" ? ". Tap to approve" : ""}`}
+          disabled={locked}
+        >
+          <span className="dash-icon" aria-hidden="true">{state === "done" ? "✓" : state === "pending" ? <Clock /> : ""}</span>
+          <span className="dash-row-label">{p.label}</span>
+          {state === "pending" && <span className="dash-row-tag">Waiting</span>}
+        </button>
+      </form>
+    </li>
+  );
+}
+
+/** Dashboard bonus row: kids mark it (waits for approval); a parent's tap counts it right away. */
+export function BonusRow(p: {
+  as: "mom" | "kid";
+  label: string;
+  amount: string;
+  approved: number;
+  waiting: number;
+  fields: Record<string, string>;
+  disabled?: boolean;
+}) {
+  const [counts, setCounts] = useOptimistic({ approved: p.approved, waiting: p.waiting });
+  return (
+    <li className="bonus-row">
+      <span className="bonus-text">
+        <span>{p.label}</span>
+        <span className="amt plus">+{p.amount}</span>
+        {(counts.approved > 0 || counts.waiting > 0) && (
+          <span className="muted small">
+            {counts.approved > 0 && `${counts.approved} counted`}
+            {counts.approved > 0 && counts.waiting > 0 && ", "}
+            {counts.waiting > 0 && `${counts.waiting} waiting`}
+          </span>
+        )}
+      </span>
+      <form
+        action={async (fd) => {
+          setCounts(p.as === "mom" ? { ...counts, approved: counts.approved + 1 } : { ...counts, waiting: counts.waiting + 1 });
+          await (p.as === "mom" ? changeTally(fd) : kidBonus(fd));
+        }}
+      >
+        <Hidden fields={{ ...p.fields, delta: 1 }} />
+        <button className="btn btn-small" disabled={p.disabled} aria-label={`${p.as === "mom" ? "Add" : "I did"}: ${p.label}`}>
+          {p.as === "mom" ? "+ Add" : "I did this"}
+        </button>
+      </form>
+    </li>
   );
 }

@@ -41,7 +41,7 @@ export async function login(_: FormState, form: FormData): Promise<FormState> {
   await setSession({ role: "parent", parentId: parent.id, familyId: parent.familyId });
   const family = await db().getFamily(parent.familyId);
   if (family) await rememberFamily(family.token);
-  redirect("/parent");
+  redirect("/"); // the family dashboard is home for parents too
 }
 
 export async function adminLogin(_: FormState, form: FormData): Promise<FormState> {

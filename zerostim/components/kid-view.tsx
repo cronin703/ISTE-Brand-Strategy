@@ -25,8 +25,12 @@ export function KidView({ v, asParent }: { v: WeekView; asParent: boolean }) {
           </Link>
         )}
       </header>
+      <div className="split">
+      <div className="split-a">
       <PayoutPoster kid={kid} s={summary} paid={paid} penny={penny} heading={`Hi ${kid.name}`} />
       <p className="muted small" style={{ textAlign: "center" }}>Week of {formatRange(summary.weekStart)}. Fresh start every Monday.</p>
+      </div>
+      <div className="split-b">
       <ChoreGrid kid={kid} s={summary} mode={asParent ? "view" : "kid"} />
       <Tallies kid={kid} s={summary} rules={rules} kind="bonus" editable={false} kidCanMark={!asParent && started} />
       <Tallies kid={kid} s={summary} rules={rules} kind="deduction" editable={false} />
@@ -34,6 +38,8 @@ export function KidView({ v, asParent }: { v: WeekView; asParent: boolean }) {
         <h2 id="rules-h">House rules</h2>
         <ul className="rules">{HOUSE_RULES.map((r) => <li key={r}>{r}</li>)}</ul>
       </section>
+      </div>
+      </div>
     </main>
   );
 }

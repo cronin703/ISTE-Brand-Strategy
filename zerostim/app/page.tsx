@@ -9,7 +9,7 @@ import { Avatar } from "@/components/avatar";
 import { Mascot } from "@/components/mascot";
 import { SetupNeeded } from "@/components/setup-needed";
 import { approveAll } from "./actions";
-import { Pending } from "./ui";
+import { BonusRow, ChoreRow, Pending } from "./ui";
 
 // The landing screen: both kids at a glance, by day, week or month.
 // Open to the family (no login); approve buttons only show for Mom or Dad.
@@ -50,8 +50,15 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
 
   return (
     <main className="page" data-world="parent">
-      <header className="topbar">
+      <header className="topbar topbar-dash">
         <Logo />
+        <nav className="seg seg-bar" aria-label="Dashboard view">
+          {VIEWS.map((v) => (
+            <Link key={v.id} href={v.id === "day" ? "/" : `/?view=${v.id}`} aria-current={v.id === view ? "page" : undefined}>
+              {v.label}
+            </Link>
+          ))}
+        </nav>
         {isMom ? (
           <Link href="/parent" className="btn btn-solid">Manage</Link>
         ) : (
@@ -59,17 +66,9 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
         )}
       </header>
 
-      <nav className="seg" aria-label="Dashboard view">
-        {VIEWS.map((v) => (
-          <Link key={v.id} href={v.id === "day" ? "/" : `/?view=${v.id}`} aria-current={v.id === view ? "page" : undefined}>
-            {v.label}
-          </Link>
-        ))}
-      </nav>
-
-      <div className="enter-1">
+      <div className="enter-1 dash-title">
         <h1 className="home-title">{title}</h1>
-        <p className="muted" style={{ marginTop: 6 }}>{sub}</p>
+        <p className="muted">{sub}</p>
       </div>
 
       {beforeStart && (
@@ -152,48 +151,62 @@ function Actions({ v, isMom, week }: { v: WeekView; isMom: boolean; week: string
 function DayCard({ v, t, isMom, week }: { v: WeekView; t: string; isMom: boolean; week: string }) {
   const { kid, summary: s, rules } = v;
   const day = s.days.find((d) => d.date === t)!;
-  const todays = kid.chores.map((c) => {
-    const key = `${c.id}|${t}`;
-    return { ...c, state: s.choreDone.has(key) ? "done" : s.chorePending.has(key) ? "pending" : "none" } as const;
-  });
-  const bonusesWaiting = s.pendingItems.filter((p) => p.kind === "bonus" && p.date === t);
+  const as = isMom ? "mom" : "kid";
+  const started = day.active;
+  const choreFields = (choreId: string): Record<string, string> =>
+    isMom ? { kidId: kid.id, week, date: t, choreId } : { kidToken: kid.token, choreId };
   return (
     <section className="dash-card" data-kid={kid.color} aria-labelledby={`dash-${kid.id}`}>
-      <CardHead v={v} />
-      <Money v={v} />
-      <div className="dash-today">
-        <p className="dash-label">
-          {day.active
-            ? `Today: ${day.approved} of ${day.total} signed off${day.pending ? `, ${day.pending} waiting for Mom or Dad` : ""}`
-            : "Today doesn't count yet"}
-        </p>
-        {day.active && (
-          <p className="small">
-            Keeping <strong>{money(Math.round(day.keptCents))}</strong> of today&apos;s {money(Math.round(day.dailyCents))} so far.
-          </p>
+      <div className="dash-col">
+        <CardHead v={v} />
+        <Money v={v} />
+        {rules.bonuses.length > 0 && (
+          <div className="dash-bonuses">
+            <p className="dash-label">Bonuses <span className="muted">(up to {money(s.bonusCapCents)} a week)</span></p>
+            <ul className="bonus-list">
+              {rules.bonuses.map((b) => (
+                <BonusRow
+                  key={b.id}
+                  as={as}
+                  label={b.label}
+                  amount={money(b.cents)}
+                  approved={s.tallies[`bonus|${b.id}`] ?? 0}
+                  waiting={s.pendingTallies[`bonus|${b.id}`] ?? 0}
+                  fields={(isMom ? { kidId: kid.id, week, kind: "bonus", itemId: b.id } : { kidToken: kid.token, itemId: b.id }) as Record<string, string>}
+                  disabled={!started}
+                />
+              ))}
+            </ul>
+          </div>
         )}
-        <div className="dash-bar" role="img" aria-label={`${day.approved} of ${day.total} chores signed off today, ${day.pending} waiting`}>
-          <span className="bar-done" style={{ width: `${day.total ? (day.approved / day.total) * 100 : 0}%` }} />
-          <span className="bar-pending" style={{ width: `${day.total ? (day.pending / day.total) * 100 : 0}%` }} />
-        </div>
-        <ul className="dash-list">
-          {todays.map((c) => (
-            <li key={c.id} className={`is-${c.state}`}>
-              <span className="dash-icon" aria-hidden="true">{c.state === "done" ? "✓" : c.state === "pending" ? "…" : ""}</span>
-              <span>{c.label}</span>
-              <span className="sr-only">: {c.state === "done" ? "done" : c.state === "pending" ? "waiting for Mom or Dad" : "to do"}</span>
-            </li>
-          ))}
-          {bonusesWaiting.map((b) => (
-            <li key={b.id} className="is-pending">
-              <span className="dash-icon" aria-hidden="true">+</span>
-              <span>Bonus: {rules.bonuses.find((x) => x.id === b.itemId)?.label}</span>
-              <span className="sr-only">: waiting for Mom or Dad</span>
-            </li>
-          ))}
-        </ul>
       </div>
-      <Actions v={v} isMom={isMom} week={week} />
+      <div className="dash-col">
+        <div className="dash-today">
+          <p className="dash-label">
+            {started
+              ? `Today: ${day.approved} of ${day.total} signed off${day.pending ? `, ${day.pending} waiting for Mom or Dad` : ""}`
+              : "Today doesn't count yet"}
+          </p>
+          {started && (
+            <p className="small">
+              Keeping <strong>{money(Math.round(day.keptCents))}</strong> of today&apos;s {money(Math.round(day.dailyCents))} so far.
+              {isMom ? " Tap a chore to approve it." : " Tap a chore when it's done."}
+            </p>
+          )}
+          <div className="dash-bar" role="img" aria-label={`${day.approved} of ${day.total} chores signed off today, ${day.pending} waiting`}>
+            <span className="bar-done" style={{ width: `${day.total ? (day.approved / day.total) * 100 : 0}%` }} />
+            <span className="bar-pending" style={{ width: `${day.total ? (day.pending / day.total) * 100 : 0}%` }} />
+          </div>
+          <ul className="dash-list" aria-label={`${kid.name}'s chores today`}>
+            {kid.chores.map((c) => {
+              const key = `${c.id}|${t}`;
+              const state = s.choreDone.has(key) ? "done" : s.chorePending.has(key) ? "pending" : "none";
+              return <ChoreRow key={c.id} as={as} state={state} label={c.label} fields={choreFields(c.id)} disabled={!started} />;
+            })}
+          </ul>
+        </div>
+        <Actions v={v} isMom={isMom} week={week} />
+      </div>
     </section>
   );
 }
@@ -202,8 +215,11 @@ function WeekCard({ v, t, isMom, week }: { v: WeekView; t: string; isMom: boolea
   const { kid, summary: s } = v;
   return (
     <section className="dash-card" data-kid={kid.color} aria-labelledby={`dash-${kid.id}`}>
-      <CardHead v={v} />
-      <Money v={v} />
+      <div className="dash-col">
+        <CardHead v={v} />
+        <Money v={v} />
+      </div>
+      <div className="dash-col">
       <div className="week-strip" role="list" aria-label={`${kid.name}'s days this week`}>
         {s.days.map((d, i) => {
           const label = !d.active
@@ -230,6 +246,7 @@ function WeekCard({ v, t, isMom, week }: { v: WeekView; t: string; isMom: boolea
         {s.pendingCount ? ` ${s.pendingCount} waiting for Mom or Dad.` : ""}
       </p>
       <Actions v={v} isMom={isMom} week={week} />
+      </div>
     </section>
   );
 }
@@ -289,6 +306,7 @@ async function loadMonth(ctx: FamilyCtx, row: KidRow, t: string): Promise<MonthD
 function MonthCard({ m, t }: { m: MonthData; t: string }) {
   return (
     <section className="dash-card" data-kid={m.color} aria-labelledby={`dash-${m.kidId}`}>
+      <div className="dash-col">
       <div className="dash-who">
         <Avatar color={m.color} name={m.name} size={44} />
         <h2 id={`dash-${m.kidId}`} className="display dash-name">{m.name}</h2>
@@ -297,6 +315,8 @@ function MonthCard({ m, t }: { m: MonthData; t: string }) {
         <div><dt>This month so far</dt><dd>{money(m.earnedCents)}</dd></div>
         <div><dt>Perfect days</dt><dd>{m.fullDays} of {m.activeDays}</dd></div>
       </dl>
+      </div>
+      <div className="dash-col">
       <div className="cal" aria-hidden="true">
         {DAY_SHORT.map((d) => <span key={d} className="cal-head">{d}</span>)}
         {Array.from({ length: m.firstWeekday }, (_, i) => <span key={`pad-${i}`} />)}
@@ -324,6 +344,7 @@ function MonthCard({ m, t }: { m: MonthData; t: string }) {
         ))}
       </ul>
       <Link href={`/k/${m.token}`} prefetch={false} className="btn btn-solid">Open {m.name}&apos;s page</Link>
+      </div>
     </section>
   );
 }

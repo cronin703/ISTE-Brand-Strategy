@@ -656,3 +656,103 @@ textarea, select { color: inherit; }
 .user-card { display: grid; gap: 10px; }
 .user-edit { display: grid; gap: 10px; }
 .user-edit .btn { justify-self: start; }
+
+/* ======================================================================
+   Wide screens (laptops, desktops): use the full width and fit the key
+   info in a 16:9 window without scrolling. Phones are unchanged.
+   ====================================================================== */
+.split, .split-a, .split-b { display: grid; gap: 16px; align-content: start; }
+.dash-col { display: grid; gap: 14px; align-content: start; }
+
+/* Day/Week/Month tabs live in the top bar; on phones they drop to their own row. */
+.topbar-dash { flex-wrap: wrap; }
+.topbar-dash .seg-bar { order: 3; flex: 1 1 100%; }
+.dash-title { display: grid; gap: 6px; }
+
+@media (min-width: 960px) {
+  .page { max-width: none; padding-left: clamp(20px, 3vw, 48px); padding-right: clamp(20px, 3vw, 48px); gap: 18px; }
+  .page.admin, .page:has(> .login-hero) { max-width: 1100px; }
+
+  .topbar-dash { flex-wrap: nowrap; }
+  .topbar-dash .seg-bar { order: 0; flex: 0 1 420px; margin: 0 auto; }
+  .dash-title { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  .home-title { font-size: clamp(2.25rem, 3.6vw, 3.25rem); }
+
+  /* Dashboard: one column per kid, each card split in two. */
+  .dash { grid-template-columns: repeat(auto-fit, minmax(min(100%, 560px), 1fr)); gap: 18px; }
+  .dash-card { grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; padding: 20px; }
+  .dash-name { font-size: 2.25rem; }
+  .dash-amount { font-size: 3rem; }
+  .dash-list { gap: 4px; }
+  .dash-list li { font-size: 0.9375rem; }
+  .dash-math { grid-template-columns: 1fr 1fr; }
+
+  /* Parent week + kid page: money and approvals left, chores right. */
+  .split { grid-template-columns: minmax(340px, 5fr) 7fr; align-items: start; }
+  .split-a { position: sticky; top: 16px; }
+  .poster { padding: 18px; gap: 12px; }
+  .poster-name { font-size: clamp(2.5rem, 3.4vw, 3.5rem); }
+  .poster-amount { font-size: clamp(3.5rem, 5vw, 4.75rem); }
+  .chore { padding-top: 8px; gap: 6px; }
+  .day { min-height: 40px; }
+
+  /* Settings: panels flow into columns. */
+  .settings { grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); align-items: start; }
+  .settings > .btn, .settings > .save-bar { grid-column: 1 / -1; }
+
+  /* Parent tab bar: centered pill instead of a full-width bar. */
+  .bottom-tabs { left: 50%; right: auto; transform: translateX(-50%); width: min(560px, 100% - 32px); bottom: 12px; border: 2px solid var(--border); border-radius: 999px; padding: 6px; }
+  .bottom-tabs a { border-radius: 999px; min-height: 44px; grid-auto-flow: column; align-items: center; justify-content: center; gap: 8px; }
+  .page-with-tabs { padding-bottom: 96px; }
+}
+
+@media (min-width: 960px) {
+  .week-bar { display: grid; grid-template-columns: 1fr minmax(280px, auto); gap: 16px; align-items: center; }
+  .week-bar .weeknav { gap: 16px; }
+  /* One line per chore: name left, the seven days right. Day letters live in the tiles. */
+  .split-b .chore { grid-template-columns: minmax(170px, 1fr) minmax(0, 2.2fr); align-items: center; gap: 12px; padding: 6px 0; }
+  .split-b .chore:first-of-type { padding-top: 6px; }
+  .split-b .day-head { display: none; }
+  .split-b .day { min-height: 36px; }
+  .split-b .panel { padding: 16px 18px; gap: 8px; }
+  .split-b .tally { padding: 6px 0; }
+  .split-b .step { width: 38px; height: 38px; }
+  .poster .mascot { width: 84px; height: 84px; }
+  .poster-sub, .poster-note { font-size: 0.8125rem; }
+  .poster .math dd { font-size: 0.9375rem; }
+  .btn-onposter { min-height: 46px; }
+}
+
+/* ---------- Dashboard: tappable chores and bonuses ---------- */
+.dash-list li { display: block; }
+.dash-list li form { display: block; }
+.dash-row {
+  width: 100%; display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 6px 8px; margin: 0 -8px;
+  border: 0; border-radius: var(--r-sm); background: transparent; color: var(--text); font: inherit; font-size: 0.9375rem;
+  text-align: left; cursor: pointer; transition: background-color var(--m-150) var(--ease-out);
+}
+.dash-row:hover:not(:disabled) { background: var(--surface-2); }
+.dash-row:active:not(:disabled) .dash-icon { transform: scale(0.9); }
+.dash-row:disabled { cursor: default; }
+.dash-row .dash-icon { transition: transform var(--m-100) var(--ease-out), background-color var(--m-150) var(--ease-out); }
+.dash-row .dash-icon svg { width: 14px; height: 14px; }
+.dash-row-label { flex: 1; }
+.dash-list .is-done .dash-row { color: var(--muted); }
+.dash-list .is-done .dash-row-label { text-decoration: line-through; }
+.dash-row-tag { font-size: 0.75rem; font-weight: 700; color: var(--a); }
+.dash-bonuses { display: grid; gap: 6px; }
+.bonus-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.bonus-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 0; border-top: 2px solid var(--surface-2); }
+.bonus-row:first-child { border-top: 0; }
+.bonus-text { display: grid; font-size: 0.875rem; line-height: 1.3; }
+.bonus-text .amt { font-size: 0.8125rem; }
+.bonus-row .btn-small { min-height: 36px; padding: 0 12px; font-size: 0.8125rem; flex: none; }
+@media (min-width: 960px) {
+  .dash-card .dash-math { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .dash-card .dash-math div { padding: 6px 8px; }
+  .dash-card .dash-math dt { font-size: 0.6875rem; }
+  .dash-card .penny-says { padding: 10px 14px; font-size: 0.9375rem; }
+  .dash-card .dash-amount { font-size: 2.75rem; }
+  .dash-row { min-height: 34px; padding: 4px 8px; }
+}
+@media (prefers-reduced-motion: reduce) { .dash-row:active .dash-icon { transform: none; } }

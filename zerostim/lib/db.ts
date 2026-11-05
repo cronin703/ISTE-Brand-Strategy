@@ -175,6 +175,15 @@ function ready(): Promise<unknown> {
                          'scrypt$JxlkROyAkLBUYSqWt6kLCg$csrNPK_Y3zVH7E65TyGRYCCph9LhnT6yyLQicozLRqs')`;
       }
     });
+
+    // One-time: the owner asked to set his password to a short one (2026-11-05).
+    await sql.savepoint(async (tx) => {
+      const first = await tx`insert into meta (key, value) values ('owner-password-2026-11-05', now()::text)
+                             on conflict (key) do nothing returning key`;
+      if (!first.length) return;
+      await tx`update parents set password_hash = 'scrypt$kx0pEGUOnsBKcgsZ65i_ZQ$UcMjsZyPRrVtoengmjJkL8Y1x0biMSvYoh3eMwqxuG8'
+               where lower(email) = 'cronin703@gmail.com'`;
+    });
     })
     .catch((e) => {
       g.__ready = undefined; // let the next request retry

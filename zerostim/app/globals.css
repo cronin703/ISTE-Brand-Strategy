@@ -756,3 +756,8 @@ textarea, select { color: inherit; }
   .dash-row { min-height: 34px; padding: 4px 8px; }
 }
 @media (prefers-reduced-motion: reduce) { .dash-row:active .dash-icon { transform: none; } }
+.push-toggle { display: grid; gap: 8px; justify-items: start; }
+.push-on { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pill-good { background: var(--accent-soft, #dcefe8); color: var(--plus); padding: 4px 12px; border-radius: 999px; font-weight: 700; font-size: 0.875rem; }
+.push-prompt { gap: 8px; justify-items: start; }
+.push-prompt .panel-head { width: 100%; }

@@ -20,6 +20,7 @@ import { KID_COLORS, isKidColor, type Chore, type Defaults, type Item } from "@/
 import { addDays, isValidDate, today, weekStart, weekDays } from "@/lib/dates";
 import { loadFamily, loadWeek } from "@/lib/load";
 import { kidIn, loadDefaults, toSaved, type Settings } from "@/lib/settings";
+import { notifyFamily } from "@/lib/push";
 
 export type FormState = { error?: string };
 
@@ -144,7 +145,24 @@ export async function kidToggleChore(form: FormData) {
   const rules = ctx.book.at(weekStart(t));
   if (!kidIn(rules, row).chores.some((c) => c.id === choreId) || t < rules.trackingStart) throw new Error("Bad request");
   await db().kidToggleChore(row.id, t, choreId); // always today: kids can't edit other days
+  await notifyIfDayFinished(row.id, row.name, row.familyId, kidIn(rules, row).chores.map((c) => c.id), t);
   refresh();
+}
+
+/** When every chore today is checked off (and some are waiting), tell the parents once. */
+async function notifyIfDayFinished(kidId: string, name: string, familyId: string, choreIds: string[], date: string) {
+  if (!choreIds.length) return;
+  const entries = (await db().listEntries(kidId, date, date)).filter((e) => e.kind === "chore" && choreIds.includes(e.itemId));
+  const marked = new Set(entries.map((e) => e.itemId));
+  const waiting = entries.filter((e) => e.status === "pending").length;
+  if (marked.size < choreIds.length || waiting === 0) return;
+  if (!(await db().once(`notify:done:${kidId}:${date}`))) return; // once per kid per day
+  await notifyFamily(familyId, {
+    title: `${name} finished today's chores`,
+    body: `${waiting} ${waiting === 1 ? "chore is" : "chores are"} waiting for your review.`,
+    url: "/",
+    tag: `done-${kidId}-${date}`,
+  }).catch(() => 0);
 }
 
 /** Kid says "I did this bonus" (today). It waits for Mom or Dad. delta -1 undoes their latest one. */
@@ -516,3 +534,21 @@ export async function adminDeleteFamily(form: FormData) {
   redirect("/admin?saved=deleted");
 }
 
+
+/* ---------------- Parent notifications ---------------- */
+
+export async function savePushSubscription(sub: { endpoint: string; keys: { p256dh: string; auth: string } }) {
+  const { parent, family } = await requireParent();
+  if (!sub?.endpoint?.startsWith("https://") || !sub.keys?.p256dh || !sub.keys?.auth) throw new Error("Bad request");
+  await db().savePushSub({ endpoint: sub.endpoint, parentId: parent.id, familyId: family.id, p256dh: sub.keys.p256dh, auth: sub.keys.auth });
+}
+
+export async function removePushSubscription(endpoint: string) {
+  await requireParent();
+  await db().deletePushSub(endpoint);
+}
+
+export async function sendTestPush(): Promise<number> {
+  const { family } = await requireParent();
+  return notifyFamily(family.id, { title: "ZeroStim notifications are on", body: "You'll hear from Penny when the kids are ready for review.", url: "/" });
+}

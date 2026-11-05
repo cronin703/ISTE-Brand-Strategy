@@ -120,6 +120,15 @@ function ready(): Promise<unknown> {
       primary key (family_id, effective_week)
     )`;
 
+    await sql`create table if not exists push_subs (
+      endpoint text primary key,
+      parent_id text not null references parents(id) on delete cascade,
+      family_id text not null references families(id) on delete cascade,
+      p256dh text not null,
+      auth text not null,
+      created_at timestamptz not null default now()
+    )`;
+
     // Move the original single family (Thomas & Carter) into the new tables, once.
     await sql.savepoint(async (tx) => {
       const first = await tx`insert into meta (key, value) values ('multi-family-v1', now()::text)
@@ -449,6 +458,34 @@ function makeStore() {
     async deleteParent(id: string) {
       await ready();
       await sql`delete from parents where id = ${id}`;
+    },
+
+    /* ---------------- Notifications (web push) ---------------- */
+    async savePushSub(p: { endpoint: string; parentId: string; familyId: string; p256dh: string; auth: string }) {
+      await ready();
+      await sql`insert into push_subs (endpoint, parent_id, family_id, p256dh, auth)
+                values (${p.endpoint}, ${p.parentId}, ${p.familyId}, ${p.p256dh}, ${p.auth})
+                on conflict (endpoint) do update set parent_id = excluded.parent_id, family_id = excluded.family_id,
+                  p256dh = excluded.p256dh, auth = excluded.auth`;
+    },
+    async deletePushSub(endpoint: string) {
+      await ready();
+      await sql`delete from push_subs where endpoint = ${endpoint}`;
+    },
+    async listPushSubs(familyId: string): Promise<{ endpoint: string; p256dh: string; auth: string }[]> {
+      await ready();
+      return sql<{ endpoint: string; p256dh: string; auth: string }[]>`select endpoint, p256dh, auth from push_subs where family_id = ${familyId}`;
+    },
+    async countPushSubs(parentId: string): Promise<number> {
+      await ready();
+      const r = await sql<{ n: number }[]>`select count(*)::int as n from push_subs where parent_id = ${parentId}`;
+      return r[0]?.n ?? 0;
+    },
+    /** Records a one-off event; returns false if it was already recorded (e.g. "already notified today"). */
+    async once(key: string): Promise<boolean> {
+      await ready();
+      const r = await sql`insert into meta (key, value) values (${key}, now()::text) on conflict (key) do nothing returning key`;
+      return r.length > 0;
     },
 
     /* ---------------- Kids ---------------- */

@@ -7,6 +7,8 @@ import { addKid, addParent, changePassword, removeKid, removeParent, updateKid }
 import { Pending } from "@/app/ui";
 import { Avatar } from "./avatar";
 import { db } from "@/lib/db";
+import { vapidPublicKey } from "@/lib/push";
+import { PushToggle } from "./push-toggle";
 
 const SAVED: Record<string, string> = {
   kid: "Saved.",
@@ -37,6 +39,12 @@ export async function FamilySettings({ ctx, me, saved, error }: { ctx: FamilyCtx
     <>
       {saved && SAVED[saved] && <p className="notice notice-good" role="status">{SAVED[saved]}</p>}
       {error && <p className="notice notice-bad" role="alert">{error}</p>}
+
+      <section className="panel" aria-labelledby="fam-push">
+        <h2 id="fam-push">Notifications</h2>
+        <p className="muted small">Get a notification on this phone when a kid checks off all of today&apos;s chores, plus an 8pm wrap-up of anything still waiting. Each parent turns this on on their own phone.</p>
+        <PushToggle vapidKey={vapidPublicKey()} />
+      </section>
 
       <section className="panel" aria-labelledby="fam-kids">
         <h2 id="fam-kids">Kids</h2>

@@ -10,6 +10,8 @@ import { Mascot } from "@/components/mascot";
 import { SetupNeeded } from "@/components/setup-needed";
 import { approveAll } from "./actions";
 import { BonusRow, ChoreRow, Pending } from "./ui";
+import { PushToggle } from "@/components/push-toggle";
+import { vapidPublicKey } from "@/lib/push";
 
 // The landing screen: both kids at a glance, by day, week or month.
 // Open to the family (no login); approve buttons only show for Mom or Dad.
@@ -76,6 +78,8 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
           ZeroStim starts {addDays(t, 1) === TRACKING_START ? "tomorrow morning" : `on ${formatShort(TRACKING_START)}`}. Nothing counts until then.
         </p>
       )}
+
+      {isMom && <PushToggle vapidKey={vapidPublicKey()} compact />}
 
       {views.length === 0 && (
         <p className="notice">No kids yet. {isMom ? "Add them in Settings." : "Ask Mom or Dad to add you."}</p>

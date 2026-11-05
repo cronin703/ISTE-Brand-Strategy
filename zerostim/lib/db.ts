@@ -20,6 +20,8 @@ export type Entry = {
   createdAt: string;
 };
 export type Payout = { kidId: string; weekStart: string; amountCents: number; paidAt: string };
+/** A saved version of the rules, in effect from `week` until a later version. */
+export type SettingsVersion = { week: string; data: unknown };
 
 interface Store {
   listEntries(kidId: string, from: string, to: string): Promise<Entry[]>;
@@ -29,11 +31,14 @@ interface Store {
   listPayouts(kidId: string): Promise<Payout[]>;
   setPayout(kidId: string, weekStart: string, amountCents: number): Promise<void>;
   clearPayout(kidId: string, weekStart: string): Promise<void>;
+  listSettings(): Promise<SettingsVersion[]>;
+  /** Saves rules from `week` on, replacing any versions that start later. */
+  saveSettings(week: string, data: unknown): Promise<void>;
 }
 
 /* ---------------- JSON file store (local dev) ---------------- */
 
-type FileData = { entries: Entry[]; payouts: Payout[] };
+type FileData = { entries: Entry[]; payouts: Payout[]; settings?: SettingsVersion[] };
 const FILE = path.join(process.cwd(), ".data", "db.json");
 
 async function readFile(): Promise<FileData> {
@@ -92,6 +97,14 @@ const fileStore: Store = {
     d.payouts = d.payouts.filter((p) => !(p.kidId === kidId && p.weekStart === weekStart));
     await writeFile(d);
   },
+  async listSettings() {
+    return (await readFile()).settings ?? [];
+  },
+  async saveSettings(week, data) {
+    const d = await readFile();
+    d.settings = [...(d.settings ?? []).filter((v) => v.week < week), { week, data }];
+    await writeFile(d);
+  },
 };
 
 /* ---------------- Postgres store (production) ---------------- */
@@ -116,6 +129,11 @@ function pgStore(url: string): Store {
       amount_cents integer not null,
       paid_at timestamptz not null default now(),
       primary key (kid_id, week_start)
+    )`;
+    await sql`create table if not exists settings (
+      effective_week date primary key,
+      data jsonb not null,
+      updated_at timestamptz not null default now()
     )`;
   })());
 
@@ -182,6 +200,19 @@ function pgStore(url: string): Store {
     async clearPayout(kidId, weekStart) {
       await ready;
       await sql`delete from payouts where kid_id = ${kidId} and week_start = ${weekStart}`;
+    },
+    async listSettings() {
+      await ready;
+      const rows = await sql<{ week: string; data: unknown }[]>`
+        select to_char(effective_week, 'YYYY-MM-DD') as week, data from settings order by effective_week`;
+      return rows.map((r) => ({ week: r.week, data: r.data }));
+    },
+    async saveSettings(week, data) {
+      await ready;
+      await sql.begin(async (tx) => {
+        await tx`delete from settings where effective_week >= ${week}`;
+        await tx`insert into settings (effective_week, data) values (${week}, ${tx.json(data as never)})`;
+      });
     },
   };
 }

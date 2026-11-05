@@ -9,10 +9,10 @@ import { Pending } from "../ui";
 
 export default async function ParentWeek({ searchParams }: { searchParams: Promise<{ kid?: string; week?: string }> }) {
   const sp = await searchParams;
-  const kid = getKid(sp.kid ?? "") ?? KIDS[0];
+  const kidId = (getKid(sp.kid ?? "") ?? KIDS[0]).id;
   const current = weekStart(today());
   const week = isValidDate(sp.week) ? weekStart(sp.week) : current;
-  const { summary, paid } = await loadWeek(kid, week);
+  const { kid, rules, summary, paid } = await loadWeek(kidId, week);
   const weekQ = week === current ? "" : `&week=${week}`;
 
   return (
@@ -42,9 +42,14 @@ export default async function ParentWeek({ searchParams }: { searchParams: Promi
         </form>
       </PayoutPoster>
 
+      <div className="week-links">
+        <Link href={`/kid/${kid.id}`} className="btn">See {kid.name}&apos;s view</Link>
+        <Link href="/parent/settings" className="btn">Edit chores &amp; amounts</Link>
+      </div>
+
       <ChoreGrid kid={kid} s={summary} editable />
-      <Tallies kid={kid} s={summary} kind="deduction" editable />
-      <Tallies kid={kid} s={summary} kind="bonus" editable />
+      <Tallies kid={kid} s={summary} rules={rules} kind="deduction" editable />
+      <Tallies kid={kid} s={summary} rules={rules} kind="bonus" editable />
 
       <section className="panel" aria-labelledby="rules-h">
         <h2 id="rules-h">House rules</h2>

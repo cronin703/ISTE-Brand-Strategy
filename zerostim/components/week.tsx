@@ -1,4 +1,5 @@
-import { BONUSES, BONUS_CAP_CENTS, DEDUCTIONS, money, type Kid } from "@/lib/family";
+import { money, type Kid } from "@/lib/family";
+import type { Rules } from "@/lib/settings";
 import { DAY_LONG, DAY_SHORT, today, weekDays } from "@/lib/dates";
 import type { WeekSummary } from "@/lib/calc";
 import { DayStatic, DayToggle, Stepper } from "@/app/ui";
@@ -28,8 +29,8 @@ export function PayoutPoster(p: { kid: Kid; s: WeekSummary; paid: boolean; headi
         <div><dt>Deductions</dt><dd>{s.deductionCents ? `-${money(s.deductionCents)}` : "$0.00"}</dd></div>
         <div><dt>Bonuses</dt><dd>+{money(s.bonusCents)}</dd></div>
       </dl>
-      {s.bonusRawCents > BONUS_CAP_CENTS && (
-        <p className="poster-note">Bonuses earned {money(s.bonusRawCents)}. The weekly max is {money(BONUS_CAP_CENTS)}.</p>
+      {s.bonusRawCents > s.bonusCapCents && (
+        <p className="poster-note">Bonuses earned {money(s.bonusRawCents)}. The weekly max is {money(s.bonusCapCents)}.</p>
       )}
       <p className="poster-note">Chores done: {s.choresDone} of {s.choresPossible} so far</p>
       {p.children}
@@ -82,10 +83,11 @@ export function ChoreGrid({ kid, s, editable }: { kid: Kid; s: WeekSummary; edit
   );
 }
 
-export function Tallies({ kid, s, kind, editable }: { kid: Kid; s: WeekSummary; kind: "deduction" | "bonus"; editable: boolean }) {
-  const items = kind === "deduction" ? DEDUCTIONS : BONUSES;
+export function Tallies({ kid, s, rules, kind, editable }: { kid: Kid; s: WeekSummary; rules: Rules; kind: "deduction" | "bonus"; editable: boolean }) {
+  const items = kind === "deduction" ? rules.deductions : rules.bonuses;
+  if (items.length === 0) return null;
   const title = kind === "deduction" ? "Respect & responsibility" : "Bonuses";
-  const sub = kind === "deduction" ? "Deductions" : `Up to ${money(BONUS_CAP_CENTS)} a week`;
+  const sub = kind === "deduction" ? "Deductions" : `Up to ${money(s.bonusCapCents)} a week`;
   const id = `${kind}-h`;
   return (
     <section className={`panel panel-${kind}`} aria-labelledby={id}>

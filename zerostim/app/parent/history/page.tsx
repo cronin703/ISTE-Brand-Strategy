@@ -1,4 +1,4 @@
-import { KIDS, getKid, DEDUCTIONS, money } from "@/lib/family";
+import { KIDS, getKid, money } from "@/lib/family";
 import { formatShort, today, weekStart } from "@/lib/dates";
 import { loadHistory } from "@/lib/load";
 import { KidTabs } from "@/components/kid-tabs";
@@ -8,13 +8,13 @@ const WEEKS = 8;
 export default async function History({ searchParams }: { searchParams: Promise<{ kid?: string }> }) {
   const sp = await searchParams;
   const kid = getKid(sp.kid ?? "") ?? KIDS[0];
-  const { weeks, entries } = await loadHistory(kid, weekStart(today()), WEEKS);
-  const max = Math.max(kid.baseCents + 300, ...weeks.map((w) => w.payoutCents));
+  const { weeks, entries, rules, baseCents } = await loadHistory(kid.id, weekStart(today()), WEEKS);
+  const max = Math.max(1, baseCents + rules.bonusCapCents, ...weeks.map((w) => w.payoutCents));
   const totalPaid = weeks.reduce((n, w) => n + (w.paid?.amountCents ?? 0), 0);
   const choreDone = weeks.reduce((n, w) => n + w.choresDone, 0);
   const chorePossible = weeks.reduce((n, w) => n + w.choresPossible, 0);
 
-  const dedCounts = DEDUCTIONS.map((d) => ({ ...d, n: entries.filter((e) => e.kind === "deduction" && e.itemId === d.id).length }))
+  const dedCounts = rules.deductions.map((d) => ({ ...d, n: entries.filter((e) => e.kind === "deduction" && e.itemId === d.id).length }))
     .filter((d) => d.n > 0)
     .sort((a, b) => b.n - a.n);
   const dedMax = Math.max(1, ...dedCounts.map((d) => d.n));

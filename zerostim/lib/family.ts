@@ -1,4 +1,6 @@
-// Family setup, taken from the paper allowance charts.
+// Family setup and DEFAULT rules, taken from the paper allowance charts.
+// The parent can change amounts, chores and items on the Settings page;
+// these values are used until they do.
 // Amounts are in cents to avoid floating-point money bugs.
 
 export type Item = { id: string; label: string; cents: number };
@@ -23,14 +25,14 @@ export const KIDS: Kid[] = [
     id: "thomas",
     name: "Thomas",
     age: 12,
-    baseCents: 1500,
+    baseCents: 1000,
     chores: [...sharedChores, { id: "trash", label: "Take out trash or recycling" }],
   },
   {
     id: "carter",
     name: "Carter",
     age: 9,
-    baseCents: 1000,
+    baseCents: 1500,
     chores: [...sharedChores, { id: "pet", label: "Feed pet or set the table" }],
   },
 ];

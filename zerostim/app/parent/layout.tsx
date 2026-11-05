@@ -1,23 +1,25 @@
-import Link from "next/link";
 import { requireParent } from "@/lib/auth";
-import { Logo } from "@/components/logo";
 import { dbConfigured } from "@/lib/db";
+import { Logo } from "@/components/logo";
 import { SetupNeeded } from "@/components/setup-needed";
+import { ParentTabs } from "@/components/parent-tabs";
+import { logout } from "../actions";
 
 export default async function ParentLayout({ children }: { children: React.ReactNode }) {
   await requireParent();
   if (!dbConfigured()) return <SetupNeeded />;
   return (
-    <main className="page">
-      <header className="topbar has-nav">
-        <Logo href="/parent" />
-        <nav className="topnav" aria-label="Parent">
-          <Link href="/parent" className="btn btn-ghost">Week</Link>
-          <Link href="/parent/history" className="btn btn-ghost">History</Link>
-          <Link href="/parent/share" className="btn btn-ghost">Share</Link>
-        </nav>
-      </header>
-      {children}
-    </main>
+    <>
+      <main className="page page-with-tabs">
+        <header className="topbar">
+          <Logo href="/parent" />
+          <form action={logout}>
+            <button className="btn">Log out</button>
+          </form>
+        </header>
+        {children}
+      </main>
+      <ParentTabs />
+    </>
   );
 }

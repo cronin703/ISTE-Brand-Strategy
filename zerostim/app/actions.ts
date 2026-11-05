@@ -2,11 +2,13 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { randomBytes } from "crypto";
 import { clearSession, kidPin, parentPassword, requireParent, safeEqual, setSession } from "@/lib/auth";
 import { db, type Kind } from "@/lib/db";
-import { BONUSES, DEDUCTIONS, getKid } from "@/lib/family";
+import { KIDS, getKid, type Item } from "@/lib/family";
 import { addDays, isValidDate, today, weekStart, weekDays } from "@/lib/dates";
-import { summarize } from "@/lib/calc";
+import { loadWeek } from "@/lib/load";
+import { settingsFor, kidIn, type Settings } from "@/lib/settings";
 
 export type LoginState = { error?: string };
 
@@ -37,34 +39,35 @@ export async function logout() {
 }
 
 function readKidAndWeek(form: FormData) {
-  const kid = getKid(String(form.get("kidId")));
+  const kidId = String(form.get("kidId"));
   const week = String(form.get("week"));
-  if (!kid || !isValidDate(week) || weekStart(week) !== week) throw new Error("Bad request");
-  return { kid, week };
+  if (!getKid(kidId) || !isValidDate(week) || weekStart(week) !== week) throw new Error("Bad request");
+  return { kidId, week };
 }
 
 function refresh() {
-  revalidatePath("/parent", "layout");
-  revalidatePath("/kid/[id]", "page");
+  revalidatePath("/", "layout");
 }
 
 export async function toggleChore(form: FormData) {
   await requireParent();
-  const { kid, week } = readKidAndWeek(form);
+  const { kidId, week } = readKidAndWeek(form);
   const date = String(form.get("date"));
   const choreId = String(form.get("choreId"));
+  const kid = kidIn(await settingsFor(week), kidId)!;
   if (!weekDays(week).includes(date) || !kid.chores.some((c) => c.id === choreId)) throw new Error("Bad request");
-  await db().toggleChore(kid.id, date, choreId);
+  await db().toggleChore(kidId, date, choreId);
   refresh();
 }
 
 export async function changeTally(form: FormData) {
   await requireParent();
-  const { kid, week } = readKidAndWeek(form);
+  const { kidId, week } = readKidAndWeek(form);
   const kind = String(form.get("kind")) as Kind;
   const itemId = String(form.get("itemId"));
   const delta = Number(form.get("delta"));
-  const list = kind === "deduction" ? DEDUCTIONS : kind === "bonus" ? BONUSES : null;
+  const rules = await settingsFor(week);
+  const list = kind === "deduction" ? rules.deductions : kind === "bonus" ? rules.bonuses : null;
   if (!list || !list.some((i) => i.id === itemId)) throw new Error("Bad request");
 
   const end = addDays(week, 6);
@@ -72,23 +75,88 @@ export async function changeTally(form: FormData) {
     // Log it on today if we're looking at this week, otherwise on the week's Monday.
     const t = today();
     const date = t >= week && t <= end ? t : week;
-    await db().addTally(kid.id, date, kind, itemId);
+    await db().addTally(kidId, date, kind, itemId);
   } else {
-    await db().removeLatestTally(kid.id, week, end, kind, itemId);
+    await db().removeLatestTally(kidId, week, end, kind, itemId);
   }
   refresh();
 }
 
 export async function togglePaid(form: FormData) {
   await requireParent();
-  const { kid, week } = readKidAndWeek(form);
+  const { kidId, week } = readKidAndWeek(form);
   const store = db();
-  const paid = (await store.listPayouts(kid.id)).some((p) => p.weekStart === week);
-  if (paid) {
-    await store.clearPayout(kid.id, week);
-  } else {
-    const entries = await store.listEntries(kid.id, week, addDays(week, 6));
-    await store.setPayout(kid.id, week, summarize(kid, week, entries).payoutCents);
-  }
+  const { summary, paid } = await loadWeek(kidId, week);
+  if (paid) await store.clearPayout(kidId, week);
+  else await store.setPayout(kidId, week, summary.payoutCents);
   refresh();
+}
+
+/* ---------------- Settings ---------------- */
+
+function cents(raw: FormDataEntryValue | null, label: string): number {
+  const n = Number(String(raw ?? "").replace(/[$,\s]/g, ""));
+  if (!Number.isFinite(n) || n < 0 || n > 1000) throw new SettingsError(`${label} needs to be an amount between $0 and $1,000.`);
+  return Math.round(n * 100);
+}
+
+class SettingsError extends Error {}
+
+function slug(label: string) {
+  return label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 32) || "item";
+}
+
+function readItems(form: FormData, prefix: string, title: string): Item[] {
+  const items: Item[] = [];
+  const count = Number(form.get(`${prefix}_count`)) || 0;
+  for (let i = 0; i < count; i++) {
+    const label = String(form.get(`${prefix}_label_${i}`) ?? "").trim().slice(0, 80);
+    if (!label) continue; // blank row = removed / unused
+    const id = String(form.get(`${prefix}_id_${i}`) || `${slug(label)}-${randomBytes(3).toString("hex")}`);
+    items.push({ id, label, cents: cents(form.get(`${prefix}_amt_${i}`), `"${label}"`) });
+  }
+  if (items.length > 20) throw new SettingsError(`${title} can have up to 20 items.`);
+  return items;
+}
+
+export async function saveSettings(form: FormData) {
+  await requireParent();
+  const current = weekStart(today());
+  const week = form.get("applyFrom") === "next" ? addDays(current, 7) : current;
+  const before = await settingsFor(week);
+
+  let data: Settings;
+  try {
+    const kids: Settings["kids"] = {};
+    for (const k of KIDS) {
+      // Keep each chore's id when its wording is unchanged, so past check marks still line up.
+      const existing = new Map(before.kids[k.id].chores.map((c) => [c.label.toLowerCase(), c.id]));
+      const used = new Set<string>();
+      const chores = String(form.get(`chores_${k.id}`) ?? "")
+        .split("\n")
+        .map((l) => l.trim().slice(0, 80))
+        .filter(Boolean)
+        .slice(0, 15)
+        .map((label) => {
+          let id = existing.get(label.toLowerCase()) ?? slug(label);
+          while (used.has(id)) id = `${id}-x`;
+          used.add(id);
+          return { id, label };
+        });
+      kids[k.id] = { baseCents: cents(form.get(`base_${k.id}`), `${k.name}'s starting amount`), chores };
+    }
+    data = {
+      kids,
+      deductions: readItems(form, "ded", "Deductions"),
+      bonuses: readItems(form, "bon", "Bonuses"),
+      bonusCapCents: cents(form.get("bonusCap"), "The weekly bonus max"),
+    };
+  } catch (e) {
+    if (e instanceof SettingsError) redirect(`/parent/settings?error=${encodeURIComponent(e.message)}`);
+    throw e;
+  }
+
+  await db().saveSettings(week, data);
+  refresh();
+  redirect(`/parent/settings?saved=${week}`);
 }

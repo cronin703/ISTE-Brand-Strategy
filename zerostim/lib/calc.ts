@@ -1,4 +1,5 @@
-import { BONUSES, BONUS_CAP_CENTS, DEDUCTIONS, type Kid } from "./family";
+import type { Kid } from "./family";
+import type { Rules } from "./settings";
 import { addDays, today, weekDays } from "./dates";
 import type { Entry } from "./db";
 
@@ -8,6 +9,7 @@ export type WeekSummary = {
   deductionCents: number;
   bonusRawCents: number;
   bonusCents: number; // after the weekly cap
+  bonusCapCents: number;
   payoutCents: number;
   choresDone: number;
   choresPossible: number; // up to today for the current week
@@ -15,7 +17,7 @@ export type WeekSummary = {
   tallies: Record<string, number>; // `${kind}|${itemId}` -> count
 };
 
-export function summarize(kid: Kid, weekStart: string, entries: Entry[]): WeekSummary {
+export function summarize(kid: Kid, rules: Rules, weekStart: string, entries: Entry[]): WeekSummary {
   const end = addDays(weekStart, 6);
   const inWeek = entries.filter((e) => e.date >= weekStart && e.date <= end);
   const choreDone = new Set<string>();
@@ -30,14 +32,14 @@ export function summarize(kid: Kid, weekStart: string, entries: Entry[]): WeekSu
     }
     const key = `${e.kind}|${e.itemId}`;
     tallies[key] = (tallies[key] ?? 0) + 1;
-    const list = e.kind === "deduction" ? DEDUCTIONS : BONUSES;
+    const list = e.kind === "deduction" ? rules.deductions : rules.bonuses;
     const item = list.find((i) => i.id === e.itemId);
-    if (!item) continue;
+    if (!item) continue; // item was removed in settings; it no longer counts
     if (e.kind === "deduction") deductionCents += item.cents;
     else bonusRawCents += item.cents;
   }
 
-  const bonusCents = Math.min(bonusRawCents, BONUS_CAP_CENTS);
+  const bonusCents = Math.min(bonusRawCents, rules.bonusCapCents);
   const payoutCents = Math.max(0, kid.baseCents - deductionCents + bonusCents);
   const t = today();
   const daysSoFar = weekDays(weekStart).filter((d) => d <= t).length;
@@ -50,6 +52,7 @@ export function summarize(kid: Kid, weekStart: string, entries: Entry[]): WeekSu
     deductionCents,
     bonusRawCents,
     bonusCents,
+    bonusCapCents: rules.bonusCapCents,
     payoutCents,
     choresDone,
     choresPossible: kid.chores.length * daysSoFar,

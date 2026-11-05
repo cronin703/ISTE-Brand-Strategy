@@ -6,7 +6,6 @@ import { formatRange, today, weekStart } from "@/lib/dates";
 import { loadWeek } from "@/lib/load";
 import { Avatar } from "@/components/avatar";
 import { RevealPin, ShareButton } from "@/components/copy-share";
-import { logout } from "../../actions";
 
 async function baseUrl() {
   const h = await headers();
@@ -22,7 +21,7 @@ export default async function SharePage() {
     KIDS.map(async (k) => {
       const url = `${base}/login?who=${k.id}`;
       const qr = await QRCode.toString(url, { type: "svg", margin: 1, color: { dark: "#15131a", light: "#ffffff" } });
-      const { summary } = await loadWeek(k, week);
+      const { summary } = await loadWeek(k.id, week);
       return { kid: k, url, qr, pin: kidPin(k.id), summary };
     }),
   );
@@ -87,11 +86,8 @@ export default async function SharePage() {
       </section>
 
       <section className="panel" aria-labelledby="acct-h">
-        <h2 id="acct-h">Account</h2>
-        <p className="muted small">Passwords and PINs are set in the zerostim project&apos;s Environment Variables in Vercel.</p>
-        <form action={logout}>
-          <button className="btn" style={{ width: "100%" }}>Log out</button>
-        </form>
+        <h2 id="acct-h">Passwords and PINs</h2>
+        <p className="muted small">They&apos;re set in the zerostim project&apos;s Environment Variables in Vercel. Ask Claude to change them.</p>
       </section>
     </div>
   );

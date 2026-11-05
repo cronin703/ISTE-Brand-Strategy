@@ -13,7 +13,9 @@ export type WeekSummary = {
   payoutCents: number;
   choresDone: number;
   choresPossible: number; // up to today for the current week
-  choreDone: Set<string>; // `${choreId}|${date}`
+  choreDone: Set<string>; // approved: `${choreId}|${date}`
+  chorePending: Set<string>; // kid checked, waiting for Mom
+  pendingCount: number;
   tallies: Record<string, number>; // `${kind}|${itemId}` -> count
 };
 
@@ -21,13 +23,14 @@ export function summarize(kid: Kid, rules: Rules, weekStart: string, entries: En
   const end = addDays(weekStart, 6);
   const inWeek = entries.filter((e) => e.date >= weekStart && e.date <= end);
   const choreDone = new Set<string>();
+  const chorePending = new Set<string>();
   const tallies: Record<string, number> = {};
   let deductionCents = 0;
   let bonusRawCents = 0;
 
   for (const e of inWeek) {
     if (e.kind === "chore") {
-      choreDone.add(`${e.itemId}|${e.date}`);
+      (e.status === "pending" ? chorePending : choreDone).add(`${e.itemId}|${e.date}`);
       continue;
     }
     const key = `${e.kind}|${e.itemId}`;
@@ -45,6 +48,7 @@ export function summarize(kid: Kid, rules: Rules, weekStart: string, entries: En
   const daysSoFar = weekDays(weekStart).filter((d) => d <= t).length;
   const choreIds = new Set(kid.chores.map((c) => c.id));
   const choresDone = [...choreDone].filter((k) => choreIds.has(k.split("|")[0])).length;
+  const pendingCount = [...chorePending].filter((k) => choreIds.has(k.split("|")[0])).length;
 
   return {
     weekStart,
@@ -57,6 +61,8 @@ export function summarize(kid: Kid, rules: Rules, weekStart: string, entries: En
     choresDone,
     choresPossible: kid.chores.length * daysSoFar,
     choreDone,
+    chorePending,
+    pendingCount,
     tallies,
   };
 }

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { KIDS, getKid, HOUSE_RULES, money } from "@/lib/family";
 import { addDays, dateOf, daysBetween, formatRange, isValidDate, today, weekStart } from "@/lib/dates";
 import { loadWeek } from "@/lib/load";
-import { ChoreGrid, PayoutPoster, Tallies } from "@/components/week";
+import { ChoreGrid, PayoutPoster, Tallies, WaitingForMom } from "@/components/week";
 import { KidTabs } from "@/components/kid-tabs";
 import { togglePaid } from "../actions";
 import { Pending } from "../ui";
@@ -60,7 +60,8 @@ export default async function ParentWeek({ searchParams }: { searchParams: Promi
         <Link href="/parent/settings" className="btn">Edit chores &amp; amounts</Link>
       </div>
 
-      <ChoreGrid kid={kid} s={summary} editable />
+      <WaitingForMom kid={kid} s={summary} />
+      <ChoreGrid kid={kid} s={summary} mode="mom" />
       <Tallies kid={kid} s={summary} rules={rules} kind="deduction" editable />
       <Tallies kid={kid} s={summary} rules={rules} kind="bonus" editable />
 

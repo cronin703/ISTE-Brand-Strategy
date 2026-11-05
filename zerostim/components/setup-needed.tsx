@@ -14,7 +14,7 @@ export function SetupNeeded() {
         <Mascot size={88} mood="ok" className="mascot" />
       </section>
       <section className="panel">
-        <h2>For the parent</h2>
+        <h2>For Mom or Dad</h2>
         <ol className="rules">
           <li>In Vercel, open the zerostim project and go to Storage.</li>
           <li>Create a Neon database and connect it to zerostim.</li>

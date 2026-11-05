@@ -18,7 +18,7 @@ export async function login(_: LoginState, form: FormData): Promise<LoginState> 
 
   if (who === "parent") {
     const pw = parentPassword();
-    if (!pw) return { error: "Parent password isn't set up yet. Add PARENT_PASSWORD in the app settings." };
+    if (!pw) return { error: "The Mom or Dad password isn't set up yet. Add PARENT_PASSWORD in the app settings." };
     if (!safeEqual(secret, pw)) return { error: "That password didn't match. Try again." };
     await setSession({ role: "parent" });
     redirect("/parent");
@@ -163,4 +163,33 @@ export async function markSeen(kidId: string) {
   const { getSession } = await import("@/lib/auth");
   if ((await getSession())?.role === "parent") return; // parent peeking doesn't count
   await db().markSeen(kidId);
+}
+
+/* ---------------- Kid check-offs and Mom's sign-off ---------------- */
+
+/** Kids mark today's chores themselves (no login). They wait for Mom's approval. */
+export async function kidToggleChore(form: FormData) {
+  const kidId = String(form.get("kidId"));
+  const choreId = String(form.get("choreId"));
+  const t = today();
+  const kid = getKid(kidId) && kidIn(await settingsFor(weekStart(t)), kidId);
+  if (!kid || !kid.chores.some((c) => c.id === choreId)) throw new Error("Bad request");
+  await db().kidToggleChore(kidId, t, choreId); // always today: kids can't edit other days
+  refresh();
+}
+
+export async function approveAll(form: FormData) {
+  await requireParent();
+  const { kidId, week } = readKidAndWeek(form);
+  await db().approveChores(kidId, week, addDays(week, 6));
+  refresh();
+}
+
+export async function rejectChore(form: FormData) {
+  await requireParent();
+  const { kidId } = readKidAndWeek(form);
+  const date = String(form.get("date"));
+  if (!isValidDate(date)) throw new Error("Bad request");
+  await db().rejectChore(kidId, date, String(form.get("choreId")));
+  refresh();
 }

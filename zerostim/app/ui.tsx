@@ -2,7 +2,7 @@
 
 import { useOptimistic } from "react";
 import { useFormStatus } from "react-dom";
-import { changeTally, toggleChore } from "./actions";
+import { changeTally, kidToggleChore, toggleChore } from "./actions";
 
 /** Submit button that dims while its form is saving. */
 export function Pending({ className, children, ...rest }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
@@ -32,35 +32,61 @@ function Check() {
   );
 }
 
-/** One day tile in the chore grid. Flips instantly, then saves. */
+export type ChoreState = "none" | "pending" | "done";
+
+function Clock() {
+  return (
+    <svg className="check" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+      <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="2.5" />
+      <path d="M12 8v4.5l3 2" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+const STATE_WORDS: Record<ChoreState, string> = { none: "not done", pending: "waiting for Mom or Dad", done: "done" };
+
+/**
+ * One day tile in the chore grid. Flips instantly, then saves.
+ * Mom: empty -> done, waiting -> done (approve), done -> empty.
+ * Kid: empty -> waiting, waiting -> empty; done is locked.
+ */
 export function DayToggle(p: {
-  done: boolean;
+  state: ChoreState;
+  as: "mom" | "kid";
   label: string;
   short: string;
   className: string;
   fields: Record<string, string>;
 }) {
-  const [done, setDone] = useOptimistic(p.done);
+  const [state, setState] = useOptimistic(p.state);
+  const next = (s: ChoreState): ChoreState =>
+    p.as === "mom" ? (s === "done" ? "none" : "done") : s === "none" ? "pending" : s === "pending" ? "none" : "done";
+  const locked = p.as === "kid" && state === "done";
   return (
     <form
       action={async (fd) => {
-        setDone(!done);
-        await toggleChore(fd);
+        setState(next(state));
+        await (p.as === "mom" ? toggleChore(fd) : kidToggleChore(fd));
       }}
     >
       <Hidden fields={p.fields} />
-      <button className={p.className} aria-pressed={done} aria-label={p.label}>
-        {done ? <Check /> : p.short}
+      <button
+        className={`${p.className} is-${state}`}
+        aria-pressed={state === "done" ? true : state === "pending" ? "mixed" : false}
+        aria-label={`${p.label}: ${STATE_WORDS[state]}${p.as === "mom" && state === "pending" ? ". Tap to approve" : ""}`}
+        disabled={locked}
+      >
+        {state === "done" ? <Check /> : state === "pending" ? <Clock /> : p.short}
       </button>
     </form>
   );
 }
 
-/** Read-only day tile for the kid view. */
-export function DayStatic({ done, label, short, className }: { done: boolean; label: string; short: string; className: string }) {
+/** Read-only day tile. */
+export function DayStatic({ state, label, short, className }: { state: ChoreState; label: string; short: string; className: string }) {
   return (
-    <span className={`${className}${done ? " done" : ""}`} role="img" aria-label={label}>
-      {done ? <Check /> : short}
+    <span className={`${className} is-${state}`} role="img" aria-label={`${label}: ${STATE_WORDS[state]}`}>
+      {state === "done" ? <Check /> : state === "pending" ? <Clock /> : short}
     </span>
   );
 }

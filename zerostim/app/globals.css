@@ -425,3 +425,68 @@ span.day { cursor: default; }
   .penny-says { animation: fade var(--m-100) linear both; }
   .mascot[data-mood="mad"] { animation: fade var(--m-100) linear both; }
 }
+
+/* ---------- Pending ("waiting for Mom") chore tiles ---------- */
+.day.is-pending {
+  border-style: dashed; border-color: var(--a); color: var(--a);
+  background: color-mix(in srgb, var(--a) 10%, var(--surface));
+}
+.day.is-done { background: linear-gradient(140deg, var(--a), var(--b)); border-color: transparent; color: var(--on); }
+.day:disabled { cursor: default; opacity: 1; }
+.legend { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding-top: 4px; }
+.legend-dot { width: 14px; height: 14px; border-radius: 4px; display: inline-block; margin-left: 6px; }
+.legend-dot:first-child { margin-left: 0; }
+.legend-dot.is-done { background: linear-gradient(140deg, var(--a), var(--b)); }
+.legend-dot.is-pending { border: 2px dashed var(--a); }
+
+/* Mom's approval list */
+.panel-waiting { box-shadow: inset 0 0 0 2px var(--a); }
+.waiting-list { list-style: none; margin: 0; padding: 0; display: grid; }
+.waiting-list li { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 0; border-top: 2px solid var(--surface-2); flex-wrap: wrap; }
+.waiting-list li:first-child { border-top: 0; padding-top: 0; }
+.waiting-actions { display: flex; gap: 6px; }
+.btn-small { min-height: 40px; padding: 0 12px; font-size: 0.9375rem; }
+
+/* ---------- Dashboard ---------- */
+.dash { display: grid; gap: 16px; }
+@media (min-width: 720px) { .dash { grid-template-columns: 1fr 1fr; } }
+.dash-card {
+  display: grid; gap: 14px; padding: 18px; border-radius: var(--r-lg); background: var(--surface);
+  box-shadow: inset 0 6px 0 var(--a);
+}
+.dash-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.dash-who { display: flex; align-items: center; gap: 12px; }
+.dash-name { font-size: 2.5rem; color: var(--text); }
+.dash-who .streak-chip { margin-top: 4px; background: var(--surface-2); color: var(--text); }
+.dash-card .penny-says { box-shadow: none; background: var(--surface-2); color: var(--text); }
+.dash-card .penny-mad { background: #fff1ef; color: var(--ink); box-shadow: inset 0 0 0 2px #d43d06; }
+.dash-card .penny-sad { background: #eef6ff; color: var(--ink); }
+.dash-money { display: grid; gap: 10px; }
+.dash-label { font-size: 0.875rem; font-weight: 650; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+.dash-card .paid-chip { background: var(--a); color: var(--on); }
+.dash-amount { font-size: 3.25rem; color: var(--text); margin-top: 2px; font-variant-numeric: tabular-nums; }
+.dash-math { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; }
+.dash-math div { background: var(--surface-2); border-radius: var(--r-sm); padding: 8px 10px; }
+.dash-math dt { font-size: 0.75rem; font-weight: 600; color: var(--muted); }
+.dash-math dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+.dash-today { display: grid; gap: 8px; }
+.dash-bar { display: flex; height: 12px; border-radius: 6px; overflow: hidden; background: var(--surface-2); }
+.dash-bar span { display: block; height: 100%; transform-origin: left; animation: grow var(--m-300) var(--ease-out) both; }
+.bar-done { background: linear-gradient(90deg, var(--a), var(--b)); }
+.bar-pending { background: repeating-linear-gradient(135deg, var(--a) 0 4px, transparent 4px 8px); opacity: 0.6; }
+.dash-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.dash-list li { display: flex; align-items: center; gap: 10px; font-size: 0.9375rem; }
+.dash-icon {
+  flex: none; width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center;
+  border: 2px solid var(--border); font-size: 0.8125rem; font-weight: 800; line-height: 1;
+}
+.dash-list .is-done { color: var(--muted); }
+.dash-list .is-done span:nth-child(2) { text-decoration: line-through; }
+.dash-list .is-done .dash-icon { background: var(--a); border-color: var(--a); color: var(--on); }
+.dash-list .is-pending .dash-icon { border-style: dashed; border-color: var(--a); color: var(--a); }
+.dash-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.dash-actions .btn-solid { flex: 1; }
+@media (prefers-color-scheme: dark) {
+  .dash-card .penny-mad, .dash-card .penny-sad { color: var(--ink); }
+}
+@media (prefers-reduced-motion: reduce) { .dash-bar span { animation: none; } }

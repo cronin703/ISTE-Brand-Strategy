@@ -85,7 +85,7 @@ export default async function SharePage() {
 
       <section className="panel" aria-labelledby="acct-h">
         <h2 id="acct-h">Privacy</h2>
-        <p className="muted small">Kids don&apos;t log in, so anyone with a kid&apos;s link can see that kid&apos;s week. They can&apos;t change anything. Only the parent password can.</p>
+        <p className="muted small">Kids don&apos;t log in, so anyone with a kid&apos;s link can see that kid&apos;s week. They can check off today&apos;s chores, but nothing counts until Mom or Dad approves it. Only the Mom or Dad password can change anything else.</p>
       </section>
     </div>
   );

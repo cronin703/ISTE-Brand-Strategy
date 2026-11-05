@@ -30,13 +30,13 @@ export default async function KidPage({ params }: { params: Promise<{ id: string
         ) : (
           <Link href="/" className="btn" style={{ gap: 8, paddingLeft: 6 }}>
             <Avatar id={kid.id} name={kid.name} size={32} />
-            Not {kid.name}?
+            Home
           </Link>
         )}
       </header>
       <PayoutPoster kid={kid} s={summary} paid={paid} penny={penny} heading={`Hi ${kid.name}`} />
       <p className="muted small" style={{ textAlign: "center" }}>Week of {formatRange(week)}. Fresh start every Monday.</p>
-      <ChoreGrid kid={kid} s={summary} editable={false} />
+      <ChoreGrid kid={kid} s={summary} mode={isParent ? "view" : "kid"} />
       <Tallies kid={kid} s={summary} rules={rules} kind="bonus" editable={false} />
       <Tallies kid={kid} s={summary} rules={rules} kind="deduction" editable={false} />
       <section className="panel" aria-labelledby="rules-h">

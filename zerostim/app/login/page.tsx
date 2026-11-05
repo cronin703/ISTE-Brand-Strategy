@@ -19,7 +19,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
       </header>
       <section className="login-hero enter-1">
         <div style={{ flex: 1 }}>
-          <h1 className="display">Parent</h1>
+          <h1 className="display">Mom or Dad</h1>
           <p>Log in to manage chores and payouts.</p>
         </div>
         <Mascot size={88} className="mascot" mood="great" />

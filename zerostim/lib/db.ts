@@ -18,6 +18,8 @@ export type Entry = {
   kind: Kind;
   itemId: string;
   createdAt: string;
+  /** Chores only: "pending" = kid checked it, waiting for Mom. Everything else is approved. */
+  status?: "approved" | "pending";
 };
 export type Payout = { kidId: string; weekStart: string; amountCents: number; paidAt: string };
 /** A saved version of the rules, in effect from `week` until a later version. */
@@ -25,7 +27,14 @@ export type SettingsVersion = { week: string; data: unknown };
 
 interface Store {
   listEntries(kidId: string, from: string, to: string): Promise<Entry[]>;
+  /** Mom's tap: empty -> approved, pending -> approved, approved -> empty. */
   toggleChore(kidId: string, date: string, choreId: string): Promise<void>;
+  /** Kid's tap: empty -> pending, pending -> empty. Approved chores are locked. */
+  kidToggleChore(kidId: string, date: string, choreId: string): Promise<void>;
+  /** Approve every pending chore in the date range. */
+  approveChores(kidId: string, from: string, to: string): Promise<void>;
+  /** Mom says it wasn't done: remove a pending check. */
+  rejectChore(kidId: string, date: string, choreId: string): Promise<void>;
   addTally(kidId: string, date: string, kind: Kind, itemId: string): Promise<void>;
   removeLatestTally(kidId: string, from: string, to: string, kind: Kind, itemId: string): Promise<void>;
   listPayouts(kidId: string): Promise<Payout[]>;
@@ -64,8 +73,27 @@ const fileStore: Store = {
   async toggleChore(kidId, date, choreId) {
     const d = await readFile();
     const i = d.entries.findIndex((e) => e.kidId === kidId && e.date === date && e.kind === "chore" && e.itemId === choreId);
+    if (i >= 0 && d.entries[i].status === "pending") d.entries[i].status = "approved";
+    else if (i >= 0) d.entries.splice(i, 1);
+    else d.entries.push({ id: randomUUID(), kidId, date, kind: "chore", itemId: choreId, createdAt: new Date().toISOString(), status: "approved" });
+    await writeFile(d);
+  },
+  async kidToggleChore(kidId, date, choreId) {
+    const d = await readFile();
+    const i = d.entries.findIndex((e) => e.kidId === kidId && e.date === date && e.kind === "chore" && e.itemId === choreId);
+    if (i >= 0 && d.entries[i].status !== "pending") return; // approved: locked
     if (i >= 0) d.entries.splice(i, 1);
-    else d.entries.push({ id: randomUUID(), kidId, date, kind: "chore", itemId: choreId, createdAt: new Date().toISOString() });
+    else d.entries.push({ id: randomUUID(), kidId, date, kind: "chore", itemId: choreId, createdAt: new Date().toISOString(), status: "pending" });
+    await writeFile(d);
+  },
+  async approveChores(kidId, from, to) {
+    const d = await readFile();
+    for (const e of d.entries) if (e.kidId === kidId && e.kind === "chore" && e.status === "pending" && e.date >= from && e.date <= to) e.status = "approved";
+    await writeFile(d);
+  },
+  async rejectChore(kidId, date, choreId) {
+    const d = await readFile();
+    d.entries = d.entries.filter((e) => !(e.kidId === kidId && e.date === date && e.kind === "chore" && e.itemId === choreId && e.status === "pending"));
     await writeFile(d);
   },
   async addTally(kidId, date, kind, itemId) {
@@ -150,9 +178,22 @@ function pgStore(url: string): Store {
       kid_id text primary key,
       seen_at timestamptz not null
     )`;
+    await sql`alter table entries add column if not exists status text not null default 'approved'`;
+    await sql`create table if not exists meta (key text primary key, value text not null)`;
+    // One-time fresh start requested on 2026-11-05: clear test check-offs, tallies,
+    // payouts and visits (settings stay). Runs once per database, never again.
+    await sql.begin(async (tx) => {
+      const first = await tx`insert into meta (key, value) values ('fresh-start-2026-11-05', now()::text)
+                             on conflict (key) do nothing returning key`;
+      if (first.length) {
+        await tx`delete from entries`;
+        await tx`delete from payouts`;
+        await tx`delete from seen`;
+      }
+    });
   })());
 
-  type Row = { id: string; kid_id: string; date: string; kind: Kind; item_id: string; created_at: Date };
+  type Row = { id: string; kid_id: string; date: string; kind: Kind; item_id: string; created_at: Date; status: "approved" | "pending" };
   const toEntry = (r: Row): Entry => ({
     id: r.id,
     kidId: r.kid_id,
@@ -160,26 +201,54 @@ function pgStore(url: string): Store {
     kind: r.kind,
     itemId: r.item_id,
     createdAt: r.created_at.toISOString(),
+    status: r.status,
   });
 
   return {
     async listEntries(kidId, from, to) {
       await ready;
       const rows = await sql<Row[]>`
-        select id, kid_id, to_char(date, 'YYYY-MM-DD') as date, kind, item_id, created_at
+        select id, kid_id, to_char(date, 'YYYY-MM-DD') as date, kind, item_id, created_at, status
         from entries where kid_id = ${kidId} and date between ${from} and ${to}`;
       return rows.map(toEntry);
     },
     async toggleChore(kidId, date, choreId) {
       await ready;
+      const approved = await sql`
+        update entries set status = 'approved'
+        where kid_id = ${kidId} and date = ${date} and kind = 'chore' and item_id = ${choreId} and status = 'pending'
+        returning id`;
+      if (approved.length) return;
       const removed = await sql`
         delete from entries
         where kid_id = ${kidId} and date = ${date} and kind = 'chore' and item_id = ${choreId}
         returning id`;
       if (removed.length === 0) {
-        await sql`insert into entries (id, kid_id, date, kind, item_id)
-                  values (${randomUUID()}, ${kidId}, ${date}, 'chore', ${choreId})`;
+        await sql`insert into entries (id, kid_id, date, kind, item_id, status)
+                  values (${randomUUID()}, ${kidId}, ${date}, 'chore', ${choreId}, 'approved')`;
       }
+    },
+    async kidToggleChore(kidId, date, choreId) {
+      await ready;
+      const existing = await sql<{ status: string }[]>`
+        select status from entries where kid_id = ${kidId} and date = ${date} and kind = 'chore' and item_id = ${choreId}`;
+      if (existing.some((r) => r.status !== "pending")) return; // approved: locked
+      if (existing.length) {
+        await sql`delete from entries where kid_id = ${kidId} and date = ${date} and kind = 'chore' and item_id = ${choreId} and status = 'pending'`;
+      } else {
+        await sql`insert into entries (id, kid_id, date, kind, item_id, status)
+                  values (${randomUUID()}, ${kidId}, ${date}, 'chore', ${choreId}, 'pending')`;
+      }
+    },
+    async approveChores(kidId, from, to) {
+      await ready;
+      await sql`update entries set status = 'approved'
+                where kid_id = ${kidId} and kind = 'chore' and status = 'pending' and date between ${from} and ${to}`;
+    },
+    async rejectChore(kidId, date, choreId) {
+      await ready;
+      await sql`delete from entries
+                where kid_id = ${kidId} and date = ${date} and kind = 'chore' and item_id = ${choreId} and status = 'pending'`;
     },
     async addTally(kidId, date, kind, itemId) {
       await ready;

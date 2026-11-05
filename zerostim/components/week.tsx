@@ -2,7 +2,8 @@ import { money, type Kid } from "@/lib/family";
 import type { Rules } from "@/lib/settings";
 import { DAY_LONG, DAY_SHORT, today, weekDays } from "@/lib/dates";
 import type { WeekSummary } from "@/lib/calc";
-import { DayStatic, DayToggle, Stepper } from "@/app/ui";
+import { DayStatic, DayToggle, Pending, Stepper, type ChoreState } from "@/app/ui";
+import { approveAll, rejectChore, toggleChore } from "@/app/actions";
 import { Mascot } from "./mascot";
 import type { WeekView } from "@/lib/load";
 
@@ -50,7 +51,8 @@ export function PayoutPoster(p: {
         <p className="poster-note">Bonuses earned {money(s.bonusRawCents)}. The weekly max is {money(s.bonusCapCents)}.</p>
       )}
       <p className="poster-note">
-        {penny.todayTotal !== undefined && `Today: ${penny.todayDone} of ${penny.todayTotal} chores. `}
+        {penny.todayTotal !== undefined &&
+          `Today: ${penny.todayDone} of ${penny.todayTotal} chores${penny.todayPending ? ` (${penny.todayPending} waiting for Mom or Dad)` : ""}. `}
         This week: {s.choresDone} of {s.choresPossible}.
       </p>
       {p.meta}
@@ -59,14 +61,25 @@ export function PayoutPoster(p: {
   );
 }
 
-export function ChoreGrid({ kid, s, editable }: { kid: Kid; s: WeekSummary; editable: boolean }) {
+/**
+ * mode "mom": every day tappable (approve / check / uncheck).
+ * mode "kid": only today is tappable; marks wait for Mom.
+ * mode "view": read-only.
+ */
+export function ChoreGrid({ kid, s, mode }: { kid: Kid; s: WeekSummary; mode: "mom" | "kid" | "view" }) {
   const days = weekDays(s.weekStart);
   const t = today();
+  const hint =
+    mode === "mom"
+      ? "Tap to check. Tap a clock to approve."
+      : mode === "kid" && days.includes(t)
+        ? "Tap today's chores when they're done. Mom or Dad signs off."
+        : null;
   return (
     <section className="panel" aria-labelledby="chores-h">
       <div className="panel-head">
         <h2 id="chores-h">Daily responsibilities</h2>
-        {editable && <span className="muted small">Tap a day to check it off</span>}
+        {hint && <span className="muted small">{hint}</span>}
       </div>
       <div className="day-head" aria-hidden="true">
         {DAY_SHORT.map((d, i) => <span key={d} className={days[i] === t ? "is-today" : undefined}>{d}</span>)}
@@ -76,30 +89,76 @@ export function ChoreGrid({ kid, s, editable }: { kid: Kid; s: WeekSummary; edit
           <span className="chore-name">{c.label}</span>
           <div className="days">
             {days.map((date, i) => {
-              const done = s.choreDone.has(`${c.id}|${date}`);
+              const key = `${c.id}|${date}`;
+              const state: ChoreState = s.choreDone.has(key) ? "done" : s.chorePending.has(key) ? "pending" : "none";
               const cls = ["day", date === t && "today", date > t && "future"].filter(Boolean).join(" ");
-              return editable ? (
+              const label = `${c.label}, ${DAY_LONG[i]}`;
+              const tappable = mode === "mom" || (mode === "kid" && date === t);
+              return tappable ? (
                 <DayToggle
                   key={date}
-                  done={done}
+                  as={mode === "mom" ? "mom" : "kid"}
+                  state={state}
                   short={DAY_SHORT[i]}
                   className={cls}
-                  label={`${c.label}, ${DAY_LONG[i]}`}
+                  label={label}
                   fields={{ kidId: kid.id, week: s.weekStart, date, choreId: c.id }}
                 />
               ) : (
-                <DayStatic
-                  key={date}
-                  done={done}
-                  short={DAY_SHORT[i]}
-                  className={cls}
-                  label={`${c.label}, ${DAY_LONG[i]}, ${done ? "done" : "not done"}`}
-                />
+                <DayStatic key={date} state={state} short={DAY_SHORT[i]} className={cls} label={label} />
               );
             })}
           </div>
         </div>
       ))}
+      <p className="legend muted small" aria-hidden="true">
+        <span className="legend-dot is-done" /> Done
+        <span className="legend-dot is-pending" /> Waiting for Mom or Dad
+      </p>
+    </section>
+  );
+}
+
+/** Mom's sign-off list: everything the kid checked that she hasn't approved. */
+export function WaitingForMom({ kid, s }: { kid: Kid; s: WeekSummary }) {
+  if (!s.pendingCount) return null;
+  const items = [...s.chorePending]
+    .map((k) => {
+      const [choreId, date] = k.split("|");
+      return { choreId, date, label: kid.chores.find((c) => c.id === choreId)?.label };
+    })
+    .filter((x) => x.label)
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const fields = (extra: Record<string, string>) => ({ kidId: kid.id, week: s.weekStart, ...extra });
+  return (
+    <section className="panel panel-waiting" aria-labelledby="waiting-h">
+      <div className="panel-head">
+        <h2 id="waiting-h">Waiting for Mom or Dad ({items.length})</h2>
+        <form action={approveAll}>
+          {Object.entries(fields({})).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
+          <Pending className="btn btn-solid">Approve all</Pending>
+        </form>
+      </div>
+      <ul className="waiting-list">
+        {items.map((it) => (
+          <li key={`${it.choreId}|${it.date}`}>
+            <span>
+              {it.label}
+              <span className="muted small"> {DAY_LONG[weekDays(s.weekStart).indexOf(it.date)]}</span>
+            </span>
+            <span className="waiting-actions">
+              <form action={rejectChore}>
+                {Object.entries(fields({ date: it.date, choreId: it.choreId })).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
+                <Pending className="btn btn-small" aria-label={`Not done: ${it.label}`}>Not done</Pending>
+              </form>
+              <form action={toggleChore}>
+                {Object.entries(fields({ date: it.date, choreId: it.choreId })).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
+                <Pending className="btn btn-small btn-solid" aria-label={`Approve: ${it.label}`}>Approve</Pending>
+              </form>
+            </span>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

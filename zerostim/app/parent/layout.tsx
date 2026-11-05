@@ -12,7 +12,7 @@ export default async function ParentLayout({ children }: { children: React.React
     <>
       <main className="page page-with-tabs">
         <header className="topbar">
-          <Logo href="/parent" />
+          <Logo href="/" />
           <form action={logout}>
             <button className="btn">Log out</button>
           </form>

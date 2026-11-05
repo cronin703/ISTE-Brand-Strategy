@@ -15,7 +15,8 @@ export type Penny = {
   mood: Mood;
   line: string;
   streak: number; // days in a row with every chore done
-  todayDone: number;
+  todayDone: number; // includes ones waiting for Mom
+  todayPending: number;
   todayTotal: number;
   lastSeen: string | null; // ISO time the kid last opened their page
 };
@@ -24,18 +25,23 @@ function choresOn(book: SettingsBook, kidId: string, date: string) {
   return kidIn(book.at(weekStart(date)), kidId)!.chores;
 }
 
-function doneOn(entries: Entry[], date: string, ids: Set<string>) {
-  return new Set(entries.filter((e) => e.kind === "chore" && e.date === date && ids.has(e.itemId)).map((e) => e.itemId)).size;
+/** Chores done on a date. `approvedOnly` for streaks; kids get credit for pending ones otherwise. */
+function doneOn(entries: Entry[], date: string, ids: Set<string>, approvedOnly = false) {
+  return new Set(
+    entries
+      .filter((e) => e.kind === "chore" && e.date === date && ids.has(e.itemId) && (!approvedOnly || e.status !== "pending"))
+      .map((e) => e.itemId),
+  ).size;
 }
 
 /** Days in a row (ending today if today is complete, else yesterday) with all chores done. */
 export function streakFor(book: SettingsBook, kidId: string, entries: Entry[], t = today()): number {
   let n = 0;
   const todayIds = new Set(choresOn(book, kidId, t).map((c) => c.id));
-  let day = todayIds.size && doneOn(entries, t, todayIds) === todayIds.size ? t : addDays(t, -1);
+  let day = todayIds.size && doneOn(entries, t, todayIds, true) === todayIds.size ? t : addDays(t, -1);
   for (let i = 0; i < 60; i++) {
     const ids = new Set(choresOn(book, kidId, day).map((c) => c.id));
-    if (!ids.size || doneOn(entries, day, ids) < ids.size) break;
+    if (!ids.size || doneOn(entries, day, ids, true) < ids.size) break;
     n++;
     day = addDays(day, -1);
   }
@@ -57,6 +63,7 @@ export function pennyFor(opts: {
   const chores = choresOn(book, kid.id, t);
   const ids = new Set(chores.map((c) => c.id));
   const todayDone = doneOn(entries, t, ids);
+  const todayPending = todayDone - doneOn(entries, t, ids, true);
   const todayTotal = ids.size;
   const left = todayTotal - todayDone;
   const firstLeft = chores.find((c) => !entries.some((e) => e.kind === "chore" && e.date === t && e.itemId === c.id));
@@ -67,7 +74,7 @@ export function pennyFor(opts: {
   const streak = streakFor(book, kid.id, entries, t);
   const away = lastSeen ? daysBetween(dateOf(lastSeen), t) : null;
   const seed = Number(t.replaceAll("-", "")) + kid.id.length; // same line all day, different tomorrow
-  const base = { streak, todayDone, todayTotal, lastSeen };
+  const base = { streak, todayDone, todayPending, todayTotal, lastSeen };
 
   // Away for a while: the Duolingo guilt trip comes first.
   if (away !== null && away >= 2) {
@@ -82,6 +89,14 @@ export function pennyFor(opts: {
         ],
         seed,
       ),
+    };
+  }
+
+  if (todayTotal > 0 && left === 0 && todayPending > 0) {
+    return {
+      ...base,
+      mood: "great",
+      line: pick(["All done. Now Mom or Dad has to sign off.", `Done! ${todayPending} waiting for Mom or Dad to approve.`], seed),
     };
   }
 

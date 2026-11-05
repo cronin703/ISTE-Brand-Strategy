@@ -761,3 +761,11 @@ textarea, select { color: inherit; }
 .pill-good { background: var(--accent-soft, #dcefe8); color: var(--plus); padding: 4px 12px; border-radius: 999px; font-weight: 700; font-size: 0.875rem; }
 .push-prompt { gap: 8px; justify-items: start; }
 .push-prompt .panel-head { width: 100%; }
+
+/* ---------- Admin "view as" ---------- */
+.impersonate-bar {
+  position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding: 8px 16px; background: #7c3aed; color: #fff; font-size: 0.9375rem;
+}
+.impersonate-bar .btn { background: #fff; color: #3b0d8f; border-color: #fff; }
+.user-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }

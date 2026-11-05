@@ -2,7 +2,7 @@ import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { tempPassword } from "@/lib/password";
-import { adminCreateUser, adminRemoveParent, adminResetPassword, adminUpdateUser } from "../../actions";
+import { adminCreateUser, adminImpersonate, adminRemoveParent, adminResetPassword, adminUpdateUser } from "../../actions";
 import { Pending } from "../../ui";
 
 const SAVED: Record<string, string> = {
@@ -55,6 +55,13 @@ export default async function AdminUsers({ searchParams }: { searchParams: Promi
       <ul className="admin-list">
         {users.map((u) => (
           <li key={u.id} className="panel user-card">
+            <div className="user-top">
+              <span className="muted small">{u.familyName}</span>
+              <form action={adminImpersonate}>
+                <input type="hidden" name="parentId" value={u.id} />
+                <Pending className="btn btn-small btn-solid">View as {u.name}</Pending>
+              </form>
+            </div>
             <form action={adminUpdateUser} className="user-edit">
               <input type="hidden" name="parentId" value={u.id} />
               <div className="field"><label htmlFor={`un-${u.id}`}>Name</label><input id={`un-${u.id}`} name="name" className="text-input" defaultValue={u.name} maxLength={40} /></div>

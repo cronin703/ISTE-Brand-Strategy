@@ -9,7 +9,8 @@ import { db, type Family, type Parent } from "./db";
 // - The app owner logs in at /admin with ADMIN_PASSWORD. That area isn't linked anywhere.
 // - Kids never log in; their page is reached by a private link per kid.
 
-export type Session = { role: "parent"; parentId: string; familyId: string } | { role: "admin" };
+/** `asAdmin`: the app owner is viewing as this parent (impersonation). */
+export type Session = { role: "parent"; parentId: string; familyId: string; asAdmin?: boolean } | { role: "admin" };
 
 const COOKIE = "zerostim_session";
 const DEVICE = "zerostim_family"; // remembers which family's dashboard this device shows
@@ -58,7 +59,7 @@ export async function getSession(): Promise<Session | null> {
     if (typeof data.exp !== "number" || data.exp < Date.now()) return null;
     if (data.role === "admin") return { role: "admin" };
     if (data.role === "parent" && typeof data.parentId === "string" && typeof data.familyId === "string") {
-      return { role: "parent", parentId: data.parentId, familyId: data.familyId };
+      return { role: "parent", parentId: data.parentId, familyId: data.familyId, asAdmin: data.asAdmin === true };
     }
   } catch {}
   return null;

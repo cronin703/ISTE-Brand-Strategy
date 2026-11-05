@@ -54,7 +54,32 @@ export async function adminLogin(_: FormState, form: FormData): Promise<FormStat
 }
 
 export async function logout() {
+  // Ending an impersonation goes back to admin instead of logging out.
+  const s = await getSession();
+  if (s?.role === "parent" && s.asAdmin) {
+    await setSession({ role: "admin" });
+    redirect("/admin/users");
+  }
   await clearSession();
+  redirect("/");
+}
+
+/** Admin: act as a parent (sees and can change exactly what they can). */
+export async function adminImpersonate(form: FormData) {
+  await requireAdmin();
+  const parent = await db().getParent(String(form.get("parentId")));
+  if (!parent) throw new Error("Bad request");
+  await setSession({ role: "parent", parentId: parent.id, familyId: parent.familyId, asAdmin: true });
+  redirect("/");
+}
+
+/** Leave "view as" and return to the admin area. */
+export async function stopImpersonating() {
+  const s = await getSession();
+  if (s?.role === "parent" && s.asAdmin) {
+    await setSession({ role: "admin" });
+    redirect("/admin/users");
+  }
   redirect("/");
 }
 
@@ -183,8 +208,10 @@ export async function kidVisit(kidToken: string) {
   const row = await db().getKidByToken(kidToken);
   if (!row) return;
   const family = await db().getFamily(row.familyId);
+  const s = await getSession();
+  if (s?.role === "admin" || (s?.role === "parent" && s.asAdmin)) return; // the app owner peeking: don't count or remember
   if (family) await rememberFamily(family.token);
-  if ((await getSession())?.role === "parent") return; // a parent peeking doesn't count
+  if (s?.role === "parent") return; // a parent peeking doesn't count
   await db().markSeen(row.id);
 }
 

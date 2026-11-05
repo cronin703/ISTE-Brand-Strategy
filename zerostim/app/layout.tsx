@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/bricolage-grotesque/standard.css";
 import "./globals.css";
+import { ImpersonationBanner } from "@/components/impersonation-banner";
+import { dbConfigured } from "@/lib/db";
 
 // Every page reads the database or cookies, so never prerender at build time.
 export const dynamic = "force-dynamic";
@@ -24,7 +26,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {dbConfigured() && <ImpersonationBanner />}
+        {children}
+      </body>
     </html>
   );
 }

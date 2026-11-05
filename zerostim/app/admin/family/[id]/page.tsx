@@ -5,7 +5,8 @@ import { db } from "@/lib/db";
 import { formatShort } from "@/lib/dates";
 import { tempPassword } from "@/lib/password";
 import { Avatar } from "@/components/avatar";
-import { adminAddKid, adminAddParent, adminDeleteFamily, adminRemoveParent, adminRenameFamily, adminResetPassword } from "../../../actions";
+import { adminAddKid, adminAddParent, adminDeleteFamily, adminImpersonate, adminRemoveParent, adminRenameFamily, adminResetPassword } from "../../../actions";
+import Link from "next/link";
 import { Pending } from "../../../ui";
 
 const SAVED: Record<string, string> = {
@@ -52,6 +53,10 @@ export default async function AdminFamily({ params, searchParams }: { params: Pr
                 <strong>{p.name}</strong>
                 <span className="muted small break" style={{ display: "block" }}>{p.email}</span>
               </span>
+              <form action={adminImpersonate}>
+                <input type="hidden" name="parentId" value={p.id} />
+                <Pending className="btn btn-small btn-solid">View as {p.name}</Pending>
+              </form>
               <details className="danger-lite">
                 <summary>Manage</summary>
                 <form action={adminResetPassword} className="danger-form">
@@ -86,7 +91,7 @@ export default async function AdminFamily({ params, searchParams }: { params: Pr
           {kids.map((k) => (
             <li key={k.id}>
               <span className="share-head"><Avatar color={k.color} name={k.name} size={32} /> {k.name}</span>
-              <span className="muted small break">{base.replace(/^https?:\/\//, "")}/k/{k.token}</span>
+              <Link href={`/k/${k.token}`} className="btn btn-small">Open {k.name}&apos;s page</Link>
             </li>
           ))}
         </ul>

@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { randomBytes } from "crypto";
 import { clearSession, parentPassword, requireParent, safeEqual, setSession } from "@/lib/auth";
 import { db, type Kind } from "@/lib/db";
-import { KIDS, TRACKING_START, getKid, type Item } from "@/lib/family";
+import { KIDS, getKid, type Item } from "@/lib/family";
 import { addDays, isValidDate, today, weekStart, weekDays } from "@/lib/dates";
 import { loadWeek } from "@/lib/load";
 import { settingsFor, kidIn, type Settings } from "@/lib/settings";
@@ -119,7 +119,8 @@ export async function saveSettings(form: FormData) {
   const week = form.get("applyFrom") === "next" ? addDays(current, 7) : current;
   const before = await settingsFor(week);
 
-  let data: Settings;
+  let data: Omit<Settings, "trackingStart">;
+  let startDate = "";
   try {
     const kids: Settings["kids"] = {};
     for (const k of KIDS) {
@@ -138,6 +139,9 @@ export async function saveSettings(form: FormData) {
       }
       kids[k.id] = { baseCents: cents(form.get(`base_${k.id}`), `${k.name}'s starting amount`), chores };
     }
+    const start = String(form.get("startDate") ?? "");
+    if (!isValidDate(start)) throw new SettingsError("Pick a start date.");
+    startDate = start;
     data = {
       kids,
       deductions: readItems(form, "ded", "Deductions"),
@@ -150,6 +154,7 @@ export async function saveSettings(form: FormData) {
   }
 
   await db().saveSettings(week, data);
+  await db().setMeta("tracking_start", startDate);
   refresh();
   redirect(`/parent/settings?saved=${week}`);
 }
@@ -171,8 +176,9 @@ export async function kidToggleChore(form: FormData) {
   const kidId = String(form.get("kidId"));
   const choreId = String(form.get("choreId"));
   const t = today();
-  const kid = getKid(kidId) && kidIn(await settingsFor(weekStart(t)), kidId);
-  if (!kid || !kid.chores.some((c) => c.id === choreId) || t < TRACKING_START) throw new Error("Bad request");
+  const rules = await settingsFor(weekStart(t));
+  const kid = getKid(kidId) && kidIn(rules, kidId);
+  if (!kid || !kid.chores.some((c) => c.id === choreId) || t < rules.trackingStart) throw new Error("Bad request");
   await db().kidToggleChore(kidId, t, choreId); // always today: kids can't edit other days
   refresh();
 }
@@ -205,8 +211,8 @@ export async function kidBonus(form: FormData) {
   const itemId = String(form.get("itemId"));
   const delta = Number(form.get("delta"));
   const t = today();
-  if (!getKid(kidId) || t < TRACKING_START) throw new Error("Bad request");
   const rules = await settingsFor(weekStart(t));
+  if (!getKid(kidId) || t < rules.trackingStart) throw new Error("Bad request");
   if (!rules.bonuses.some((b) => b.id === itemId)) throw new Error("Bad request");
   if (delta > 0) await db().addTally(kidId, t, "bonus", itemId, "pending");
   else await db().removeLatestPending(kidId, t, "bonus", itemId);

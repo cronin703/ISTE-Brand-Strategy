@@ -4,7 +4,6 @@ import { DAY_LONG, DAY_SHORT, today, weekDays } from "@/lib/dates";
 import type { WeekSummary } from "@/lib/calc";
 import { DayStatic, DayToggle, Pending, Stepper, type ChoreState } from "@/app/ui";
 import { approveAll, approveEntry, kidBonus, rejectEntry } from "@/app/actions";
-import { TRACKING_START } from "@/lib/family";
 import { Mascot } from "./mascot";
 import type { WeekView } from "@/lib/load";
 
@@ -80,7 +79,7 @@ export function ChoreGrid({ kid, s, mode }: { kid: Kid; s: WeekSummary; mode: "m
   const hint =
     mode === "mom"
       ? "Tap to check. Tap a clock to approve."
-      : mode === "kid" && days.includes(t) && t >= TRACKING_START
+      : mode === "kid" && days.includes(t) && t >= s.trackingStart
         ? "Tap today's chores when they're done. Mom or Dad signs off."
         : null;
   return (
@@ -99,7 +98,7 @@ export function ChoreGrid({ kid, s, mode }: { kid: Kid; s: WeekSummary; mode: "m
             {days.map((date, i) => {
               const key = `${c.id}|${date}`;
               const state: ChoreState = s.choreDone.has(key) ? "done" : s.chorePending.has(key) ? "pending" : "none";
-              const inactive = date < TRACKING_START;
+              const inactive = date < s.trackingStart;
               const cls = ["day", date === t && "today", date > t && "future", inactive && "inactive"].filter(Boolean).join(" ");
               const label = `${c.label}, ${DAY_LONG[i]}${inactive ? " (before ZeroStim started)" : ""}`;
               const tappable = !inactive && (mode === "mom" || (mode === "kid" && date === t));

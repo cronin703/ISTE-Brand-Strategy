@@ -54,7 +54,7 @@ export const BONUSES: Item[] = [
 
 export const BONUS_CAP_CENTS = 300;
 
-/** First day that counts. Days before it earn nothing and lose nothing. */
+/** Default first day that counts, until Mom or Dad picks one in Settings. */
 export const TRACKING_START = process.env.TRACKING_START || "2026-11-05";
 
 export const HOUSE_RULES = [

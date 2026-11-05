@@ -7,6 +7,8 @@ import { Pending } from "../../ui";
 import { ListEditor } from "@/components/list-editor";
 
 const dollars = (c: number) => (c / 100).toFixed(2);
+const longDay = (d: string) =>
+  new Intl.DateTimeFormat("en-US", { weekday: "long", month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${d}T12:00:00Z`));
 
 export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ saved?: string; error?: string }> }) {
   const sp = await searchParams;
@@ -33,6 +35,27 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
       )}
 
       <form action={saveSettings} className="settings">
+        <section className="panel" aria-labelledby="set-start">
+          <h2 id="set-start">Start date</h2>
+          <div className="field">
+            <label htmlFor="startDate">First day that counts</label>
+            <input
+              id="startDate"
+              name="startDate"
+              type="date"
+              className="date-input"
+              defaultValue={book.trackingStart}
+              required
+            />
+            <p className="muted small">
+              {book.trackingStart > current
+                ? `ZeroStim starts ${longDay(book.trackingStart)}. Nothing counts before then, and Penny won't nag.`
+                : `Counting since ${longDay(book.trackingStart)}. Days before this don't count.`}{" "}
+              If the first week is short, its chores still add up to the full weekly amount.
+            </p>
+          </div>
+        </section>
+
         {KIDS.map((k) => {
           const kid = kidIn(s, k.id)!;
           return (

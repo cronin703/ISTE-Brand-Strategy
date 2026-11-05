@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { KIDS, TRACKING_START, money } from "@/lib/family";
+import { KIDS, money } from "@/lib/family";
 import { getSession } from "@/lib/auth";
 import { dbConfigured } from "@/lib/db";
 import { addDays, DAY_SHORT, formatRange, formatShort, today, weekStart } from "@/lib/dates";
@@ -32,6 +32,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   const t = today();
   const week = weekStart(t);
   const views = await Promise.all(KIDS.map((k) => loadWeek(k.id, week)));
+  const TRACKING_START = views[0].summary.trackingStart;
   const beforeStart = t < TRACKING_START;
 
   const title =

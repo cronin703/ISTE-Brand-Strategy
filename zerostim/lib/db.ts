@@ -51,11 +51,14 @@ interface Store {
   /** When the kid last opened their page (ISO time), or null. */
   lastSeen(kidId: string): Promise<string | null>;
   markSeen(kidId: string): Promise<void>;
+  /** Small app-wide values, e.g. the tracking start date. */
+  getMeta(key: string): Promise<string | null>;
+  setMeta(key: string, value: string): Promise<void>;
 }
 
 /* ---------------- JSON file store (local dev) ---------------- */
 
-type FileData = { entries: Entry[]; payouts: Payout[]; settings?: SettingsVersion[]; seen?: Record<string, string> };
+type FileData = { entries: Entry[]; payouts: Payout[]; settings?: SettingsVersion[]; seen?: Record<string, string>; meta?: Record<string, string> };
 const FILE = path.join(process.cwd(), ".data", "db.json");
 
 async function readFile(): Promise<FileData> {
@@ -170,6 +173,14 @@ const fileStore: Store = {
   async markSeen(kidId) {
     const d = await readFile();
     d.seen = { ...(d.seen ?? {}), [kidId]: new Date().toISOString() };
+    await writeFile(d);
+  },
+  async getMeta(key) {
+    return (await readFile()).meta?.[key] ?? null;
+  },
+  async setMeta(key, value) {
+    const d = await readFile();
+    d.meta = { ...(d.meta ?? {}), [key]: value };
     await writeFile(d);
   },
 };
@@ -350,6 +361,16 @@ function pgStore(url: string): Store {
       await ready;
       await sql`insert into seen (kid_id, seen_at) values (${kidId}, now())
                 on conflict (kid_id) do update set seen_at = now()`;
+    },
+    async getMeta(key) {
+      await ready;
+      const rows = await sql<{ value: string }[]>`select value from meta where key = ${key}`;
+      return rows[0]?.value ?? null;
+    },
+    async setMeta(key, value) {
+      await ready;
+      await sql`insert into meta (key, value) values (${key}, ${value})
+                on conflict (key) do update set value = excluded.value`;
     },
   };
 }

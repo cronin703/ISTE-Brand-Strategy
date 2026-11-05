@@ -1,11 +1,17 @@
 import "server-only";
-import { BONUSES, BONUS_CAP_CENTS, DEDUCTIONS, KIDS, type Item, type Kid } from "./family";
+import { BONUSES, BONUS_CAP_CENTS, DEDUCTIONS, KIDS, TRACKING_START, type Item, type Kid } from "./family";
 import { db } from "./db";
 
 // The rules the parent can change. Saved as versions by week, so changing
 // amounts never rewrites what past weeks paid.
 
-export type Rules = { deductions: Item[]; bonuses: Item[]; bonusCapCents: number };
+export type Rules = {
+  deductions: Item[];
+  bonuses: Item[];
+  bonusCapCents: number;
+  /** First day that counts (app-wide, set in Settings). */
+  trackingStart: string;
+};
 export type Settings = Rules & {
   kids: Record<string, { baseCents: number; chores: { id: string; label: string }[] }>;
 };
@@ -16,11 +22,12 @@ export function defaultSettings(): Settings {
     deductions: DEDUCTIONS,
     bonuses: BONUSES,
     bonusCapCents: BONUS_CAP_CENTS,
+    trackingStart: TRACKING_START,
   };
 }
 
 /** Fill in anything missing (e.g. a kid added later) from the defaults. */
-function normalize(raw: unknown): Settings {
+function normalize(raw: unknown, trackingStart: string): Settings {
   const d = defaultSettings();
   const s = (raw ?? {}) as Partial<Settings>;
   const kids = { ...d.kids };
@@ -33,19 +40,24 @@ function normalize(raw: unknown): Settings {
     deductions: Array.isArray(s.deductions) ? s.deductions : d.deductions,
     bonuses: Array.isArray(s.bonuses) ? s.bonuses : d.bonuses,
     bonusCapCents: Number.isFinite(s.bonusCapCents) ? (s.bonusCapCents as number) : d.bonusCapCents,
+    trackingStart,
   };
 }
 
-export type SettingsBook = { at(week: string): Settings; latestWeek: string | null };
+export type SettingsBook = { at(week: string): Settings; latestWeek: string | null; trackingStart: string };
 
 /** Loads every saved version once; `at(week)` picks the one in effect that week. */
 export async function loadSettingsBook(): Promise<SettingsBook> {
-  const versions = (await db().listSettings()).sort((a, b) => a.week.localeCompare(b.week));
+  const store = db();
+  const [list, saved] = await Promise.all([store.listSettings(), store.getMeta("tracking_start")]);
+  const versions = list.sort((a, b) => a.week.localeCompare(b.week));
+  const trackingStart = saved && /^\d{4}-\d{2}-\d{2}$/.test(saved) ? saved : TRACKING_START;
   return {
     latestWeek: versions.at(-1)?.week ?? null,
+    trackingStart,
     at(week) {
       const v = versions.filter((x) => x.week <= week).at(-1);
-      return v ? normalize(v.data) : defaultSettings();
+      return v ? normalize(v.data, trackingStart) : { ...defaultSettings(), trackingStart };
     },
   };
 }

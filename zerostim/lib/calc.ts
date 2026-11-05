@@ -1,4 +1,4 @@
-import { TRACKING_START, type Kid } from "./family";
+import type { Kid } from "./family";
 import type { Rules } from "./settings";
 import { addDays, today, weekDays } from "./dates";
 import type { Entry } from "./db";
@@ -13,7 +13,7 @@ import type { Entry } from "./db";
 // - Today is never reduced while it's still going.
 // - Approved bonuses add (up to the weekly max); deductions subtract.
 // - Pending items (kid checked, not approved yet) never change the money.
-// - Days before TRACKING_START don't count at all.
+// - Days before the start date (Settings) don't count at all.
 
 export type DayInfo = {
   date: string;
@@ -32,6 +32,7 @@ export type PendingItem = { id: string; kind: "chore" | "bonus"; itemId: string;
 
 export type WeekSummary = {
   weekStart: string;
+  trackingStart: string;
   baseCents: number; // weekly allowance setting
   dailyCents: number;
   startCents: number; // this week's full amount (active days x daily)
@@ -55,7 +56,7 @@ export type WeekSummary = {
 export function summarize(kid: Kid, rules: Rules, weekStart: string, entries: Entry[]): WeekSummary {
   const end = addDays(weekStart, 6);
   const t = today();
-  const inWeek = entries.filter((e) => e.date >= weekStart && e.date <= end && e.date >= TRACKING_START);
+  const inWeek = entries.filter((e) => e.date >= weekStart && e.date <= end && e.date >= rules.trackingStart);
   const choreIds = new Set(kid.chores.map((c) => c.id));
   const choreDone = new Set<string>();
   const chorePending = new Set<string>();
@@ -87,11 +88,11 @@ export function summarize(kid: Kid, rules: Rules, weekStart: string, entries: En
     else bonusRawCents += item.cents;
   }
 
-  const activeCount = weekDays(weekStart).filter((d) => d >= TRACKING_START).length;
+  const activeCount = weekDays(weekStart).filter((d) => d >= rules.trackingStart).length;
   const dailyCents = activeCount ? kid.baseCents / activeCount : 0;
   const n = kid.chores.length;
   const days: DayInfo[] = weekDays(weekStart).map((date) => {
-    const active = date >= TRACKING_START;
+    const active = date >= rules.trackingStart;
     const status = !active ? "inactive" : date < t ? "past" : date === t ? "today" : "future";
     const approved = kid.chores.filter((c) => choreDone.has(`${c.id}|${date}`)).length;
     const pending = kid.chores.filter((c) => chorePending.has(`${c.id}|${date}`)).length;
@@ -117,6 +118,7 @@ export function summarize(kid: Kid, rules: Rules, weekStart: string, entries: En
 
   return {
     weekStart,
+    trackingStart: rules.trackingStart,
     baseCents: kid.baseCents,
     dailyCents: Math.round(dailyCents),
     startCents,

@@ -1,4 +1,4 @@
-import { money, TRACKING_START, type Kid } from "./family";
+import { money, type Kid } from "./family";
 import { addDays, dateOf, daysBetween, nowHour, today, weekStart } from "./dates";
 import type { Entry } from "./db";
 import type { WeekSummary } from "./calc";
@@ -36,6 +36,7 @@ function doneOn(entries: Entry[], date: string, ids: Set<string>, approvedOnly =
 
 /** Days in a row (ending today if today is complete, else yesterday) with all chores done. */
 export function streakFor(book: SettingsBook, kidId: string, entries: Entry[], t = today()): number {
+  const TRACKING_START = book.trackingStart;
   let n = 0;
   const todayIds = new Set(choresOn(book, kidId, t).map((c) => c.id));
   let day = todayIds.size && doneOn(entries, t, todayIds, true) === todayIds.size ? t : addDays(t, -1);
@@ -59,6 +60,7 @@ export function pennyFor(opts: {
   lastSeen: string | null;
 }): Penny {
   const { kid, book, summary: s, entries, lastSeen } = opts;
+  const TRACKING_START = book.trackingStart;
   const t = today();
   const hour = nowHour();
   const chores = choresOn(book, kid.id, t);
@@ -84,7 +86,7 @@ export function pennyFor(opts: {
       ...base,
       streak: 0,
       mood: "great",
-      line: tomorrow ? "Day one starts tomorrow morning. Penny is ready." : `Day one is ${TRACKING_START}. Penny is ready.`,
+      line: tomorrow ? "Day one starts tomorrow morning. Penny is ready." : `Day one is ${new Intl.DateTimeFormat("en-US", { weekday: "long", month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${TRACKING_START}T12:00:00Z`))}. Penny is ready.`,
     };
   }
 

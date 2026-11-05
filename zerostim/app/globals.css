@@ -566,3 +566,8 @@ textarea, select { color: inherit; }
 .le-remove:hover { background: var(--surface-2); color: var(--minus); }
 .le-add { justify-self: start; border-style: dashed; }
 .money-input input { color: inherit; }
+.date-input {
+  min-height: 48px; max-width: 220px; padding: 0 12px; border: 2px solid var(--border); border-radius: var(--r-md);
+  background: var(--surface); color: var(--text); font: 600 1rem var(--font-body); color-scheme: light dark;
+}
+.date-input:focus { border-color: var(--text); outline: none; }

@@ -50,10 +50,10 @@ export function PayoutPoster(p: {
         <div><dt>Bonuses</dt><dd>+{money(s.bonusCents)}</dd></div>
       </dl>
       <p className="poster-note">
-        {s.startCents < Math.round(s.baseCents)
-          ? `This week counts ${s.days.filter((d) => d.active).length} days at ${money(s.dailyCents)} a day.`
+        {s.days.filter((d) => d.active).length < 7
+          ? `Short week: ${s.days.filter((d) => d.active).length} days at ${money(s.dailyCents)} a day.`
           : `${money(s.dailyCents)} a day.`}{" "}
-        Chores not signed off come off when the day ends.
+        Each chore not signed off by Mom or Dad comes off when the day ends.
       </p>
       {s.bonusRawCents > s.bonusCapCents && (
         <p className="poster-note">Bonuses earned {money(s.bonusRawCents)}. The weekly max is {money(s.bonusCapCents)}.</p>

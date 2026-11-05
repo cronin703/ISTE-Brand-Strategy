@@ -4,7 +4,9 @@ import { addDays, today, weekDays } from "./dates";
 import type { Entry } from "./db";
 
 // How money works (start full, keep it by doing chores):
-// - Each day has a set amount: the weekly allowance / 7.
+// - The week's chores add up to the full weekly allowance ($10 / $15).
+//   Each active day gets an equal share; each chore is a share of its day.
+//   A short week (like the first one) still adds up to the full amount.
 // - When a day ends, every chore not signed off by Mom or Dad takes its share
 //   off that day. No sign-offs at all = the day earns $0. The next day starts
 //   fresh at the full amount.
@@ -85,7 +87,8 @@ export function summarize(kid: Kid, rules: Rules, weekStart: string, entries: En
     else bonusRawCents += item.cents;
   }
 
-  const dailyCents = kid.baseCents / 7;
+  const activeCount = weekDays(weekStart).filter((d) => d >= TRACKING_START).length;
+  const dailyCents = activeCount ? kid.baseCents / activeCount : 0;
   const n = kid.chores.length;
   const days: DayInfo[] = weekDays(weekStart).map((date) => {
     const active = date >= TRACKING_START;
@@ -106,8 +109,7 @@ export function summarize(kid: Kid, rules: Rules, weekStart: string, entries: En
     };
   });
 
-  const activeDays = days.filter((d) => d.active).length;
-  const startCents = Math.round(dailyCents * activeDays);
+  const startCents = activeCount ? kid.baseCents : 0;
   const missedCents = Math.round(days.reduce((sum, d) => sum + d.lostCents, 0));
   const bonusCents = Math.min(bonusRawCents, rules.bonusCapCents);
   const payoutCents = Math.max(0, startCents - missedCents - deductionCents + bonusCents);

@@ -6,8 +6,8 @@ import { ParentTabs } from "@/components/parent-tabs";
 import { logout } from "../actions";
 
 export default async function ParentLayout({ children }: { children: React.ReactNode }) {
-  await requireParent();
   if (!dbConfigured()) return <SetupNeeded />;
+  await requireParent();
   return (
     <>
       <main className="page page-with-tabs">

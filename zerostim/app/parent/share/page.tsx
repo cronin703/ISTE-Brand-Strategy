@@ -1,8 +1,9 @@
 import { headers } from "next/headers";
 import QRCode from "qrcode";
-import { KIDS, money } from "@/lib/family";
+import { money } from "@/lib/family";
+import { requireParent } from "@/lib/auth";
 import { formatRange, today, weekStart } from "@/lib/dates";
-import { loadWeek } from "@/lib/load";
+import { loadFamily, loadWeek } from "@/lib/load";
 import { Avatar } from "@/components/avatar";
 import { ShareButton } from "@/components/copy-share";
 
@@ -15,12 +16,16 @@ async function baseUrl() {
 
 export default async function SharePage() {
   const base = await baseUrl();
+  const { family } = await requireParent();
+  const ctx = await loadFamily(family);
   const week = weekStart(today());
+  const familyUrl = `${base}/f/${family.token}`;
+  const familyQr = await QRCode.toString(familyUrl, { type: "svg", margin: 1, color: { dark: "#15131a", light: "#ffffff" } });
   const kids = await Promise.all(
-    KIDS.map(async (k) => {
-      const url = `${base}/kid/${k.id}`;
+    ctx.kids.map(async (k) => {
+      const url = `${base}/k/${k.token}`;
       const qr = await QRCode.toString(url, { type: "svg", margin: 1, color: { dark: "#15131a", light: "#ffffff" } });
-      const { summary } = await loadWeek(k.id, week);
+      const { summary } = await loadWeek(ctx, k, week);
       return { kid: k, url, qr, summary };
     }),
   );
@@ -47,10 +52,24 @@ export default async function SharePage() {
         </p>
       </div>
 
+      <section className="panel" aria-labelledby="share-family">
+        <div className="share-head">
+          <Avatar color="parent" name={family.name} size={44} />
+          <div style={{ minWidth: 0 }}>
+            <h2 id="share-family">Family dashboard</h2>
+            <p className="muted small">Shows every kid&apos;s day. Good for a shared tablet or the other parent&apos;s phone.</p>
+          </div>
+        </div>
+        <div className="qr" role="img" aria-label="QR code for the family dashboard" dangerouslySetInnerHTML={{ __html: familyQr }} />
+        <div className="share-actions">
+          <ShareButton title={`${family.name} on ZeroStim`} text="Our family's ZeroStim dashboard." url={familyUrl} />
+        </div>
+      </section>
+
       {kids.map(({ kid, url, qr }) => (
-        <section key={kid.id} className="panel" data-kid={kid.id} aria-labelledby={`share-${kid.id}`}>
+        <section key={kid.id} className="panel" data-kid={kid.color} aria-labelledby={`share-${kid.id}`}>
           <div className="share-head">
-            <Avatar id={kid.id} name={kid.name} size={44} />
+            <Avatar color={kid.color} name={kid.name} size={44} />
             <div style={{ minWidth: 0 }}>
               <h2 id={`share-${kid.id}`}>{kid.name}&apos;s link</h2>
               <p className="muted small break">{url.replace(/^https?:\/\//, "")}</p>
@@ -85,7 +104,7 @@ export default async function SharePage() {
 
       <section className="panel" aria-labelledby="acct-h">
         <h2 id="acct-h">Privacy</h2>
-        <p className="muted small">Kids don&apos;t log in, so anyone with a kid&apos;s link can see that kid&apos;s week. They can check off today&apos;s chores, but nothing counts until Mom or Dad approves it. Only the Mom or Dad password can change anything else.</p>
+        <p className="muted small">Kids don&apos;t log in. Each link is private and hard to guess, but anyone you send it to can see that week. They can check off today&apos;s chores, but nothing counts until Mom or Dad approves it. Only the Mom or Dad password can change anything else.</p>
       </section>
     </div>
   );

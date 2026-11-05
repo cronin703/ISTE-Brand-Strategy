@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { KIDS, money } from "@/lib/family";
-import { getSession } from "@/lib/auth";
-import { dbConfigured } from "@/lib/db";
+import { money } from "@/lib/family";
+import { currentParent, deviceFamily } from "@/lib/auth";
+import { dbConfigured, type KidRow } from "@/lib/db";
 import { addDays, DAY_SHORT, formatRange, formatShort, today, weekStart } from "@/lib/dates";
-import { loadWeek, type WeekView } from "@/lib/load";
+import { loadFamily, loadWeek, type FamilyCtx, type WeekView } from "@/lib/load";
 import { Logo } from "@/components/logo";
 import { Avatar } from "@/components/avatar";
 import { Mascot } from "@/components/mascot";
@@ -28,11 +28,15 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   if (!dbConfigured()) return <SetupNeeded />;
   const sp = await searchParams;
   const view: View = sp.view === "week" || sp.view === "month" ? sp.view : "day";
-  const isMom = (await getSession())?.role === "parent";
+  const me = await currentParent();
+  const isMom = Boolean(me);
+  const family = me?.family ?? (await deviceFamily());
+  if (!family) return <Welcome />;
+  const ctx = await loadFamily(family);
   const t = today();
   const week = weekStart(t);
-  const views = await Promise.all(KIDS.map((k) => loadWeek(k.id, week)));
-  const TRACKING_START = views[0].summary.trackingStart;
+  const views = await Promise.all(ctx.kids.map((k) => loadWeek(ctx, k, week)));
+  const TRACKING_START = family.trackingStart;
   const beforeStart = t < TRACKING_START;
 
   const title =
@@ -74,10 +78,14 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
         </p>
       )}
 
+      {views.length === 0 && (
+        <p className="notice">No kids yet. {isMom ? "Add them in Settings." : "Ask Mom or Dad to add you."}</p>
+      )}
+
       <div className="dash enter-2">
         {view === "day" && views.map((v) => <DayCard key={v.kid.id} v={v} t={t} isMom={isMom} week={week} />)}
         {view === "week" && views.map((v) => <WeekCard key={v.kid.id} v={v} t={t} isMom={isMom} week={week} />)}
-        {view === "month" && (await Promise.all(KIDS.map((k) => loadMonth(k.id, t)))).map((m) => <MonthCard key={m.kidId} m={m} t={t} />)}
+        {view === "month" && (await Promise.all(ctx.kids.map((k) => loadMonth(ctx, k, t)))).map((m) => <MonthCard key={m.kidId} m={m} t={t} />)}
       </div>
     </main>
   );
@@ -89,7 +97,7 @@ function CardHead({ v }: { v: WeekView }) {
     <>
       <div className="dash-top">
         <div className="dash-who">
-          <Avatar id={kid.id} name={kid.name} size={44} />
+          <Avatar color={kid.color} name={kid.name} size={44} />
           <div>
             <h2 id={`dash-${kid.id}`} className="display dash-name">{kid.name}</h2>
             {(penny.streak ?? 0) > 0 && <span className="streak-chip">{penny.streak}-day streak</span>}
@@ -127,7 +135,7 @@ function Actions({ v, isMom, week }: { v: WeekView; isMom: boolean; week: string
   const { kid, summary: s } = v;
   return (
     <div className="dash-actions">
-      <Link href={`/kid/${kid.id}`} prefetch={false} className="btn btn-solid">
+      <Link href={isMom ? `/kid/${kid.id}` : `/k/${kid.token}`} prefetch={false} className="btn btn-solid">
         {isMom ? `Open ${kid.name}'s page` : `I'm ${kid.name}`}
       </Link>
       {isMom && s.pendingCount > 0 && (
@@ -150,7 +158,7 @@ function DayCard({ v, t, isMom, week }: { v: WeekView; t: string; isMom: boolean
   });
   const bonusesWaiting = s.pendingItems.filter((p) => p.kind === "bonus" && p.date === t);
   return (
-    <section className="dash-card" data-kid={kid.id} aria-labelledby={`dash-${kid.id}`}>
+    <section className="dash-card" data-kid={kid.color} aria-labelledby={`dash-${kid.id}`}>
       <CardHead v={v} />
       <Money v={v} />
       <div className="dash-today">
@@ -193,7 +201,7 @@ function DayCard({ v, t, isMom, week }: { v: WeekView; t: string; isMom: boolean
 function WeekCard({ v, t, isMom, week }: { v: WeekView; t: string; isMom: boolean; week: string }) {
   const { kid, summary: s } = v;
   return (
-    <section className="dash-card" data-kid={kid.id} aria-labelledby={`dash-${kid.id}`}>
+    <section className="dash-card" data-kid={kid.color} aria-labelledby={`dash-${kid.id}`}>
       <CardHead v={v} />
       <Money v={v} />
       <div className="week-strip" role="list" aria-label={`${kid.name}'s days this week`}>
@@ -230,6 +238,8 @@ function WeekCard({ v, t, isMom, week }: { v: WeekView; t: string; isMom: boolea
 
 type MonthData = {
   kidId: string;
+  color: KidRow["color"];
+  token: string;
   name: string;
   firstWeekday: number; // 0 = Monday
   days: { date: string; active: boolean; ratio: number; status: string }[];
@@ -239,22 +249,24 @@ type MonthData = {
   activeDays: number;
 };
 
-async function loadMonth(kidId: string, t: string): Promise<MonthData> {
+async function loadMonth(ctx: FamilyCtx, row: KidRow, t: string): Promise<MonthData> {
   const first = `${t.slice(0, 8)}01`;
   const next = new Date(`${first}T12:00:00Z`);
   next.setUTCMonth(next.getUTCMonth() + 1);
   const last = addDays(next.toISOString().slice(0, 10), -1);
   const weekStarts: string[] = [];
   for (let w = weekStart(first); w <= last; w = addDays(w, 7)) weekStarts.push(w);
-  const loaded = await Promise.all(weekStarts.map((w) => loadWeek(kidId, w)));
+  const loaded = await Promise.all(weekStarts.map((w) => loadWeek(ctx, row, w)));
   const days = loaded
     .flatMap((v) => v.summary.days)
     .filter((d) => d.date >= first && d.date <= last)
     .map((d) => ({ date: d.date, active: d.active, status: d.status, ratio: d.total ? d.approved / d.total : 0 }));
   const counted = days.filter((d) => d.active && (d.status === "past" || d.status === "today"));
   return {
-    kidId,
-    name: loaded[0].kid.name,
+    kidId: row.id,
+    color: row.color,
+    token: row.token,
+    name: row.name,
     firstWeekday: (new Date(`${first}T12:00:00Z`).getUTCDay() + 6) % 7,
     days,
     weeks: loaded
@@ -276,9 +288,9 @@ async function loadMonth(kidId: string, t: string): Promise<MonthData> {
 
 function MonthCard({ m, t }: { m: MonthData; t: string }) {
   return (
-    <section className="dash-card" data-kid={m.kidId} aria-labelledby={`dash-${m.kidId}`}>
+    <section className="dash-card" data-kid={m.color} aria-labelledby={`dash-${m.kidId}`}>
       <div className="dash-who">
-        <Avatar id={m.kidId} name={m.name} size={44} />
+        <Avatar color={m.color} name={m.name} size={44} />
         <h2 id={`dash-${m.kidId}`} className="display dash-name">{m.name}</h2>
       </div>
       <dl className="dash-math dash-math-2">
@@ -311,7 +323,35 @@ function MonthCard({ m, t }: { m: MonthData; t: string }) {
           </li>
         ))}
       </ul>
-      <Link href={`/kid/${m.kidId}`} prefetch={false} className="btn btn-solid">Open {m.name}&apos;s page</Link>
+      <Link href={`/k/${m.token}`} prefetch={false} className="btn btn-solid">Open {m.name}&apos;s page</Link>
     </section>
+  );
+}
+
+/** No family on this device yet: point grown-ups to log in and kids to their link. */
+function Welcome() {
+  return (
+    <main className="page" data-world="parent">
+      <header className="topbar">
+        <Logo />
+        <Link href="/login" className="btn btn-solid">Log in</Link>
+      </header>
+      <section className="login-hero enter-1">
+        <div style={{ flex: 1 }}>
+          <h1 className="display">ZeroStim</h1>
+          <p>Chores, allowance and a coin named Penny who notices everything.</p>
+        </div>
+        <Mascot size={88} mood="great" className="mascot" />
+      </section>
+      <section className="panel enter-2">
+        <h2>Mom or Dad</h2>
+        <p className="muted">Log in with your email to set up chores and approve them.</p>
+        <Link href="/login" className="btn btn-solid">Log in</Link>
+      </section>
+      <section className="panel enter-2">
+        <h2>Kids</h2>
+        <p className="muted">Open the link Mom or Dad sent you. After that, this phone remembers your family.</p>
+      </section>
+    </main>
   );
 }

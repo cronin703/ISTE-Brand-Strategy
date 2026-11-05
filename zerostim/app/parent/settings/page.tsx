@@ -1,7 +1,11 @@
-import { KIDS, money } from "@/lib/family";
+import Link from "next/link";
+import { money } from "@/lib/family";
 import { addDays, formatRange, today, weekStart } from "@/lib/dates";
-import { kidIn, loadSettingsBook } from "@/lib/settings";
+import { kidIn } from "@/lib/settings";
+import { requireParent } from "@/lib/auth";
+import { loadFamily } from "@/lib/load";
 import { Avatar } from "@/components/avatar";
+import { FamilySettings } from "@/components/family-settings";
 import { saveSettings } from "../../actions";
 import { Pending } from "../../ui";
 import { ListEditor } from "@/components/list-editor";
@@ -10,11 +14,14 @@ const dollars = (c: number) => (c / 100).toFixed(2);
 const longDay = (d: string) =>
   new Intl.DateTimeFormat("en-US", { weekday: "long", month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${d}T12:00:00Z`));
 
-export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ saved?: string; error?: string }> }) {
+export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ saved?: string; error?: string; tab?: string }> }) {
   const sp = await searchParams;
+  const me = await requireParent();
+  const ctx = await loadFamily(me.family);
+  const tab = sp.tab === "family" ? "family" : "rules";
   const current = weekStart(today());
   const next = addDays(current, 7);
-  const book = await loadSettingsBook();
+  const book = ctx.book;
   // Show what applies going forward: next week's version if one is scheduled.
   const showing = book.latestWeek && book.latestWeek > current ? next : current;
   const s = book.at(showing);
@@ -23,9 +30,19 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
     <div data-world="parent" style={{ display: "contents" }}>
       <div className="enter-1">
         <h1 className="history-title">Settings</h1>
-        <p className="muted" style={{ marginTop: 8 }}>Set amounts and chores before the week starts. Past weeks keep the rules they had.</p>
+        <p className="muted" style={{ marginTop: 8 }}>{me.family.name}</p>
       </div>
 
+      <nav className="seg seg-2" aria-label="Settings sections">
+        <Link href="/parent/settings" aria-current={tab === "rules" ? "page" : undefined}>Chores &amp; money</Link>
+        <Link href="/parent/settings?tab=family" aria-current={tab === "family" ? "page" : undefined}>Family</Link>
+      </nav>
+
+      {tab === "family" ? (
+        <FamilySettings ctx={ctx} me={me.parent} saved={sp.saved} error={sp.error} />
+      ) : (
+      <>
+      <p className="muted">Set amounts and chores before the week starts. Past weeks keep the rules they had.</p>
       {sp.saved && (
         <p className="notice notice-good" role="status">Saved. These rules apply from the week of {formatRange(sp.saved)}.</p>
       )}
@@ -56,16 +73,16 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
           </div>
         </section>
 
-        {KIDS.map((k) => {
-          const kid = kidIn(s, k.id)!;
+        {ctx.kids.map((k) => {
+          const kid = kidIn(s, k);
           return (
-            <section key={k.id} className="panel" data-kid={k.id} aria-labelledby={`set-${k.id}`}>
+            <section key={k.id} className="panel" data-kid={k.color} aria-labelledby={`set-${k.id}`}>
               <div className="share-head">
-                <Avatar id={k.id} name={k.name} size={40} />
+                <Avatar color={k.color} name={k.name} size={40} />
                 <h2 id={`set-${k.id}`}>{k.name}</h2>
               </div>
               <div className="field">
-                <label htmlFor={`base_${k.id}`}>Starting allowance each week</label>
+                <label htmlFor={`base_${k.id}`}>Weekly allowance</label>
                 <span className="money-input money-input-lg">
                   <span aria-hidden="true">$</span>
                   <input id={`base_${k.id}`} name={`base_${k.id}`} inputMode="decimal" defaultValue={dollars(kid.baseCents)} required />
@@ -115,9 +132,11 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
             </label>
           </div>
           <Pending className="btn btn-solid" style={{ width: "100%" }}>Save settings</Pending>
-          <p className="muted small">Starting amounts now: {KIDS.map((k) => `${k.name} ${money(kidIn(s, k.id)!.baseCents)}`).join(", ")}.</p>
+          <p className="muted small">Weekly amounts now: {ctx.kids.map((k) => `${k.name} ${money(kidIn(s, k).baseCents)}`).join(", ")}.</p>
         </section>
       </form>
+      </>
+      )}
     </div>
   );
 }

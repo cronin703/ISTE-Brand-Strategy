@@ -47,8 +47,8 @@
 }
 
 /* Color worlds. A tile can carry data-kid; a whole page sets data-world. */
-[data-kid="thomas"],
-html:has([data-world="thomas"]) {
+[data-kid="cobalt"],
+html:has([data-world="cobalt"]) {
   --a: var(--cobalt);
   --b: var(--violet);
   --on: #ffffff;
@@ -56,14 +56,50 @@ html:has([data-world="thomas"]) {
   --tint: #eef0ff;
   --accent: #2d4fe6;
 }
-[data-kid="carter"],
-html:has([data-world="carter"]) {
+[data-kid="flame"],
+html:has([data-world="flame"]) {
   --a: var(--flame);
   --b: var(--bubblegum);
   --on: var(--ink);
   --depth: #a8250b;
   --tint: #fff1ea;
   --accent: #d43d06;
+}
+[data-kid="lime"],
+html:has([data-world="lime"]) {
+  --a: #17a34a;
+  --b: #0ea5a0;
+  --on: var(--ink);
+  --depth: #0b5e2b;
+  --tint: #ecfbf1;
+  --accent: #0f7a3f;
+}
+[data-kid="grape"],
+html:has([data-world="grape"]) {
+  --a: #7c3aed;
+  --b: #c026d3;
+  --on: #ffffff;
+  --depth: #4c1d95;
+  --tint: #f5efff;
+  --accent: #6d28d9;
+}
+[data-kid="teal"],
+html:has([data-world="teal"]) {
+  --a: #0e7490;
+  --b: #2563eb;
+  --on: #ffffff;
+  --depth: #083d4d;
+  --tint: #ecfaff;
+  --accent: #0e7490;
+}
+[data-kid="bubble"],
+html:has([data-world="bubble"]) {
+  --a: #ff3e9a;
+  --b: #ff8a3d;
+  --on: var(--ink);
+  --depth: #9d0f55;
+  --tint: #fff0f7;
+  --accent: #c2185b;
 }
 [data-kid="parent"],
 html:has([data-world="parent"]) {
@@ -87,8 +123,12 @@ html:has([data-world="parent"]) {
     --focus: #ffffff;
   }
   :root { --tint: #17151e; }
-  html:has([data-world="thomas"]) { --tint: #141626; --accent: #8ea4ff; }
-  html:has([data-world="carter"]) { --tint: #1e1512; --accent: #ff9a6b; }
+  html:has([data-world="cobalt"]) { --tint: #141626; --accent: #8ea4ff; }
+  html:has([data-world="flame"]) { --tint: #1e1512; --accent: #ff9a6b; }
+  html:has([data-world="lime"]) { --tint: #121c16; --accent: #6ee7a0; }
+  html:has([data-world="grape"]) { --tint: #18132a; --accent: #c4a1ff; }
+  html:has([data-world="teal"]) { --tint: #10191d; --accent: #67d6f0; }
+  html:has([data-world="bubble"]) { --tint: #1f1219; --accent: #ff8cc6; }
   html:has([data-world="parent"]) { --tint: #1e1316; --accent: #ff7a8a; }
 }
 
@@ -188,7 +228,7 @@ button, input { font: inherit; color: inherit; }
 .mascot { flex: none; filter: drop-shadow(0 8px 12px rgb(0 0 0 / 0.25)); }
 .math { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; }
 .math div { background: rgb(255 255 255 / 0.2); border-radius: var(--r-sm); padding: 8px 12px; }
-[data-kid="carter"] .math div, html:has([data-world="carter"]) .math div { background: rgb(255 255 255 / 0.35); }
+:is([data-kid="flame"], [data-kid="lime"], [data-kid="bubble"]) .math div, html:is(:has([data-world="flame"]), :has([data-world="lime"]), :has([data-world="bubble"])) .math div { background: rgb(255 255 255 / 0.35); }
 .math dt { font-size: 0.75rem; font-weight: 600; }
 .math dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
 
@@ -571,3 +611,44 @@ textarea, select { color: inherit; }
   background: var(--surface); color: var(--text); font: 600 1rem var(--font-body); color-scheme: light dark;
 }
 .date-input:focus { border-color: var(--text); outline: none; }
+.tabs-scroll { overflow-x: auto; } .tabs-scroll .tab { flex: 0 0 auto; padding: 0 14px; }
+.text-input, .field input[type="email"], .field input[type="text"].text-input {
+  width: 100%; min-height: 48px; padding: 0 12px; border: 2px solid var(--border); border-radius: var(--r-md);
+  background: var(--surface); color: var(--text); font: 500 1rem var(--font-body);
+}
+.text-input:focus { border-color: var(--text); outline: none; }
+.field input[name="secret"] { width: 100%; }
+
+/* ---------- Family settings ---------- */
+.seg-2 { grid-template-columns: 1fr 1fr; }
+.kid-edit { display: grid; gap: 10px; padding: 14px 0; border-top: 2px solid var(--surface-2); }
+.kid-edit:first-of-type { border-top: 0; padding-top: 0; }
+.kid-edit-form { display: grid; gap: 10px; }
+.kid-edit-form .btn { justify-self: start; }
+.swatches { display: flex; flex-wrap: wrap; gap: 8px; border: 0; padding: 0; margin: 0; }
+.swatches legend { margin-bottom: 6px; }
+.swatch { position: relative; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(140deg, var(--a), var(--b)); cursor: pointer; }
+.swatch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.swatch:has(input:checked) { box-shadow: 0 0 0 3px var(--surface), 0 0 0 6px var(--text); }
+.swatch:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 6px; }
+.add-box { display: grid; gap: 10px; padding-top: 14px; border-top: 2px solid var(--surface-2); }
+.add-box h3 { margin: 0; font-size: 1rem; }
+.add-box .btn { justify-self: start; }
+.people { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.people li { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.danger summary { cursor: pointer; color: var(--minus); font-weight: 650; font-size: 0.9375rem; min-height: 44px; display: flex; align-items: center; }
+.danger-form { display: grid; gap: 8px; padding: 12px; border-radius: var(--r-md); background: var(--surface-2); }
+.btn-danger { background: var(--minus); border-color: var(--minus); color: #fff; justify-self: start; }
+.btn-danger:hover { background: var(--minus); opacity: 0.9; }
+
+/* ---------- Admin ---------- */
+.admin-tag { padding: 2px 10px; border-radius: 999px; background: var(--a); color: #fff; font-size: 0.8125rem; font-weight: 750; }
+.admin-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.admin-card { text-decoration: none; display: grid; gap: 4px; transition: transform var(--m-100) var(--ease-out); }
+.admin-card:active { transform: scale(0.99); }
+.admin-card-name { font-family: var(--font-display); font-weight: 800; font-stretch: 75%; font-size: 1.75rem; letter-spacing: -0.03em; line-height: 1; }
+.people-admin { align-items: flex-start !important; flex-wrap: wrap; }
+.danger-lite summary { cursor: pointer; font-weight: 650; min-height: 44px; display: flex; align-items: center; }
+.danger-lite { display: grid; gap: 8px; }
+.kid-count { display: grid; gap: 10px; }
+.kid-count-row { display: grid; grid-template-columns: 1fr 120px; gap: 8px; }

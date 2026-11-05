@@ -1,37 +1,33 @@
 # ZeroStim
 
-Weekly allowance tracker for Thomas and Carter, based on the paper allowance charts.
+Weekly allowance and chore tracker for families, based on the paper allowance charts.
 
-- **Parent** logs in with a password and manages each kid's week: check off daily chores, tally deductions and bonuses, mark the week paid.
-- **Kids** tap their name to see their week (read-only, no login). Anyone with a kid's link can view it; only the parent can change anything.
-- **Penny**, the coin mascot, reacts like Duolingo's owl: proud on a streak, nagging when chores are left, grumpy in the evening, sad when money is lost, and pointed when a kid hasn't opened the app in 2+ days. Logic lives in `lib/penny.ts`.
-- **History** shows the last 8 weeks per kid: payout, chore completion %, and most common deductions.
+- **Families**: each family has its own kids, chores, money rules, start date and history.
+- **Parents** log in with email + password (several per family). They check chores, approve what kids mark, log deductions and bonuses, mark weeks paid, and change Settings (Chores & money, Family).
+- **Kids** don't log in. Each kid has a private link (`/k/<token>`) where they check off today's chores and mark bonuses; nothing counts until a parent approves it. Opening a kid link remembers the family on that device, so `/` shows the family dashboard.
+- **App manager (admin)** at `/admin` with `ADMIN_PASSWORD` (not linked anywhere): create families with their first parent and kids, add or reset parent logins, set defaults for new families (kids per family, weekly amount, chores, deductions, bonuses), delete families.
+- **Penny**, the coin mascot, reacts like Duolingo's owl (`lib/penny.ts`).
 
-Rules from the chart are built in as defaults (Thomas $10, Carter $15, bonuses capped at $3/week, payout never below $0, fresh balance every Monday). The parent changes amounts, chores, deductions and bonuses on the Settings page, for this week or next; past weeks keep their rules.
+## Money
+
+Each week's chores add up to the kid's weekly amount. Each day gets an equal share, and each chore is a share of its day. When a day ends, chores not approved come off; today is never reduced while it's going. Approved bonuses add (weekly cap), deductions subtract. Rules are saved as weekly versions, so past weeks keep their rules.
 
 ## Run locally
+
+Needs Postgres.
 
 ```bash
 cd zerostim
 npm install
-npm run dev
+DATABASE_URL=postgres://user:pass@localhost:5432/zerostim ADMIN_PASSWORD=admin npm run dev
 ```
 
-Open http://localhost:3100. Dev parent password: `parent`. Data is saved to `.data/db.json` (no database needed locally).
+Open http://localhost:3100/admin to create a family, then log in at /login.
 
-## Deploy (Vercel + Postgres)
+## Deploy (Vercel + Neon)
 
-1. In Vercel, create a new project from this repo and set **Root Directory** to `zerostim`.
-2. Add a Postgres database (Storage tab → Neon). This sets `DATABASE_URL` automatically. Tables are created on first use.
-3. Add environment variables (see `.env.example`): `PARENT_PASSWORD`, `SESSION_SECRET` (`openssl rand -hex 32`), and `FAMILY_TZ` if you're not on Eastern time.
-4. Deploy. On each phone, open the site and use **Add to Home Screen**; it opens full-screen like an app.
-
-## How data is stored
-
-Two tables. `entries` is an append-only log: one row per chore check, deduction, or bonus, with kid, date, and time. `payouts` records what was paid each week. Every number on screen is computed from the log, so new analytics can be added later without changing how data is collected.
+Root Directory `zerostim`, a Neon Postgres database (sets `DATABASE_URL`), and the variables in `.env.example`. Tables are created and upgraded automatically on first use.
 
 ## Path to a mobile app
 
-The UI is mobile-first and installable as a home-screen web app today. Next step options:
-- **Capacitor**: wrap this same web app as iOS/Android apps. Fastest; adds push notifications.
-- **Expo (React Native)**: native app that calls the same data. More work, more native feel.
+Installable as a home-screen web app today. Next: Capacitor (wrap this app) or Expo (native).

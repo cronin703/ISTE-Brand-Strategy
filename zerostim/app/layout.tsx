@@ -2,6 +2,9 @@ import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/bricolage-grotesque/standard.css";
 import "./globals.css";
 
+// Every page reads the database or cookies, so never prerender at build time.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "ZeroStim",
   description: "Weekly allowance, chores, and respect tracker for the family.",

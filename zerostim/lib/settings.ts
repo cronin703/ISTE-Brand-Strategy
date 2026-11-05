@@ -1,75 +1,83 @@
 import "server-only";
-import { BONUSES, BONUS_CAP_CENTS, DEDUCTIONS, KIDS, TRACKING_START, type Item, type Kid } from "./family";
-import { db } from "./db";
+import { BUILT_IN_DEFAULTS, type Chore, type Defaults, type Item, type Kid } from "./family";
+import { db, type Family, type KidRow } from "./db";
 
-// The rules the parent can change. Saved as versions by week, so changing
-// amounts never rewrites what past weeks paid.
+// A family's rules. Saved as versions by week, so changing amounts never
+// rewrites what past weeks paid.
 
 export type Rules = {
   deductions: Item[];
   bonuses: Item[];
   bonusCapCents: number;
-  /** First day that counts (app-wide, set in Settings). */
+  /** First day that counts for this family (set in Settings). */
   trackingStart: string;
 };
 export type Settings = Rules & {
-  kids: Record<string, { baseCents: number; chores: { id: string; label: string }[] }>;
+  kids: Record<string, { baseCents: number; chores: Chore[] }>;
 };
 
-export function defaultSettings(): Settings {
-  return {
-    kids: Object.fromEntries(KIDS.map((k) => [k.id, { baseCents: k.baseCents, chores: k.chores }])),
-    deductions: DEDUCTIONS,
-    bonuses: BONUSES,
-    bonusCapCents: BONUS_CAP_CENTS,
-    trackingStart: TRACKING_START,
-  };
+/** App-wide defaults for new families (set by the owner in /admin). */
+export async function loadDefaults(): Promise<Defaults> {
+  const raw = await db().getMeta("defaults");
+  if (!raw) return BUILT_IN_DEFAULTS;
+  try {
+    const d = JSON.parse(raw) as Partial<Defaults>;
+    return {
+      kidCount: Number.isInteger(d.kidCount) ? (d.kidCount as number) : BUILT_IN_DEFAULTS.kidCount,
+      baseCents: Number.isFinite(d.baseCents) ? (d.baseCents as number) : BUILT_IN_DEFAULTS.baseCents,
+      chores: Array.isArray(d.chores) ? d.chores : BUILT_IN_DEFAULTS.chores,
+      deductions: Array.isArray(d.deductions) ? d.deductions : BUILT_IN_DEFAULTS.deductions,
+      bonuses: Array.isArray(d.bonuses) ? d.bonuses : BUILT_IN_DEFAULTS.bonuses,
+      bonusCapCents: Number.isFinite(d.bonusCapCents) ? (d.bonusCapCents as number) : BUILT_IN_DEFAULTS.bonusCapCents,
+    };
+  } catch {
+    return BUILT_IN_DEFAULTS;
+  }
 }
 
-/** Fill in anything missing (e.g. a kid added later) from the defaults. */
-function normalize(raw: unknown, trackingStart: string): Settings {
-  const d = defaultSettings();
+/** Fill in anything missing (e.g. a kid added later) from the kid row and defaults. */
+function normalize(raw: unknown, kids: KidRow[], defaults: Defaults, trackingStart: string): Settings {
   const s = (raw ?? {}) as Partial<Settings>;
-  const kids = { ...d.kids };
-  for (const k of KIDS) {
+  const out: Settings["kids"] = {};
+  for (const k of kids) {
     const v = s.kids?.[k.id];
-    if (v && Number.isFinite(v.baseCents) && Array.isArray(v.chores)) kids[k.id] = v;
+    out[k.id] =
+      v && Number.isFinite(v.baseCents) && Array.isArray(v.chores) ? v : { baseCents: k.baseCents, chores: defaults.chores };
   }
   return {
-    kids,
-    deductions: Array.isArray(s.deductions) ? s.deductions : d.deductions,
-    bonuses: Array.isArray(s.bonuses) ? s.bonuses : d.bonuses,
-    bonusCapCents: Number.isFinite(s.bonusCapCents) ? (s.bonusCapCents as number) : d.bonusCapCents,
+    kids: out,
+    deductions: Array.isArray(s.deductions) ? s.deductions : defaults.deductions,
+    bonuses: Array.isArray(s.bonuses) ? s.bonuses : defaults.bonuses,
+    bonusCapCents: Number.isFinite(s.bonusCapCents) ? (s.bonusCapCents as number) : defaults.bonusCapCents,
     trackingStart,
   };
 }
 
 export type SettingsBook = { at(week: string): Settings; latestWeek: string | null; trackingStart: string };
 
-/** Loads every saved version once; `at(week)` picks the one in effect that week. */
-export async function loadSettingsBook(): Promise<SettingsBook> {
-  const store = db();
-  const [list, saved] = await Promise.all([store.listSettings(), store.getMeta("tracking_start")]);
+/** Loads a family's saved versions once; `at(week)` picks the one in effect that week. */
+export async function loadSettingsBook(family: Family, kids: KidRow[]): Promise<SettingsBook> {
+  const [list, defaults] = await Promise.all([db().listSettings(family.id), loadDefaults()]);
   const versions = list.sort((a, b) => a.week.localeCompare(b.week));
-  const trackingStart = saved && /^\d{4}-\d{2}-\d{2}$/.test(saved) ? saved : TRACKING_START;
   return {
     latestWeek: versions.at(-1)?.week ?? null,
-    trackingStart,
+    trackingStart: family.trackingStart,
     at(week) {
       const v = versions.filter((x) => x.week <= week).at(-1);
-      return v ? normalize(v.data, trackingStart) : { ...defaultSettings(), trackingStart };
+      return normalize(v?.data, kids, defaults, family.trackingStart);
     },
   };
 }
 
-export async function settingsFor(week: string): Promise<Settings> {
-  return (await loadSettingsBook()).at(week);
+/** The kid with this week's amount and chores applied. */
+export function kidIn(settings: Settings, row: KidRow): Kid {
+  const k = settings.kids[row.id];
+  return { id: row.id, familyId: row.familyId, name: row.name, color: row.color, token: row.token, baseCents: k.baseCents, chores: k.chores };
 }
 
-/** The kid with this week's amount and chores applied. */
-export function kidIn(settings: Settings, kidId: string): Kid | undefined {
-  const base = KIDS.find((k) => k.id === kidId);
-  if (!base) return undefined;
-  const k = settings.kids[kidId];
-  return { ...base, baseCents: k.baseCents, chores: k.chores };
+/** Strip the per-family start date before saving a version. */
+export function toSaved(s: Settings): Omit<Settings, "trackingStart"> {
+  const { trackingStart: _t, ...rest } = s;
+  void _t;
+  return rest;
 }

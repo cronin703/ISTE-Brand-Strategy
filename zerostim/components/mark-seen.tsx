@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import { markSeen } from "@/app/actions";
+import { kidVisit } from "@/app/actions";
 
-/** Records a kid's visit after the page renders in a real browser (not link previews). */
-export function MarkSeen({ kidId }: { kidId: string }) {
+/** Records a kid's visit after the page renders in a real browser (not link previews),
+ *  and remembers the family on this device. */
+export function MarkSeen({ kidToken }: { kidToken: string }) {
   useEffect(() => {
-    markSeen(kidId).catch(() => {});
-  }, [kidId]);
+    kidVisit(kidToken).catch(() => {});
+  }, [kidToken]);
   return null;
 }

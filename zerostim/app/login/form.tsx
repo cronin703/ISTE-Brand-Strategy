@@ -1,30 +1,36 @@
 "use client";
 
 import { useActionState } from "react";
-import { login, type LoginState } from "../actions";
+import type { FormState } from "../actions";
 
-export function LoginForm({ who, isParent }: { who: string; isParent: boolean }) {
-  const [state, action, pending] = useActionState<LoginState, FormData>(login, {});
+/** Email + password for parents; password only for the admin. */
+export function LoginForm({ action: act, withEmail }: { action: (s: FormState, f: FormData) => Promise<FormState>; withEmail: boolean }) {
+  const [state, action, pending] = useActionState<FormState, FormData>(act, {});
+  const described = state.error ? "login-error" : undefined;
   return (
     <form action={action} className="panel">
-      <input type="hidden" name="who" value={who} />
+      {withEmail && (
+        <div className="field">
+          <label htmlFor="email">Email</label>
+          <input id="email" name="email" type="email" className="text-input" autoComplete="username" autoFocus required aria-describedby={described} />
+        </div>
+      )}
       <div className="field">
-        <label htmlFor="secret">{isParent ? "Password" : "PIN"}</label>
+        <label htmlFor="secret">Password</label>
         <input
           id="secret"
           name="secret"
           type="password"
-          autoFocus
           required
-          autoComplete={isParent ? "current-password" : "off"}
-          inputMode={isParent ? undefined : "numeric"}
-          aria-describedby={state.error ? "login-error" : undefined}
+          autoFocus={!withEmail}
+          autoComplete="current-password"
+          aria-describedby={described}
           aria-invalid={state.error ? true : undefined}
         />
         {state.error && <p id="login-error" className="error" role="alert">{state.error}</p>}
       </div>
       <button className="btn btn-solid" disabled={pending} aria-busy={pending || undefined}>
-        {pending ? "Checking…" : isParent ? "Log in" : "See my week"}
+        {pending ? "Checking…" : "Log in"}
       </button>
     </form>
   );

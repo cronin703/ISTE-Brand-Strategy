@@ -2,15 +2,18 @@ import "server-only";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createHmac, timingSafeEqual } from "crypto";
-import { getKid } from "./family";
+import { db, type Family, type Parent } from "./db";
 
-// Signed-cookie session for the parent only (one password, set as an
-// environment variable). Kids open their page without logging in.
+// Signed-cookie sessions.
+// - Parents log in with email + password (hashed in the database).
+// - The app owner logs in at /admin with ADMIN_PASSWORD. That area isn't linked anywhere.
+// - Kids never log in; their page is reached by a private link per kid.
 
-export type Session = { role: "parent" } | { role: "kid"; kidId: string };
+export type Session = { role: "parent"; parentId: string; familyId: string } | { role: "admin" };
 
 const COOKIE = "zerostim_session";
-const MAX_AGE = 60 * 60 * 24 * 90; // 90 days, so kids aren't re-entering PINs constantly
+const DEVICE = "zerostim_family"; // remembers which family's dashboard this device shows
+const MAX_AGE = 60 * 60 * 24 * 90; // 90 days
 const isProd = process.env.NODE_ENV === "production";
 
 function secret(): string {
@@ -20,8 +23,8 @@ function secret(): string {
   return "dev-only-secret";
 }
 
-export function parentPassword(): string | undefined {
-  return process.env.PARENT_PASSWORD || (isProd ? undefined : "parent");
+export function adminPassword(): string | undefined {
+  return process.env.ADMIN_PASSWORD || (isProd ? undefined : "admin");
 }
 
 function sign(value: string) {
@@ -34,15 +37,11 @@ export function safeEqual(a: string, b: string): boolean {
   return timingSafeEqual(ha, hb);
 }
 
+const cookieOpts = { httpOnly: true, secure: isProd, sameSite: "lax" as const, path: "/", maxAge: MAX_AGE };
+
 export async function setSession(s: Session) {
   const payload = Buffer.from(JSON.stringify({ ...s, exp: Date.now() + MAX_AGE * 1000 })).toString("base64url");
-  (await cookies()).set(COOKIE, `${payload}.${sign(payload)}`, {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: "lax",
-    path: "/",
-    maxAge: MAX_AGE,
-  });
+  (await cookies()).set(COOKIE, `${payload}.${sign(payload)}`, cookieOpts);
 }
 
 export async function clearSession() {
@@ -57,14 +56,42 @@ export async function getSession(): Promise<Session | null> {
   try {
     const data = JSON.parse(Buffer.from(payload, "base64url").toString());
     if (typeof data.exp !== "number" || data.exp < Date.now()) return null;
-    if (data.role === "parent") return { role: "parent" };
-    if (data.role === "kid" && getKid(data.kidId)) return { role: "kid", kidId: data.kidId };
+    if (data.role === "admin") return { role: "admin" };
+    if (data.role === "parent" && typeof data.parentId === "string" && typeof data.familyId === "string") {
+      return { role: "parent", parentId: data.parentId, familyId: data.familyId };
+    }
   } catch {}
   return null;
 }
 
-export async function requireParent() {
+/** The logged-in parent (checked against the database), or null. */
+export async function currentParent(): Promise<{ parent: Parent; family: Family } | null> {
   const s = await getSession();
-  if (s?.role !== "parent") redirect("/login?who=parent");
+  if (s?.role !== "parent") return null;
+  const parent = await db().getParent(s.parentId);
+  if (!parent || parent.familyId !== s.familyId) return null;
+  const family = await db().getFamily(parent.familyId);
+  return family ? { parent, family } : null;
 }
 
+export async function requireParent() {
+  const p = await currentParent();
+  if (!p) redirect("/login");
+  return p;
+}
+
+export async function requireAdmin() {
+  const s = await getSession();
+  if (s?.role !== "admin") redirect("/admin/login");
+}
+
+/* ---- Device memory: which family's dashboard to show on this phone ---- */
+
+export async function rememberFamily(token: string) {
+  (await cookies()).set(DEVICE, token, cookieOpts);
+}
+
+export async function deviceFamily(): Promise<Family | null> {
+  const token = (await cookies()).get(DEVICE)?.value;
+  return token ? db().getFamilyByToken(token) : null;
+}

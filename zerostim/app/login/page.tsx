@@ -1,16 +1,11 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { getKid } from "@/lib/family";
 import { Logo } from "@/components/logo";
 import { Mascot } from "@/components/mascot";
+import { login } from "../actions";
 import { LoginForm } from "./form";
 
-// Parent login. Kids don't log in; old kid links forward to their page.
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ who?: string }> }) {
-  const { who = "parent" } = await searchParams;
-  const kid = getKid(who);
-  if (kid) redirect(`/kid/${kid.id}`);
-
+// Parent login (email + password). Kids don't log in; they use their private link.
+export default function LoginPage() {
   return (
     <main className="page" data-world="parent">
       <header className="topbar">
@@ -25,8 +20,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <Mascot size={88} className="mascot" mood="great" />
       </section>
       <div className="enter-2">
-        <LoginForm who="parent" isParent />
+        <LoginForm action={login} withEmail />
       </div>
+      <p className="muted small" style={{ textAlign: "center" }}>Forgot your password? Ask the other parent in your family or the person who set up ZeroStim for you.</p>
     </main>
   );
 }

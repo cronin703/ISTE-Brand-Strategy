@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { KIDS, getKid, HOUSE_RULES, money } from "@/lib/family";
+import { HOUSE_RULES, money } from "@/lib/family";
+import { requireParent } from "@/lib/auth";
 import { addDays, dateOf, daysBetween, formatRange, isValidDate, today, weekStart } from "@/lib/dates";
-import { loadWeek } from "@/lib/load";
+import { loadFamily, loadWeek } from "@/lib/load";
 import { ChoreGrid, PayoutPoster, Tallies, WaitingForMom } from "@/components/week";
 import { KidTabs } from "@/components/kid-tabs";
 import { togglePaid } from "../actions";
@@ -15,15 +16,26 @@ function lastOpened(name: string, iso: string | null) {
 
 export default async function ParentWeek({ searchParams }: { searchParams: Promise<{ kid?: string; week?: string }> }) {
   const sp = await searchParams;
-  const kidId = (getKid(sp.kid ?? "") ?? KIDS[0]).id;
+  const { family } = await requireParent();
+  const ctx = await loadFamily(family);
+  const row = ctx.kids.find((k) => k.id === sp.kid) ?? ctx.kids[0];
+  if (!row) {
+    return (
+      <div className="panel">
+        <h1 className="history-title">No kids yet</h1>
+        <p className="muted">Add your kids in Settings to start tracking.</p>
+        <Link href="/parent/settings?tab=family" className="btn btn-solid">Add a kid</Link>
+      </div>
+    );
+  }
   const current = weekStart(today());
   const week = isValidDate(sp.week) ? weekStart(sp.week) : current;
-  const { kid, rules, summary, paid, penny } = await loadWeek(kidId, week);
+  const { kid, rules, summary, paid, penny } = await loadWeek(ctx, row, week);
   const weekQ = week === current ? "" : `&week=${week}`;
 
   return (
-    <div data-world={kid.id} style={{ display: "contents" }}>
-      <KidTabs base="/parent" current={kid.id} query={weekQ} />
+    <div data-world={kid.color} style={{ display: "contents" }}>
+      <KidTabs kids={ctx.kids} base="/parent" current={kid.id} query={weekQ} />
 
       <nav className="weeknav" aria-label="Week">
         <Link className="btn" href={`/parent?kid=${kid.id}&week=${addDays(week, -7)}`} aria-label="Previous week">←</Link>

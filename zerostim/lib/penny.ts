@@ -3,7 +3,6 @@ import { addDays, dateOf, daysBetween, nowHour, today, weekStart } from "./dates
 import type { Entry } from "./db";
 import type { WeekSummary } from "./calc";
 import type { SettingsBook } from "./settings";
-import { kidIn } from "./settings";
 
 // Penny is ZeroStim's coin mascot. Like Duolingo's owl, she reacts to what
 // the kid is (or isn't) doing: proud on a streak, nagging when chores are
@@ -22,7 +21,7 @@ export type Penny = {
 };
 
 function choresOn(book: SettingsBook, kidId: string, date: string) {
-  return kidIn(book.at(weekStart(date)), kidId)!.chores;
+  return book.at(weekStart(date)).kids[kidId]?.chores ?? [];
 }
 
 /** Chores done on a date. `approvedOnly` for streaks; kids get credit for pending ones otherwise. */

@@ -110,7 +110,7 @@ export function ChoreGrid({ kid, s, mode }: { kid: Kid; s: WeekSummary; mode: "m
                   short={DAY_SHORT[i]}
                   className={cls}
                   label={label}
-                  fields={{ kidId: kid.id, week: s.weekStart, date, choreId: c.id }}
+                  fields={(mode === "mom" ? { kidId: kid.id, week: s.weekStart, date, choreId: c.id } : { kidToken: kid.token, choreId: c.id }) as Record<string, string>}
                 />
               ) : (
                 <DayStatic key={date} state={state} short={DAY_SHORT[i]} className={cls} label={label} />
@@ -228,14 +228,14 @@ export function Tallies({
                   )}
                   {waiting > 0 && (
                     <form action={kidBonus}>
-                      <input type="hidden" name="kidId" value={kid.id} />
+                      <input type="hidden" name="kidToken" value={kid.token} />
                       <input type="hidden" name="itemId" value={item.id} />
                       <input type="hidden" name="delta" value="-1" />
                       <Pending className="btn btn-small" aria-label={`Undo: ${item.label}`}>Undo</Pending>
                     </form>
                   )}
                   <form action={kidBonus}>
-                    <input type="hidden" name="kidId" value={kid.id} />
+                    <input type="hidden" name="kidToken" value={kid.token} />
                     <input type="hidden" name="itemId" value={item.id} />
                     <input type="hidden" name="delta" value="1" />
                     <Pending className="btn btn-small btn-solid">I did this</Pending>

@@ -1,14 +1,18 @@
-import { KIDS, getKid, money } from "@/lib/family";
+import { money } from "@/lib/family";
+import { requireParent } from "@/lib/auth";
 import { formatShort, today, weekStart } from "@/lib/dates";
-import { loadHistory } from "@/lib/load";
+import { loadFamily, loadHistory } from "@/lib/load";
 import { KidTabs } from "@/components/kid-tabs";
 
 const WEEKS = 8;
 
 export default async function History({ searchParams }: { searchParams: Promise<{ kid?: string }> }) {
   const sp = await searchParams;
-  const kid = getKid(sp.kid ?? "") ?? KIDS[0];
-  const { weeks, entries, rules, baseCents } = await loadHistory(kid.id, weekStart(today()), WEEKS);
+  const { family } = await requireParent();
+  const ctx = await loadFamily(family);
+  const kid = ctx.kids.find((k) => k.id === sp.kid) ?? ctx.kids[0];
+  if (!kid) return <p className="notice">No kids yet. Add them in Settings.</p>;
+  const { weeks, entries, rules, baseCents } = await loadHistory(ctx, kid, weekStart(today()), WEEKS);
   const max = Math.max(1, baseCents + rules.bonusCapCents, ...weeks.map((w) => w.payoutCents));
   const totalPaid = weeks.reduce((n, w) => n + (w.paid?.amountCents ?? 0), 0);
   const choreDone = weeks.reduce((n, w) => n + w.choresDone, 0);
@@ -21,8 +25,8 @@ export default async function History({ searchParams }: { searchParams: Promise<
   const hasData = entries.length > 0;
 
   return (
-    <div data-world={kid.id} style={{ display: "contents" }}>
-      <KidTabs base="/parent/history" current={kid.id} />
+    <div data-world={kid.color} style={{ display: "contents" }}>
+      <KidTabs kids={ctx.kids} base="/parent/history" current={kid.id} />
       <h1 className="history-title enter-1">{kid.name}&apos;s last {WEEKS} weeks</h1>
       <dl className="stats enter-2">
         <div className="stat"><dt>Paid out</dt><dd>{money(totalPaid)}</dd></div>

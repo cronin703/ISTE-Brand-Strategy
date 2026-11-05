@@ -160,6 +160,21 @@ function ready(): Promise<unknown> {
         await tx`insert into family_settings (family_id, effective_week, data) values ('family1', '2026-11-02', ${tx.json(data as never)})`;
       }
     });
+
+    // One-time: a login for Mom (Becca) in the original family. Only the hash is stored here;
+    // the temporary password was given to the owner, and she can change it in Settings.
+    await sql.savepoint(async (tx) => {
+      const first = await tx`insert into meta (key, value) values ('seed-parent-becca', now()::text)
+                             on conflict (key) do nothing returning key`;
+      if (!first.length) return;
+      const fam = await tx`select 1 from families where id = 'family1'`;
+      const taken = await tx`select 1 from parents where lower(email) = 'montague.becca@gmail.com'`;
+      if (fam.length && !taken.length) {
+        await tx`insert into parents (id, family_id, email, name, password_hash)
+                 values (${newId("p")}, 'family1', 'montague.becca@gmail.com', 'Becca',
+                         'scrypt$JxlkROyAkLBUYSqWt6kLCg$csrNPK_Y3zVH7E65TyGRYCCph9LhnT6yyLQicozLRqs')`;
+      }
+    });
     })
     .catch((e) => {
       g.__ready = undefined; // let the next request retry
@@ -405,6 +420,18 @@ function makeStore() {
       const id = newId("p");
       await sql`insert into parents (id, family_id, email, name, password_hash) values (${id}, ${p.familyId}, ${p.email.trim().toLowerCase()}, ${p.name}, ${p.passwordHash})`;
       return id;
+    },
+    /** Every parent login across all families (admin Users page). */
+    async listAllParents(): Promise<(Parent & { familyName: string })[]> {
+      await ready();
+      const rows = await sql<(ParentRow & { family_name: string })[]>`
+        select p.id, p.family_id, p.email, p.name, p.password_hash, f.name as family_name
+        from parents p join families f on f.id = p.family_id order by f.created_at, p.created_at`;
+      return rows.map((r) => ({ ...toParent(r), familyName: r.family_name }));
+    },
+    async updateParent(id: string, p: { name: string; email: string; familyId: string }) {
+      await ready();
+      await sql`update parents set name = ${p.name}, email = ${p.email.trim().toLowerCase()}, family_id = ${p.familyId} where id = ${id}`;
     },
     async setParentPassword(id: string, passwordHash: string) {
       await ready();

@@ -428,22 +428,64 @@ export async function adminAddParent(form: FormData) {
   redirect(`/admin/family/${family.id}?saved=parent`);
 }
 
+/** Where an admin form came from: the Users page or a family page. */
+function adminBack(form: FormData, familyId: string) {
+  return form.get("back") === "users" ? "/admin/users" : `/admin/family/${familyId}`;
+}
+
 export async function adminResetPassword(form: FormData) {
-  const family = await adminFamily(form);
+  await requireAdmin();
   const parent = await db().getParent(String(form.get("parentId")));
+  if (!parent) throw new Error("Bad request");
+  const back = adminBack(form, parent.familyId);
   const password = String(form.get("password") ?? "");
-  if (!parent || parent.familyId !== family.id) throw new Error("Bad request");
-  if (password.length < 8) redirect(`/admin/family/${family.id}?error=${encodeURIComponent("Passwords need at least 8 characters.")}`);
+  if (password.length < 8) redirect(`${back}?error=${encodeURIComponent("Passwords need at least 8 characters.")}`);
   await db().setParentPassword(parent.id, await hashPassword(password));
-  redirect(`/admin/family/${family.id}?saved=password`);
+  redirect(`${back}?saved=password`);
 }
 
 export async function adminRemoveParent(form: FormData) {
-  const family = await adminFamily(form);
+  await requireAdmin();
   const parent = await db().getParent(String(form.get("parentId")));
-  if (!parent || parent.familyId !== family.id) throw new Error("Bad request");
+  if (!parent) throw new Error("Bad request");
   await db().deleteParent(parent.id);
-  redirect(`/admin/family/${family.id}?saved=removed`);
+  redirect(`${adminBack(form, parent.familyId)}?saved=removed`);
+}
+
+/** Users page: add a parent login to any family. */
+export async function adminCreateUser(form: FormData) {
+  await requireAdmin();
+  try {
+    const family = await db().getFamily(String(form.get("familyId")));
+    if (!family) throw new FormError("Pick a family.");
+    const p = readParentFields(form);
+    if (await db().getParentByEmail(p.email)) throw new FormError("That email already has a ZeroStim login.");
+    await db().createParent({ familyId: family.id, email: p.email, name: p.name, passwordHash: await hashPassword(p.password) });
+  } catch (e) {
+    fail("/admin/users", e);
+  }
+  redirect("/admin/users?saved=parent");
+}
+
+/** Users page: change a login's name, email or family. */
+export async function adminUpdateUser(form: FormData) {
+  await requireAdmin();
+  const parent = await db().getParent(String(form.get("parentId")));
+  if (!parent) throw new Error("Bad request");
+  try {
+    const name = String(form.get("name") ?? "").trim().slice(0, 40);
+    const email = String(form.get("email") ?? "").trim().toLowerCase();
+    const family = await db().getFamily(String(form.get("familyId")));
+    if (!name) throw new FormError("Names can't be blank.");
+    if (!/^\S+@\S+\.\S+$/.test(email)) throw new FormError("That email doesn't look right.");
+    if (!family) throw new FormError("Pick a family.");
+    const other = await db().getParentByEmail(email);
+    if (other && other.id !== parent.id) throw new FormError("That email already has a ZeroStim login.");
+    await db().updateParent(parent.id, { name, email, familyId: family.id });
+  } catch (e) {
+    fail("/admin/users", e);
+  }
+  redirect("/admin/users?saved=updated");
 }
 
 export async function adminAddKid(form: FormData) {

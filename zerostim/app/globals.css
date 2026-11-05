@@ -652,3 +652,7 @@ textarea, select { color: inherit; }
 .danger-lite { display: grid; gap: 8px; }
 .kid-count { display: grid; gap: 10px; }
 .kid-count-row { display: grid; grid-template-columns: 1fr 120px; gap: 8px; }
+.seg-4 { grid-template-columns: repeat(4, 1fr); }
+.user-card { display: grid; gap: 10px; }
+.user-edit { display: grid; gap: 10px; }
+.user-edit .btn { justify-self: start; }

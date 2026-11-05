@@ -23,9 +23,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         )}
       </header>
       {isAdmin && (
-        <nav className="seg" aria-label="Admin">
+        <nav className="seg seg-4" aria-label="Admin">
           <Link href="/admin">Families</Link>
-          <Link href="/admin/new">New family</Link>
+          <Link href="/admin/users">Users</Link>
+          <Link href="/admin/new">New</Link>
           <Link href="/admin/defaults">Defaults</Link>
         </nav>
       )}

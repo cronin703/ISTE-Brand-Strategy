@@ -31,11 +31,16 @@ interface Store {
   toggleChore(kidId: string, date: string, choreId: string): Promise<void>;
   /** Kid's tap: empty -> pending, pending -> empty. Approved chores are locked. */
   kidToggleChore(kidId: string, date: string, choreId: string): Promise<void>;
-  /** Approve every pending chore in the date range. */
+  /** Approve everything pending (chores and bonuses) in the date range. */
   approveChores(kidId: string, from: string, to: string): Promise<void>;
+  /** Approve or remove one pending entry by id (Mom's sign-off list). */
+  approveEntry(kidId: string, id: string): Promise<void>;
+  rejectEntry(kidId: string, id: string): Promise<void>;
+  /** Kid's undo for a bonus they marked: removes their latest pending one that day. */
+  removeLatestPending(kidId: string, date: string, kind: Kind, itemId: string): Promise<void>;
   /** Mom says it wasn't done: remove a pending check. */
   rejectChore(kidId: string, date: string, choreId: string): Promise<void>;
-  addTally(kidId: string, date: string, kind: Kind, itemId: string): Promise<void>;
+  addTally(kidId: string, date: string, kind: Kind, itemId: string, status?: "approved" | "pending"): Promise<void>;
   removeLatestTally(kidId: string, from: string, to: string, kind: Kind, itemId: string): Promise<void>;
   listPayouts(kidId: string): Promise<Payout[]>;
   setPayout(kidId: string, weekStart: string, amountCents: number): Promise<void>;
@@ -88,19 +93,42 @@ const fileStore: Store = {
   },
   async approveChores(kidId, from, to) {
     const d = await readFile();
-    for (const e of d.entries) if (e.kidId === kidId && e.kind === "chore" && e.status === "pending" && e.date >= from && e.date <= to) e.status = "approved";
+    for (const e of d.entries) if (e.kidId === kidId && e.status === "pending" && e.date >= from && e.date <= to) e.status = "approved";
     await writeFile(d);
+  },
+  async approveEntry(kidId, id) {
+    const d = await readFile();
+    for (const e of d.entries) if (e.kidId === kidId && e.id === id) e.status = "approved";
+    await writeFile(d);
+  },
+  async rejectEntry(kidId, id) {
+    const d = await readFile();
+    d.entries = d.entries.filter((e) => !(e.kidId === kidId && e.id === id && e.status === "pending"));
+    await writeFile(d);
+  },
+  async removeLatestPending(kidId, date, kind, itemId) {
+    const d = await readFile();
+    const mine = d.entries
+      .map((e, i) => ({ e, i }))
+      .filter(({ e }) => e.kidId === kidId && e.date === date && e.kind === kind && e.itemId === itemId && e.status === "pending")
+      .sort((a, b) => a.e.createdAt.localeCompare(b.e.createdAt));
+    const last = mine.at(-1);
+    if (last) {
+      d.entries.splice(last.i, 1);
+      await writeFile(d);
+    }
   },
   async rejectChore(kidId, date, choreId) {
     const d = await readFile();
     d.entries = d.entries.filter((e) => !(e.kidId === kidId && e.date === date && e.kind === "chore" && e.itemId === choreId && e.status === "pending"));
     await writeFile(d);
   },
-  async addTally(kidId, date, kind, itemId) {
+  async addTally(kidId, date, kind, itemId, status = "approved") {
     const d = await readFile();
-    d.entries.push({ id: randomUUID(), kidId, date, kind, itemId, createdAt: new Date().toISOString() });
+    d.entries.push({ id: randomUUID(), kidId, date, kind, itemId, createdAt: new Date().toISOString(), status });
     await writeFile(d);
   },
+
   async removeLatestTally(kidId, from, to, kind, itemId) {
     const d = await readFile();
     const matches = d.entries
@@ -243,17 +271,32 @@ function pgStore(url: string): Store {
     async approveChores(kidId, from, to) {
       await ready;
       await sql`update entries set status = 'approved'
-                where kid_id = ${kidId} and kind = 'chore' and status = 'pending' and date between ${from} and ${to}`;
+                where kid_id = ${kidId} and status = 'pending' and date between ${from} and ${to}`;
+    },
+    async approveEntry(kidId, id) {
+      await ready;
+      await sql`update entries set status = 'approved' where kid_id = ${kidId} and id = ${id}`;
+    },
+    async rejectEntry(kidId, id) {
+      await ready;
+      await sql`delete from entries where kid_id = ${kidId} and id = ${id} and status = 'pending'`;
+    },
+    async removeLatestPending(kidId, date, kind, itemId) {
+      await ready;
+      await sql`delete from entries where id = (
+        select id from entries
+        where kid_id = ${kidId} and date = ${date} and kind = ${kind} and item_id = ${itemId} and status = 'pending'
+        order by created_at desc limit 1)`;
     },
     async rejectChore(kidId, date, choreId) {
       await ready;
       await sql`delete from entries
                 where kid_id = ${kidId} and date = ${date} and kind = 'chore' and item_id = ${choreId} and status = 'pending'`;
     },
-    async addTally(kidId, date, kind, itemId) {
+    async addTally(kidId, date, kind, itemId, status = "approved") {
       await ready;
-      await sql`insert into entries (id, kid_id, date, kind, item_id)
-                values (${randomUUID()}, ${kidId}, ${date}, ${kind}, ${itemId})`;
+      await sql`insert into entries (id, kid_id, date, kind, item_id, status)
+                values (${randomUUID()}, ${kidId}, ${date}, ${kind}, ${itemId}, ${status})`;
     },
     async removeLatestTally(kidId, from, to, kind, itemId) {
       await ready;

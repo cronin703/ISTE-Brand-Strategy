@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getKid, HOUSE_RULES } from "@/lib/family";
+import { getKid, HOUSE_RULES, TRACKING_START } from "@/lib/family";
 import { formatRange, today, weekStart } from "@/lib/dates";
 import { getSession } from "@/lib/auth";
 import { loadWeek } from "@/lib/load";
@@ -37,7 +37,7 @@ export default async function KidPage({ params }: { params: Promise<{ id: string
       <PayoutPoster kid={kid} s={summary} paid={paid} penny={penny} heading={`Hi ${kid.name}`} />
       <p className="muted small" style={{ textAlign: "center" }}>Week of {formatRange(week)}. Fresh start every Monday.</p>
       <ChoreGrid kid={kid} s={summary} mode={isParent ? "view" : "kid"} />
-      <Tallies kid={kid} s={summary} rules={rules} kind="bonus" editable={false} />
+      <Tallies kid={kid} s={summary} rules={rules} kind="bonus" editable={false} kidCanMark={!isParent && today() >= TRACKING_START} />
       <Tallies kid={kid} s={summary} rules={rules} kind="deduction" editable={false} />
       <section className="panel" aria-labelledby="rules-h">
         <h2 id="rules-h">House rules</h2>

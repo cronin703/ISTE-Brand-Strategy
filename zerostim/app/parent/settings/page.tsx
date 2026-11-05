@@ -84,6 +84,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
                   <span aria-hidden="true">$</span>
                   <input id={`base_${k.id}`} name={`base_${k.id}`} inputMode="decimal" defaultValue={dollars(kid.baseCents)} required />
                 </span>
+                <p className="muted small">That&apos;s {money(Math.round(kid.baseCents / 7))} a day. Each chore not signed off comes off that day&apos;s amount.</p>
               </div>
               <div className="field">
                 <label htmlFor={`chores_${k.id}`}>Daily chores</label>

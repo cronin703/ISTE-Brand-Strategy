@@ -1,4 +1,4 @@
-import { money, type Kid } from "./family";
+import { money, TRACKING_START, type Kid } from "./family";
 import { addDays, dateOf, daysBetween, nowHour, today, weekStart } from "./dates";
 import type { Entry } from "./db";
 import type { WeekSummary } from "./calc";
@@ -40,6 +40,7 @@ export function streakFor(book: SettingsBook, kidId: string, entries: Entry[], t
   const todayIds = new Set(choresOn(book, kidId, t).map((c) => c.id));
   let day = todayIds.size && doneOn(entries, t, todayIds, true) === todayIds.size ? t : addDays(t, -1);
   for (let i = 0; i < 60; i++) {
+    if (day < TRACKING_START) break;
     const ids = new Set(choresOn(book, kidId, day).map((c) => c.id));
     if (!ids.size || doneOn(entries, day, ids, true) < ids.size) break;
     n++;
@@ -69,12 +70,23 @@ export function pennyFor(opts: {
   const firstLeft = chores.find((c) => !entries.some((e) => e.kind === "chore" && e.date === t && e.itemId === c.id));
   const yIds = new Set(choresOn(book, kid.id, addDays(t, -1)).map((c) => c.id));
   // Only scold about yesterday once tracking had started by then (no blame for days before the app).
-  const tracking = entries.some((e) => e.date < t) || (lastSeen !== null && dateOf(lastSeen) < t);
+  const tracking = addDays(t, -1) >= TRACKING_START;
   const yesterdayMissed = tracking ? yIds.size - doneOn(entries, addDays(t, -1), yIds) : 0;
   const streak = streakFor(book, kid.id, entries, t);
-  const away = lastSeen ? daysBetween(dateOf(lastSeen), t) : null;
+  const away = lastSeen && dateOf(lastSeen) >= TRACKING_START ? daysBetween(dateOf(lastSeen), t) : null;
   const seed = Number(t.replaceAll("-", "")) + kid.id.length; // same line all day, different tomorrow
   const base = { streak, todayDone, todayPending, todayTotal, lastSeen };
+
+  // Before day one: no nagging, just excitement.
+  if (t < TRACKING_START) {
+    const tomorrow = addDays(t, 1) === TRACKING_START;
+    return {
+      ...base,
+      streak: 0,
+      mood: "great",
+      line: tomorrow ? "Day one starts tomorrow morning. Penny is ready." : `Day one is ${TRACKING_START}. Penny is ready.`,
+    };
+  }
 
   // Away for a while: the Duolingo guilt trip comes first.
   if (away !== null && away >= 2) {
@@ -159,7 +171,8 @@ export function pennyFor(opts: {
 
 /** For past weeks there's nothing to nag about; Penny just reacts to the payout. */
 export function pennyForPastWeek(s: WeekSummary): Pick<Penny, "mood" | "line"> {
-  if (s.payoutCents >= s.baseCents) return { mood: "great", line: "Full allowance that week. Penny remembers." };
-  if (s.payoutCents >= s.baseCents / 2) return { mood: "ok", line: `Lost ${money(s.deductionCents)} that week.` };
+  if (s.startCents === 0) return { mood: "ok", line: "This week was before ZeroStim started." };
+  if (s.payoutCents >= s.startCents) return { mood: "great", line: "Full allowance that week. Penny remembers." };
+  if (s.payoutCents >= s.startCents / 2) return { mood: "ok", line: `Lost ${money(s.missedCents + s.deductionCents)} that week.` };
   return { mood: "sad", line: "A rough week. Fresh start Monday." };
 }

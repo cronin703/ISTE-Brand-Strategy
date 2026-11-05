@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { randomBytes } from "crypto";
 import { clearSession, parentPassword, requireParent, safeEqual, setSession } from "@/lib/auth";
 import { db, type Kind } from "@/lib/db";
-import { KIDS, getKid, type Item } from "@/lib/family";
+import { KIDS, TRACKING_START, getKid, type Item } from "@/lib/family";
 import { addDays, isValidDate, today, weekStart, weekDays } from "@/lib/dates";
 import { loadWeek } from "@/lib/load";
 import { settingsFor, kidIn, type Settings } from "@/lib/settings";
@@ -173,7 +173,7 @@ export async function kidToggleChore(form: FormData) {
   const choreId = String(form.get("choreId"));
   const t = today();
   const kid = getKid(kidId) && kidIn(await settingsFor(weekStart(t)), kidId);
-  if (!kid || !kid.chores.some((c) => c.id === choreId)) throw new Error("Bad request");
+  if (!kid || !kid.chores.some((c) => c.id === choreId) || t < TRACKING_START) throw new Error("Bad request");
   await db().kidToggleChore(kidId, t, choreId); // always today: kids can't edit other days
   refresh();
 }
@@ -185,11 +185,31 @@ export async function approveAll(form: FormData) {
   refresh();
 }
 
-export async function rejectChore(form: FormData) {
+/** Mom's sign-off list: approve or turn down one waiting item (chore or bonus). */
+export async function approveEntry(form: FormData) {
   await requireParent();
   const { kidId } = readKidAndWeek(form);
-  const date = String(form.get("date"));
-  if (!isValidDate(date)) throw new Error("Bad request");
-  await db().rejectChore(kidId, date, String(form.get("choreId")));
+  await db().approveEntry(kidId, String(form.get("id")));
+  refresh();
+}
+
+export async function rejectEntry(form: FormData) {
+  await requireParent();
+  const { kidId } = readKidAndWeek(form);
+  await db().rejectEntry(kidId, String(form.get("id")));
+  refresh();
+}
+
+/** Kid says "I did this bonus" (today). It waits for Mom or Dad. delta -1 undoes their latest one. */
+export async function kidBonus(form: FormData) {
+  const kidId = String(form.get("kidId"));
+  const itemId = String(form.get("itemId"));
+  const delta = Number(form.get("delta"));
+  const t = today();
+  if (!getKid(kidId) || t < TRACKING_START) throw new Error("Bad request");
+  const rules = await settingsFor(weekStart(t));
+  if (!rules.bonuses.some((b) => b.id === itemId)) throw new Error("Bad request");
+  if (delta > 0) await db().addTally(kidId, t, "bonus", itemId, "pending");
+  else await db().removeLatestPending(kidId, t, "bonus", itemId);
   refresh();
 }

@@ -490,3 +490,51 @@ span.day { cursor: default; }
   .dash-card .penny-mad, .dash-card .penny-sad { color: var(--ink); }
 }
 @media (prefers-reduced-motion: reduce) { .dash-bar span { animation: none; } }
+
+/* ---------- Day / Week / Month switcher ---------- */
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; background: var(--surface); border-radius: 999px; }
+.seg a {
+  display: grid; place-items: center; min-height: 44px; border-radius: 999px; text-decoration: none;
+  font-weight: 700; color: var(--muted); transition: background-color var(--m-150) var(--ease-out), color var(--m-150) var(--ease-out);
+}
+.seg a[aria-current="page"] { background: var(--ink); color: #fff; }
+@media (prefers-color-scheme: dark) { .seg a[aria-current="page"] { background: #fff; color: var(--ink); } }
+
+/* Money boxes: 4 across on wide, 2x2 on phones */
+.math-4, .dash-math { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 480px) { .math-4, .dash-math { grid-template-columns: 1fr 1fr; } }
+.dash-math-2 { grid-template-columns: 1fr 1fr !important; }
+.dash-math-2 dd { font-size: 1.25rem; }
+
+/* Week strip: one column per day, fill shows share of chores signed off */
+.week-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.ws-day { display: grid; justify-items: center; gap: 4px; font-size: 0.75rem; font-weight: 650; color: var(--muted); }
+.ws-fill { position: relative; width: 100%; height: 64px; border-radius: 10px; background: var(--surface-2); overflow: hidden; }
+.ws-fill span { position: absolute; inset: 0; background: linear-gradient(180deg, var(--b), var(--a)); transform-origin: bottom; transition: transform var(--m-300) var(--ease-out); }
+.ws-today .ws-fill { box-shadow: inset 0 0 0 2px var(--text); }
+.ws-today .ws-name { color: var(--text); }
+.ws-inactive .ws-fill { background: repeating-linear-gradient(135deg, var(--surface-2) 0 6px, transparent 6px 12px); }
+.ws-money { font-variant-numeric: tabular-nums; color: var(--text); min-height: 1em; }
+
+/* Month calendar: day tint = share of chores signed off */
+.cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-head { text-align: center; font-size: 0.6875rem; font-weight: 650; color: var(--muted); }
+.cal-day {
+  aspect-ratio: 1; display: grid; place-items: center; border-radius: 8px; font-size: 0.8125rem; font-weight: 650; font-variant-numeric: tabular-nums;
+  background: color-mix(in srgb, var(--a) calc(var(--r, 0) * 100%), var(--surface-2));
+  color: var(--text);
+}
+.cal-day[style*="--r:1"] { color: var(--on); }
+.cal-off { opacity: 0.45; }
+.cal-today { box-shadow: inset 0 0 0 2px var(--text); }
+.month-weeks { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 0.9375rem; }
+.month-weeks li { display: flex; justify-content: space-between; gap: 8px; padding-top: 6px; border-top: 2px solid var(--surface-2); font-variant-numeric: tabular-nums; }
+
+/* Before-start days in the chore grid */
+.day.inactive { opacity: 0.3; border-style: dotted; }
+
+/* Kid bonus buttons and sign-off tags */
+.kid-bonus { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.kind-tag { display: inline-block; margin-right: 6px; padding: 1px 8px; border-radius: 999px; background: var(--surface-2); color: var(--plus); font-size: 0.75rem; font-weight: 750; }
+.waiting-dot { font-weight: 650; opacity: 0.8; }
+@media (prefers-reduced-motion: reduce) { .ws-fill span { transition: none; } }

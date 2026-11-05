@@ -3,7 +3,8 @@ import type { Rules } from "@/lib/settings";
 import { DAY_LONG, DAY_SHORT, today, weekDays } from "@/lib/dates";
 import type { WeekSummary } from "@/lib/calc";
 import { DayStatic, DayToggle, Pending, Stepper, type ChoreState } from "@/app/ui";
-import { approveAll, rejectChore, toggleChore } from "@/app/actions";
+import { approveAll, approveEntry, kidBonus, rejectEntry } from "@/app/actions";
+import { TRACKING_START } from "@/lib/family";
 import { Mascot } from "./mascot";
 import type { WeekView } from "@/lib/load";
 
@@ -42,11 +43,18 @@ export function PayoutPoster(p: {
         </h2>
         <p key={s.payoutCents} className="display poster-amount" aria-live="polite">{money(s.payoutCents)}</p>
       </div>
-      <dl className="math">
-        <div><dt>Start</dt><dd>{money(s.baseCents)}</dd></div>
+      <dl className="math math-4">
+        <div><dt>Start</dt><dd>{money(s.startCents)}</dd></div>
+        <div><dt>Missed chores</dt><dd>{s.missedCents ? `-${money(s.missedCents)}` : "$0.00"}</dd></div>
         <div><dt>Deductions</dt><dd>{s.deductionCents ? `-${money(s.deductionCents)}` : "$0.00"}</dd></div>
         <div><dt>Bonuses</dt><dd>+{money(s.bonusCents)}</dd></div>
       </dl>
+      <p className="poster-note">
+        {s.startCents < Math.round(s.baseCents)
+          ? `This week counts ${s.days.filter((d) => d.active).length} days at ${money(s.dailyCents)} a day.`
+          : `${money(s.dailyCents)} a day.`}{" "}
+        Chores not signed off come off when the day ends.
+      </p>
       {s.bonusRawCents > s.bonusCapCents && (
         <p className="poster-note">Bonuses earned {money(s.bonusRawCents)}. The weekly max is {money(s.bonusCapCents)}.</p>
       )}
@@ -72,7 +80,7 @@ export function ChoreGrid({ kid, s, mode }: { kid: Kid; s: WeekSummary; mode: "m
   const hint =
     mode === "mom"
       ? "Tap to check. Tap a clock to approve."
-      : mode === "kid" && days.includes(t)
+      : mode === "kid" && days.includes(t) && t >= TRACKING_START
         ? "Tap today's chores when they're done. Mom or Dad signs off."
         : null;
   return (
@@ -91,9 +99,10 @@ export function ChoreGrid({ kid, s, mode }: { kid: Kid; s: WeekSummary; mode: "m
             {days.map((date, i) => {
               const key = `${c.id}|${date}`;
               const state: ChoreState = s.choreDone.has(key) ? "done" : s.chorePending.has(key) ? "pending" : "none";
-              const cls = ["day", date === t && "today", date > t && "future"].filter(Boolean).join(" ");
-              const label = `${c.label}, ${DAY_LONG[i]}`;
-              const tappable = mode === "mom" || (mode === "kid" && date === t);
+              const inactive = date < TRACKING_START;
+              const cls = ["day", date === t && "today", date > t && "future", inactive && "inactive"].filter(Boolean).join(" ");
+              const label = `${c.label}, ${DAY_LONG[i]}${inactive ? " (before ZeroStim started)" : ""}`;
+              const tappable = !inactive && (mode === "mom" || (mode === "kid" && date === t));
               return tappable ? (
                 <DayToggle
                   key={date}
@@ -119,40 +128,45 @@ export function ChoreGrid({ kid, s, mode }: { kid: Kid; s: WeekSummary; mode: "m
   );
 }
 
-/** Mom's sign-off list: everything the kid checked that she hasn't approved. */
-export function WaitingForMom({ kid, s }: { kid: Kid; s: WeekSummary }) {
-  if (!s.pendingCount) return null;
-  const items = [...s.chorePending]
-    .map((k) => {
-      const [choreId, date] = k.split("|");
-      return { choreId, date, label: kid.chores.find((c) => c.id === choreId)?.label };
-    })
-    .filter((x) => x.label)
-    .sort((a, b) => a.date.localeCompare(b.date));
-  const fields = (extra: Record<string, string>) => ({ kidId: kid.id, week: s.weekStart, ...extra });
+/** Mom or Dad's sign-off list: chores and bonuses the kid marked, waiting for approval. */
+export function WaitingForMom({ kid, s, rules }: { kid: Kid; s: WeekSummary; rules: Rules }) {
+  const items = s.pendingItems
+    .map((it) => ({
+      ...it,
+      label:
+        it.kind === "chore"
+          ? kid.chores.find((c) => c.id === it.itemId)?.label
+          : rules.bonuses.find((b) => b.id === it.itemId)?.label,
+      cents: it.kind === "bonus" ? rules.bonuses.find((b) => b.id === it.itemId)?.cents : undefined,
+    }))
+    .filter((x) => x.label);
+  if (!items.length) return null;
+  const hidden = (extra: Record<string, string> = {}) =>
+    Object.entries({ kidId: kid.id, week: s.weekStart, ...extra }).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />);
   return (
     <section className="panel panel-waiting" aria-labelledby="waiting-h">
       <div className="panel-head">
         <h2 id="waiting-h">Waiting for Mom or Dad ({items.length})</h2>
         <form action={approveAll}>
-          {Object.entries(fields({})).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
+          {hidden()}
           <Pending className="btn btn-solid">Approve all</Pending>
         </form>
       </div>
       <ul className="waiting-list">
         {items.map((it) => (
-          <li key={`${it.choreId}|${it.date}`}>
+          <li key={it.id}>
             <span>
+              {it.kind === "bonus" && <span className="kind-tag">Bonus +{money(it.cents ?? 0)}</span>}
               {it.label}
               <span className="muted small"> {DAY_LONG[weekDays(s.weekStart).indexOf(it.date)]}</span>
             </span>
             <span className="waiting-actions">
-              <form action={rejectChore}>
-                {Object.entries(fields({ date: it.date, choreId: it.choreId })).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
+              <form action={rejectEntry}>
+                {hidden({ id: it.id })}
                 <Pending className="btn btn-small" aria-label={`Not done: ${it.label}`}>Not done</Pending>
               </form>
-              <form action={toggleChore}>
-                {Object.entries(fields({ date: it.date, choreId: it.choreId })).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
+              <form action={approveEntry}>
+                {hidden({ id: it.id })}
                 <Pending className="btn btn-small btn-solid" aria-label={`Approve: ${it.label}`}>Approve</Pending>
               </form>
             </span>
@@ -163,7 +177,22 @@ export function WaitingForMom({ kid, s }: { kid: Kid; s: WeekSummary }) {
   );
 }
 
-export function Tallies({ kid, s, rules, kind, editable }: { kid: Kid; s: WeekSummary; rules: Rules; kind: "deduction" | "bonus"; editable: boolean }) {
+export function Tallies({
+  kid,
+  s,
+  rules,
+  kind,
+  editable,
+  kidCanMark = false,
+}: {
+  kid: Kid;
+  s: WeekSummary;
+  rules: Rules;
+  kind: "deduction" | "bonus";
+  editable: boolean;
+  /** Kid's own page: "I did this" buttons for bonuses, waiting for Mom or Dad. */
+  kidCanMark?: boolean;
+}) {
   const items = kind === "deduction" ? rules.deductions : rules.bonuses;
   if (items.length === 0) return null;
   const title = kind === "deduction" ? "Respect & responsibility" : "Bonuses";
@@ -178,6 +207,7 @@ export function Tallies({ kid, s, rules, kind, editable }: { kid: Kid; s: WeekSu
       <div>
         {items.map((item) => {
           const count = s.tallies[`${kind}|${item.id}`] ?? 0;
+          const waiting = s.pendingTallies[`${kind}|${item.id}`] ?? 0;
           return (
             <div className="tally" key={item.id}>
               <div>
@@ -188,8 +218,35 @@ export function Tallies({ kid, s, rules, kind, editable }: { kid: Kid; s: WeekSu
               </div>
               {editable ? (
                 <Stepper count={count} itemLabel={item.label} fields={{ kidId: kid.id, week: s.weekStart, kind, itemId: item.id }} />
+              ) : kidCanMark && kind === "bonus" ? (
+                <div className="kid-bonus">
+                  {(count > 0 || waiting > 0) && (
+                    <span className="muted small">
+                      {count > 0 && `${count} approved`}
+                      {count > 0 && waiting > 0 && ", "}
+                      {waiting > 0 && `${waiting} waiting`}
+                    </span>
+                  )}
+                  {waiting > 0 && (
+                    <form action={kidBonus}>
+                      <input type="hidden" name="kidId" value={kid.id} />
+                      <input type="hidden" name="itemId" value={item.id} />
+                      <input type="hidden" name="delta" value="-1" />
+                      <Pending className="btn btn-small" aria-label={`Undo: ${item.label}`}>Undo</Pending>
+                    </form>
+                  )}
+                  <form action={kidBonus}>
+                    <input type="hidden" name="kidId" value={kid.id} />
+                    <input type="hidden" name="itemId" value={item.id} />
+                    <input type="hidden" name="delta" value="1" />
+                    <Pending className="btn btn-small btn-solid">I did this</Pending>
+                  </form>
+                </div>
               ) : (
-                <span className={`count-badge${count ? " has" : ""}`} aria-label={`${count} this week`}>×{count}</span>
+                <span className={`count-badge${count ? " has" : ""}`} aria-label={`${count} this week${waiting ? `, ${waiting} waiting` : ""}`}>
+                  ×{count}
+                  {waiting > 0 && <span className="waiting-dot"> +{waiting}?</span>}
+                </span>
               )}
             </div>
           );

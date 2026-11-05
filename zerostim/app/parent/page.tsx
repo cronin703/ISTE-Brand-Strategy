@@ -60,7 +60,7 @@ export default async function ParentWeek({ searchParams }: { searchParams: Promi
         <Link href="/parent/settings" className="btn">Edit chores &amp; amounts</Link>
       </div>
 
-      <WaitingForMom kid={kid} s={summary} />
+      <WaitingForMom kid={kid} s={summary} rules={rules} />
       <ChoreGrid kid={kid} s={summary} mode="mom" />
       <Tallies kid={kid} s={summary} rules={rules} kind="deduction" editable />
       <Tallies kid={kid} s={summary} rules={rules} kind="bonus" editable />

@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { randomBytes } from "crypto";
-import { clearSession, kidPin, parentPassword, requireParent, safeEqual, setSession } from "@/lib/auth";
+import { clearSession, parentPassword, requireParent, safeEqual, setSession } from "@/lib/auth";
 import { db, type Kind } from "@/lib/db";
 import { KIDS, getKid, type Item } from "@/lib/family";
 import { addDays, isValidDate, today, weekStart, weekDays } from "@/lib/dates";
@@ -24,13 +24,7 @@ export async function login(_: LoginState, form: FormData): Promise<LoginState> 
     redirect("/parent");
   }
 
-  const kid = getKid(who);
-  if (!kid) return { error: "Pick who's checking in first." };
-  const pin = kidPin(kid.id);
-  if (!pin) return { error: `${kid.name}'s PIN isn't set up yet. Ask a parent.` };
-  if (!safeEqual(secret, pin)) return { error: "That PIN didn't match. Try again." };
-  await setSession({ role: "kid", kidId: kid.id });
-  redirect(`/kid/${kid.id}`);
+  return { error: "Kids don't need to log in. Go back and tap your name." };
 }
 
 export async function logout() {
@@ -159,4 +153,14 @@ export async function saveSettings(form: FormData) {
   await db().saveSettings(week, data);
   refresh();
   redirect(`/parent/settings?saved=${week}`);
+}
+
+/* ---------------- Kid visits ---------------- */
+
+/** Called from the kid's own browser once their page is on screen. */
+export async function markSeen(kidId: string) {
+  if (!getKid(kidId)) return;
+  const { getSession } = await import("@/lib/auth");
+  if ((await getSession())?.role === "parent") return; // parent peeking doesn't count
+  await db().markSeen(kidId);
 }

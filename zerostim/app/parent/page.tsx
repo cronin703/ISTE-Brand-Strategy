@@ -1,18 +1,24 @@
 import Link from "next/link";
 import { KIDS, getKid, HOUSE_RULES, money } from "@/lib/family";
-import { addDays, formatRange, isValidDate, today, weekStart } from "@/lib/dates";
+import { addDays, dateOf, daysBetween, formatRange, isValidDate, today, weekStart } from "@/lib/dates";
 import { loadWeek } from "@/lib/load";
 import { ChoreGrid, PayoutPoster, Tallies } from "@/components/week";
 import { KidTabs } from "@/components/kid-tabs";
 import { togglePaid } from "../actions";
 import { Pending } from "../ui";
 
+function lastOpened(name: string, iso: string | null) {
+  if (!iso) return `${name} hasn't opened ZeroStim yet.`;
+  const d = daysBetween(dateOf(iso), today());
+  return `${name} last opened ZeroStim ${d <= 0 ? "today" : d === 1 ? "yesterday" : `${d} days ago`}.`;
+}
+
 export default async function ParentWeek({ searchParams }: { searchParams: Promise<{ kid?: string; week?: string }> }) {
   const sp = await searchParams;
   const kidId = (getKid(sp.kid ?? "") ?? KIDS[0]).id;
   const current = weekStart(today());
   const week = isValidDate(sp.week) ? weekStart(sp.week) : current;
-  const { kid, rules, summary, paid } = await loadWeek(kidId, week);
+  const { kid, rules, summary, paid, penny } = await loadWeek(kidId, week);
   const weekQ = week === current ? "" : `&week=${week}`;
 
   return (
@@ -32,7 +38,14 @@ export default async function ParentWeek({ searchParams }: { searchParams: Promi
         )}
       </nav>
 
-      <PayoutPoster kid={kid} s={summary} paid={paid} heading={kid.name}>
+      <PayoutPoster
+        kid={kid}
+        s={summary}
+        paid={paid}
+        penny={penny}
+        heading={kid.name}
+        meta={week === current && <p className="poster-note">{lastOpened(kid.name, penny.lastSeen ?? null)}</p>}
+      >
         <form action={togglePaid}>
           <input type="hidden" name="kidId" value={kid.id} />
           <input type="hidden" name="week" value={week} />

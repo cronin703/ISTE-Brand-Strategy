@@ -1,11 +1,10 @@
 import { headers } from "next/headers";
 import QRCode from "qrcode";
 import { KIDS, money } from "@/lib/family";
-import { kidPin } from "@/lib/auth";
 import { formatRange, today, weekStart } from "@/lib/dates";
 import { loadWeek } from "@/lib/load";
 import { Avatar } from "@/components/avatar";
-import { RevealPin, ShareButton } from "@/components/copy-share";
+import { ShareButton } from "@/components/copy-share";
 
 async function baseUrl() {
   const h = await headers();
@@ -19,10 +18,10 @@ export default async function SharePage() {
   const week = weekStart(today());
   const kids = await Promise.all(
     KIDS.map(async (k) => {
-      const url = `${base}/login?who=${k.id}`;
+      const url = `${base}/kid/${k.id}`;
       const qr = await QRCode.toString(url, { type: "svg", margin: 1, color: { dark: "#15131a", light: "#ffffff" } });
       const { summary } = await loadWeek(k.id, week);
-      return { kid: k, url, qr, pin: kidPin(k.id), summary };
+      return { kid: k, url, qr, summary };
     }),
   );
   const recap = kids
@@ -48,7 +47,7 @@ export default async function SharePage() {
         </p>
       </div>
 
-      {kids.map(({ kid, url, qr, pin }) => (
+      {kids.map(({ kid, url, qr }) => (
         <section key={kid.id} className="panel" data-kid={kid.id} aria-labelledby={`share-${kid.id}`}>
           <div className="share-head">
             <Avatar id={kid.id} name={kid.name} size={44} />
@@ -61,10 +60,9 @@ export default async function SharePage() {
           <div className="share-actions">
             <ShareButton
               title={`ZeroStim for ${kid.name}`}
-              text={`${kid.name}, here's your ZeroStim link. Ask me for your PIN.`}
+              text={`${kid.name}, here's your ZeroStim link. Add it to your home screen.`}
               url={url}
             />
-            {pin && <RevealPin pin={pin} />}
           </div>
         </section>
       ))}
@@ -86,8 +84,8 @@ export default async function SharePage() {
       </section>
 
       <section className="panel" aria-labelledby="acct-h">
-        <h2 id="acct-h">Passwords and PINs</h2>
-        <p className="muted small">They&apos;re set in the zerostim project&apos;s Environment Variables in Vercel. Ask Claude to change them.</p>
+        <h2 id="acct-h">Privacy</h2>
+        <p className="muted small">Kids don&apos;t log in, so anyone with a kid&apos;s link can see that kid&apos;s week. They can&apos;t change anything. Only the parent password can.</p>
       </section>
     </div>
   );

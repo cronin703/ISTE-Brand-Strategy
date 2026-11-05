@@ -4,8 +4,8 @@ import { redirect } from "next/navigation";
 import { createHmac, timingSafeEqual } from "crypto";
 import { getKid } from "./family";
 
-// Signed-cookie sessions. No user table: one parent password and one PIN per kid,
-// all set as environment variables.
+// Signed-cookie session for the parent only (one password, set as an
+// environment variable). Kids open their page without logging in.
 
 export type Session = { role: "parent" } | { role: "kid"; kidId: string };
 
@@ -22,11 +22,6 @@ function secret(): string {
 
 export function parentPassword(): string | undefined {
   return process.env.PARENT_PASSWORD || (isProd ? undefined : "parent");
-}
-
-export function kidPin(kidId: string): string | undefined {
-  const dev: Record<string, string> = { thomas: "1111", carter: "2222" };
-  return process.env[`KID_PIN_${kidId.toUpperCase()}`] || (isProd ? undefined : dev[kidId]);
 }
 
 function sign(value: string) {
@@ -73,10 +68,3 @@ export async function requireParent() {
   if (s?.role !== "parent") redirect("/login?who=parent");
 }
 
-/** Kids can see only their own page; the parent can see any kid's page. */
-export async function requireKidAccess(kidId: string) {
-  const s = await getSession();
-  if (s?.role === "parent") return s;
-  if (s?.role === "kid" && s.kidId === kidId) return s;
-  redirect(`/login?who=${kidId}`);
-}

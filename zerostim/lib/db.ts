@@ -34,11 +34,14 @@ interface Store {
   listSettings(): Promise<SettingsVersion[]>;
   /** Saves rules from `week` on, replacing any versions that start later. */
   saveSettings(week: string, data: unknown): Promise<void>;
+  /** When the kid last opened their page (ISO time), or null. */
+  lastSeen(kidId: string): Promise<string | null>;
+  markSeen(kidId: string): Promise<void>;
 }
 
 /* ---------------- JSON file store (local dev) ---------------- */
 
-type FileData = { entries: Entry[]; payouts: Payout[]; settings?: SettingsVersion[] };
+type FileData = { entries: Entry[]; payouts: Payout[]; settings?: SettingsVersion[]; seen?: Record<string, string> };
 const FILE = path.join(process.cwd(), ".data", "db.json");
 
 async function readFile(): Promise<FileData> {
@@ -105,6 +108,14 @@ const fileStore: Store = {
     d.settings = [...(d.settings ?? []).filter((v) => v.week < week), { week, data }];
     await writeFile(d);
   },
+  async lastSeen(kidId) {
+    return (await readFile()).seen?.[kidId] ?? null;
+  },
+  async markSeen(kidId) {
+    const d = await readFile();
+    d.seen = { ...(d.seen ?? {}), [kidId]: new Date().toISOString() };
+    await writeFile(d);
+  },
 };
 
 /* ---------------- Postgres store (production) ---------------- */
@@ -134,6 +145,10 @@ function pgStore(url: string): Store {
       effective_week date primary key,
       data jsonb not null,
       updated_at timestamptz not null default now()
+    )`;
+    await sql`create table if not exists seen (
+      kid_id text primary key,
+      seen_at timestamptz not null
     )`;
   })());
 
@@ -213,6 +228,16 @@ function pgStore(url: string): Store {
         await tx`delete from settings where effective_week >= ${week}`;
         await tx`insert into settings (effective_week, data) values (${week}, ${tx.json(data as never)})`;
       });
+    },
+    async lastSeen(kidId) {
+      await ready;
+      const rows = await sql<{ seen_at: Date }[]>`select seen_at from seen where kid_id = ${kidId}`;
+      return rows[0]?.seen_at.toISOString() ?? null;
+    },
+    async markSeen(kidId) {
+      await ready;
+      await sql`insert into seen (kid_id, seen_at) values (${kidId}, now())
+                on conflict (kid_id) do update set seen_at = now()`;
     },
   };
 }

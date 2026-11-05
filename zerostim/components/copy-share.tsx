@@ -27,11 +27,3 @@ export function ShareButton({ text, url, title, label = "Share link" }: { text?:
   );
 }
 
-export function RevealPin({ pin }: { pin: string }) {
-  const [shown, setShown] = useState(false);
-  return (
-    <button type="button" className="btn" onClick={() => setShown((s) => !s)} aria-pressed={shown}>
-      {shown ? `PIN ${pin}` : "Show PIN"}
-    </button>
-  );
-}

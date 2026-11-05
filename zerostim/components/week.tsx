@@ -3,21 +3,38 @@ import type { Rules } from "@/lib/settings";
 import { DAY_LONG, DAY_SHORT, today, weekDays } from "@/lib/dates";
 import type { WeekSummary } from "@/lib/calc";
 import { DayStatic, DayToggle, Stepper } from "@/app/ui";
-import { Mascot, MOOD_LINE, moodFor } from "./mascot";
+import { Mascot } from "./mascot";
+import type { WeekView } from "@/lib/load";
 
 /** The loud part of every kid screen: name, payout, mascot. */
-export function PayoutPoster(p: { kid: Kid; s: WeekSummary; paid: boolean; heading: string; children?: React.ReactNode }) {
-  const { kid, s } = p;
-  const mood = moodFor(s.payoutCents, s.baseCents);
+export function PayoutPoster(p: {
+  kid: Kid;
+  s: WeekSummary;
+  paid: boolean;
+  heading: string;
+  penny: WeekView["penny"];
+  meta?: React.ReactNode;
+  children?: React.ReactNode;
+}) {
+  const { s, penny } = p;
   return (
     <section className="poster" aria-labelledby="payout-h">
       <div className="poster-top">
         <div>
           <h1 className="display poster-name">{p.heading}</h1>
-          <p className="poster-sub">{MOOD_LINE[mood]}</p>
+          {(penny.streak ?? 0) > 0 && (
+            <span className="streak-chip" aria-label={`${penny.streak}-day streak`}>
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-3.5 2-4.5 0 2 1 3 2 3 0-3-1-6 1-9.5z" fill="currentColor" /></svg>
+              {penny.streak}-day streak
+            </span>
+          )}
         </div>
-        <Mascot mood={mood} size={104} className="mascot" />
+        <Mascot mood={penny.mood} size={104} className="mascot" />
       </div>
+      <p className={`penny-says penny-${penny.mood}`}>
+        <span className="sr-only">Penny says: </span>
+        {penny.line}
+      </p>
       <div>
         <h2 id="payout-h" className="poster-label">
           Payout this week {p.paid && <span className="paid-chip">Paid</span>}
@@ -32,7 +49,11 @@ export function PayoutPoster(p: { kid: Kid; s: WeekSummary; paid: boolean; headi
       {s.bonusRawCents > s.bonusCapCents && (
         <p className="poster-note">Bonuses earned {money(s.bonusRawCents)}. The weekly max is {money(s.bonusCapCents)}.</p>
       )}
-      <p className="poster-note">Chores done: {s.choresDone} of {s.choresPossible} so far</p>
+      <p className="poster-note">
+        {penny.todayTotal !== undefined && `Today: ${penny.todayDone} of ${penny.todayTotal} chores. `}
+        This week: {s.choresDone} of {s.choresPossible}.
+      </p>
+      {p.meta}
       {p.children}
     </section>
   );

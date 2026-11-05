@@ -41,3 +41,18 @@ export function formatRange(start: string): string {
 export function formatShort(date: string): string {
   return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(toUTC(date));
 }
+
+/** Current hour (0-23) in the family's time zone. */
+export function nowHour(): number {
+  return Number(new Intl.DateTimeFormat("en-US", { timeZone: TZ, hour: "numeric", hourCycle: "h23" }).format(new Date()));
+}
+
+/** Whole days from a to b (b later = positive). */
+export function daysBetween(a: string, b: string): number {
+  return Math.round((toUTC(b).getTime() - toUTC(a).getTime()) / 86_400_000);
+}
+
+/** A timestamp's calendar date in the family's time zone. */
+export function dateOf(iso: string): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: TZ }).format(new Date(iso));
+}

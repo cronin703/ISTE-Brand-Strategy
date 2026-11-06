@@ -3,7 +3,7 @@ import type { Parent } from "@/lib/db";
 import type { FamilyCtx } from "@/lib/load";
 import { kidIn } from "@/lib/settings";
 import { today, weekStart } from "@/lib/dates";
-import { addKid, addParent, changePassword, removeKid, removeParent, updateKid } from "@/app/actions";
+import { addKid, addParent, changePassword, deleteMyFamily, deleteMyLogin, removeKid, removeParent, updateKid } from "@/app/actions";
 import { Pending } from "@/app/ui";
 import { Avatar } from "./avatar";
 import { db } from "@/lib/db";
@@ -147,6 +147,35 @@ export async function FamilySettings({ ctx, me, saved, error }: { ctx: FamilyCtx
           </div>
           <Pending className="btn">Change password</Pending>
         </form>
+      </section>
+
+      <section className="panel" aria-labelledby="fam-delete">
+        <h2 id="fam-delete">Delete account</h2>
+        <p className="muted small">
+          Deleting is permanent. See the <a href="/privacy">privacy policy</a> for what ZeroStim keeps.
+        </p>
+        <details className="danger">
+          <summary>Delete my login</summary>
+          <form action={deleteMyLogin} className="danger-form">
+            <p className="small">
+              Removes your login ({me.email}). {parents.length > 1 ? "The other parent keeps the family, kids and history." : "You're the only parent, so nobody will be able to log in to this family afterward."}
+            </p>
+            <label htmlFor="del-me" className="small">Type your email to confirm</label>
+            <input id="del-me" name="confirm" type="email" className="text-input" autoComplete="off" />
+            <Pending className="btn btn-danger">Delete my login</Pending>
+          </form>
+        </details>
+        <details className="danger">
+          <summary>Delete our family and all data</summary>
+          <form action={deleteMyFamily} className="danger-form">
+            <p className="small">
+              Deletes {ctx.family.name}: every parent login, every kid, and all chores, bonuses, payouts and history. This can&apos;t be undone.
+            </p>
+            <label htmlFor="del-fam" className="small">Type <strong>{ctx.family.name}</strong> to confirm</label>
+            <input id="del-fam" name="confirm" className="text-input" autoComplete="off" />
+            <Pending className="btn btn-danger">Delete family and all data</Pending>
+          </form>
+        </details>
       </section>
     </>
   );

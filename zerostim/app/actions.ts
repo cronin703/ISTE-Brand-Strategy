@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { randomBytes } from "crypto";
 import {
@@ -30,15 +31,36 @@ function refresh() {
 
 /* ---------------- Login ---------------- */
 
+/* Login lockout: 5 wrong tries for the same email (or 20 from the same network) in
+   15 minutes pauses logins for that email / network until the window passes. */
+const LOCK_MINUTES = 15;
+const LOCKED = `Too many tries. For safety, logging in is paused for ${LOCK_MINUTES} minutes. Try again later.`;
+
+async function clientIp() {
+  const h = await headers();
+  return (h.get("x-forwarded-for") ?? "").split(",")[0].trim() || "unknown";
+}
+
+async function isLocked(keys: [string, number][]) {
+  for (const [key, max] of keys) if ((await db().recentLoginFailures(key, LOCK_MINUTES)) >= max) return true;
+  return false;
+}
+
 export async function login(_: FormState, form: FormData): Promise<FormState> {
-  const email = String(form.get("email") ?? "").trim();
+  const email = String(form.get("email") ?? "").trim().toLowerCase();
   const password = String(form.get("secret") ?? "");
   if (!email || !password) return { error: "Enter your email and password." };
+  const emailKey = `email:${email}`;
+  const ipKey = `ip:${await clientIp()}`;
+  if (await isLocked([[emailKey, 5], [ipKey, 20]])) return { error: LOCKED };
   const parent = await db().getParentByEmail(email);
   // Same message either way, so the form doesn't reveal which emails exist.
   if (!parent || !(await verifyPassword(password, parent.passwordHash))) {
+    await db().addLoginFailure(emailKey);
+    await db().addLoginFailure(ipKey);
     return { error: "That email and password didn't match. Try again." };
   }
+  await db().clearLoginFailures(emailKey);
   await setSession({ role: "parent", parentId: parent.id, familyId: parent.familyId });
   const family = await db().getFamily(parent.familyId);
   if (family) await rememberFamily(family.token);
@@ -48,7 +70,12 @@ export async function login(_: FormState, form: FormData): Promise<FormState> {
 export async function adminLogin(_: FormState, form: FormData): Promise<FormState> {
   const pw = adminPassword();
   if (!pw) return { error: "Admin isn't set up. Add ADMIN_PASSWORD in the app settings." };
-  if (!safeEqual(String(form.get("secret") ?? ""), pw)) return { error: "That password didn't match." };
+  if (await isLocked([["admin", 5]])) return { error: LOCKED };
+  if (!safeEqual(String(form.get("secret") ?? ""), pw)) {
+    await db().addLoginFailure("admin");
+    return { error: "That password didn't match." };
+  }
+  await db().clearLoginFailures("admin");
   await setSession({ role: "admin" });
   redirect("/admin");
 }
@@ -578,4 +605,28 @@ export async function removePushSubscription(endpoint: string) {
 export async function sendTestPush(): Promise<number> {
   const { family } = await requireParent();
   return notifyFamily(family.id, { title: "ZeroStim notifications are on", body: "You'll hear from Penny when the kids are ready for review.", url: "/" });
+}
+
+/* ---------------- Deleting accounts (required by the app stores) ---------------- */
+
+/** Delete your own parent login. The family and kids stay for the other parent. */
+export async function deleteMyLogin(form: FormData) {
+  const { parent } = await requireParent();
+  if (String(form.get("confirm") ?? "").trim().toLowerCase() !== parent.email.toLowerCase()) {
+    redirect(`/parent/settings?tab=family&error=${encodeURIComponent("Type your email exactly to delete your login.")}`);
+  }
+  await db().deleteParent(parent.id);
+  await clearSession();
+  redirect("/?deleted=login");
+}
+
+/** Delete the whole family: every parent login, kid and their history. */
+export async function deleteMyFamily(form: FormData) {
+  const { family } = await requireParent();
+  if (String(form.get("confirm") ?? "").trim() !== family.name) {
+    redirect(`/parent/settings?tab=family&error=${encodeURIComponent(`Type "${family.name}" exactly to delete your family.`)}`);
+  }
+  await db().deleteFamily(family.id);
+  await clearSession();
+  redirect("/?deleted=family");
 }

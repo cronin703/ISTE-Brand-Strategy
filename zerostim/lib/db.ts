@@ -129,6 +129,13 @@ function ready(): Promise<unknown> {
       created_at timestamptz not null default now()
     )`;
 
+    await sql`create table if not exists login_failures (
+      id bigserial primary key,
+      key text not null,
+      at timestamptz not null default now()
+    )`;
+    await sql`create index if not exists login_failures_key_at on login_failures (key, at)`;
+
     // Move the original single family (Thomas & Carter) into the new tables, once.
     await sql.savepoint(async (tx) => {
       const first = await tx`insert into meta (key, value) values ('multi-family-v1', now()::text)
@@ -458,6 +465,22 @@ function makeStore() {
     async deleteParent(id: string) {
       await ready();
       await sql`delete from parents where id = ${id}`;
+    },
+
+    /* ---------------- Login lockout ---------------- */
+    async recentLoginFailures(key: string, minutes: number): Promise<number> {
+      await ready();
+      const r = await sql<{ n: number }[]>`select count(*)::int as n from login_failures where key = ${key} and at > now() - make_interval(mins => ${minutes})`;
+      return r[0]?.n ?? 0;
+    },
+    async addLoginFailure(key: string) {
+      await ready();
+      await sql`insert into login_failures (key) values (${key})`;
+      await sql`delete from login_failures where at < now() - interval '1 day'`;
+    },
+    async clearLoginFailures(key: string) {
+      await ready();
+      await sql`delete from login_failures where key = ${key}`;
     },
 
     /* ---------------- Notifications (web push) ---------------- */

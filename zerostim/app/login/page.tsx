@@ -23,6 +23,7 @@ export default function LoginPage() {
         <LoginForm action={login} withEmail />
       </div>
       <p className="muted small" style={{ textAlign: "center" }}>Forgot your password? Ask the other parent in your family or the person who set up ZeroStim for you.</p>
+      <p className="muted small" style={{ textAlign: "center" }}><Link href="/privacy">Privacy policy</Link></p>
     </main>
   );
 }

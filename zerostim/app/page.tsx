@@ -26,14 +26,14 @@ const VIEWS: { id: View; label: string }[] = [
 const longDate = (d: string, opts: Intl.DateTimeFormatOptions) =>
   new Intl.DateTimeFormat("en-US", { ...opts, timeZone: "UTC" }).format(new Date(`${d}T12:00:00Z`));
 
-export default async function Dashboard({ searchParams }: { searchParams: Promise<{ view?: string }> }) {
+export default async function Dashboard({ searchParams }: { searchParams: Promise<{ view?: string; deleted?: string }> }) {
   if (!dbConfigured()) return <SetupNeeded />;
   const sp = await searchParams;
   const view: View = sp.view === "week" || sp.view === "month" ? sp.view : "day";
   const me = await currentParent();
   const isMom = Boolean(me);
   const family = me?.family ?? (await deviceFamily());
-  if (!family) return <Welcome />;
+  if (!family) return <Welcome deleted={sp.deleted} />;
   const ctx = await loadFamily(family);
   const t = today();
   const week = weekStart(t);
@@ -354,13 +354,18 @@ function MonthCard({ m, t }: { m: MonthData; t: string }) {
 }
 
 /** No family on this device yet: point grown-ups to log in and kids to their link. */
-function Welcome() {
+function Welcome({ deleted }: { deleted?: string }) {
   return (
     <main className="page" data-world="parent">
       <header className="topbar">
         <Logo />
         <Link href="/login" className="btn btn-solid">Log in</Link>
       </header>
+      {deleted && (
+        <p className="notice notice-good" role="status">
+          {deleted === "family" ? "Your family and all its data were deleted." : "Your login was deleted."}
+        </p>
+      )}
       <section className="login-hero enter-1">
         <div style={{ flex: 1 }}>
           <h1 className="display">ZeroStim</h1>
@@ -377,6 +382,7 @@ function Welcome() {
         <h2>Kids</h2>
         <p className="muted">Open the link Mom or Dad sent you. After that, this phone remembers your family.</p>
       </section>
+      <p className="muted small" style={{ textAlign: "center" }}><Link href="/privacy">Privacy policy</Link></p>
     </main>
   );
 }
